@@ -281,7 +281,7 @@ class GuillotineSBM(AbstractSingleBinModel):
         ax.set_xlim((0, 1))
         ax.set_ylim((0, 1))
 
-        cmap = get_cmap(self.I)
+        cmap = get_cmap(self.I//2)
 
 
 
@@ -305,8 +305,8 @@ class GuillotineSBM(AbstractSingleBinModel):
                                     self.items[i].height/bin_height,
                                     self.items[i].width/bin_width,
                                     edgecolor='black',
-                                    facecolor=cmap(i),
-                                    alpha=0.5
+                                    facecolor=cmap(i%(self.I//2)),
+                                    #alpha=0.5
                                 )
                             )
                             
