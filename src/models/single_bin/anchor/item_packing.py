@@ -21,18 +21,30 @@ class ItemPacking(AbstractItemPacking):
     rotation: bool = False
     
     def get_variables(self):
-        return list(self.free_pos_xs) + list(self.free_pos_ys) + [self.free_count] + [self.selected] + list(self.free_active)
+        return list(self.pos_xs) + list(self.pos_ys) + [self.count] + [self.selected] + list(self.active)
             
 
-
-
+    @property
+    def rotations(self):
+        return np.full((self.nr_width_repeats(), self.nr_length_repeats()), self.rotation)
+    
     @property
     def width(self):
         return self.item.width if not self.rotation else self.item.height
+
+    @property
+    def widths(self):
+        return np.full((self.nr_width_repeats(), self.nr_length_repeats()), self.width)
     
     @property
     def height(self):
         return self.item.height if not self.rotation else self.item.width
+
+    @property
+    def heights(self):
+        return np.full((self.nr_width_repeats(), self.nr_length_repeats()), self.height)
+    
+
 
     def nr_width_repeats(self):
         return math.floor(self.bin_config.width / self.width)

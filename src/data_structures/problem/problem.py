@@ -32,21 +32,21 @@ class Problem(metaclass=ABCMeta):
     def get_items(self):
         return [Item(ID=i, width=self.widths[i], height=self.heights[i]) for i in range(self.nr_items)]
     
-    # def get_item_packing(self):
-    #     return [
-    #         ItemPacking(
-    #                 item=i, 
-    #                 bin_config=self.get_bin_config(),
-    #             ) for i in self.get_items()
-    #     ]
-    # def get_item_packing_rotated(self):
-    #     return [
-    #         ItemPacking(
-    #                 item=i, 
-    #                 bin_config=self.get_bin_config(),
-    #                 rotation=True
-    #             ) for i in self.get_items()
-    #     ]
+    def get_item_packing(self, ItemPacking):
+        return [
+            ItemPacking(
+                    item=i, 
+                    bin_config=self.get_bin_config(),
+                ) for i in self.get_items()
+        ]
+    def get_item_packing_rotated(self, ItemPacking):
+        return [
+            ItemPacking(
+                    item=i, 
+                    bin_config=self.get_bin_config(),
+                    rotation=True
+                ) for i in self.get_items()
+        ]
     @abstractmethod
     def get_bin_config(self): pass
 

@@ -5,9 +5,9 @@ from .models.CreelPackingModel import CreelPackingModel
 import numpy as np
 import math
 
-from iterative.data_structures.BasicColor import BasicColor
-from iterative.data_structures.TextileItem import TextileItem
-from iterative.data_structures.SingleBinPacking import SingleBinPacking
+from src.data_structures.color import Color
+from src.data_structures.textile_item import TextileItem
+from src.data_structures.single_bin_packing import SingleBinPacking
 from iterative.models.MultiBin.LNS.BinProduction import BinProduction
 from iterative.data_structures.Machineconfig import MachineConfig
 from iterative.data_structures.ItemPacking import ItemPacking

@@ -77,6 +77,24 @@ class AbstractSingleBinModel(AbstractModel):
     def __init__(self):
         pass
 
+    @constraint
+    def item_count(self):
+        # Link the item count variable with the number of active item instances
+        return [ (item.count == sum(item.active)) for item in self.single_bin_packing.items]
+    
+    @constraint
+    def item_selection(self):
+        # If an item is active, it should be packed at least once
+        # If an item is inactive, it should not be packed
+        return [ ( item.selected == (item.count != 0) ) for item in self.single_bin_packing.items]
+    
+    @constraint
+    def bin_height(self):
+        # The bin length should be at least its minimal value
+        return [ self.single_bin_packing.bin.length == self.single_bin_packing.bin.config.max_length ]
+
+
+
 
 class AbstractMultiBinModel(AbstractModel):
 

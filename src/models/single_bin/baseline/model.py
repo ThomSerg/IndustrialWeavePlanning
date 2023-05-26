@@ -92,29 +92,6 @@ class BaselineSBM(AbstractSingleBinModel):
 
         return c
     
-    @constraint
-    def item_count(self):
-        c = []
-
-        for item in self.single_bin_packing.items:
-            c.append(item.count == cpm_sum(item.active))
-
-        return c
-
-    @constraint
-    def item_selection(self):
-        c = []
-
-        # If an item is active, it should be packed at least once
-        # If an item is inactive, it should not be packed
-        for item in self.single_bin_packing.items:
-
-            c.extend([
-                (~item.selected).implies(item.count == 0),
-                (item.selected).implies(item.count != 0)
-            ])
-
-        return c
 
     @constraint
     def within_bin(self):
@@ -188,26 +165,7 @@ class BaselineSBM(AbstractSingleBinModel):
         return c
 
 
-    @constraint
-    def bin_height(self):
-        c = []
-
-        # The bin length should be at least its minimal value
-        c.append(
-            self.single_bin_packing.bin.length >= self.single_bin_packing.bin.config.min_length
-        )
-
-        for item in self.single_bin_packing.items:
-            for i_instance in range(item.max_count):
-                c.append(
-                    (
-                        item.active[i_instance]
-                    ).implies(
-                        item.pos_ys[i_instance] <= self.single_bin_packing.bin.length - item.heights[i_instance]
-                    )
-                )
-
-        return c
+    
     
     def get_constraints_per_type(self):
         return {
