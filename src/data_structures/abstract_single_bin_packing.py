@@ -30,6 +30,10 @@ class AbstractSingleBinPacking(FixableObject):
 
     @property
     @abstractmethod
+    def items_unique(self): pass
+
+    @property
+    @abstractmethod
     def counts(self): pass
 
     @property
@@ -38,7 +42,7 @@ class AbstractSingleBinPacking(FixableObject):
 
     @property
     def area(self) -> intvar:
-        return sum(item.count*item.area for item in self.items)
+        return sum(item.count*item.area for item in self.items_unique)
     
     def get_variables(self):
         res = self.bin.get_variables()

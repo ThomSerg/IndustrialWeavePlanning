@@ -11,7 +11,7 @@ from src.data_structures.abstract_item_packing import AbstractItemPacking
 @dataclass(kw_only=True)
 class ItemPacking(AbstractItemPacking):
 
-    max_count: int
+    
     
     fixable_rotation: ft.FixableBoolArray = None
 

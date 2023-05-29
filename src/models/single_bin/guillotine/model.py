@@ -26,6 +26,9 @@ from ..anchor.item_packing import ItemPacking
 
 class GuillotineSBM(AbstractSingleBinModel):
 
+    ItemPacking = ItemPacking
+    single_bin_packing = SingleBinPacking
+
     def __init__(self, 
                     machine_config: MachineConfig, 
                     single_bin_packing: SingleBinPacking,
@@ -46,6 +49,8 @@ class GuillotineSBM(AbstractSingleBinModel):
         self.model = Model()
         self.cpm_vars = []
         self.vals = []
+
+        
 
     @classmethod
     def init_from_problem(cls, problem) -> GuillotineSBM:

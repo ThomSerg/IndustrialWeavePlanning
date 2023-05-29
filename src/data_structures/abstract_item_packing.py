@@ -20,6 +20,8 @@ class AbstractItemPacking(FixableObject):
 
     item: Item = None
     bin_config: BinConfig = None
+    rotation: bool = False
+    max_count: int = 0
 
     fixable_pos_xs_arr: ft.FixableIntArray = None
     fixable_pos_ys_arr: ft.FixableIntArray = None

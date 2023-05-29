@@ -30,6 +30,9 @@ from .item_packing import ItemPacking
 
 
 class AnchorSBM(AbstractSingleBinModel):
+
+    ItemPacking = ItemPacking
+    single_bin_packing = SingleBinPacking
     
     # Constructor
     def __init__(self, 

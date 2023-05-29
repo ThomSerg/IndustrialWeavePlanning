@@ -3,7 +3,7 @@ from __future__ import annotations
 import numpy as np
 import numpy.typing as npt
 
-#from src.data_structures.problem.multi_bin_problem import MultiBinProblem
+from src.data_structures.problem.multi_bin_problem import MultiBinProblem
 from src.data_structures.problem.colored_single_bin_problem import ColoredSingleBinProblem
 #from src.data_structures.problem.co import ColoredMultiBinProblem
 from src.data_structures.problem.single_bin_problem import SingleBinProblem
@@ -80,19 +80,19 @@ class ProblemJsonS(SingleBinProblem):
     def init_from_file(cls, json_dict) -> list[ProblemJsonS]:
         return [cls(a, json_dict[a]) for a in json_dict]
 
-# class ProblemJsonM(MultiBinProblem):
-#     def __init__(self, name, json_dict):
-#         self.json_dict = json_dict
-#         self.name = name
-#         self.widths : npt.NDArray[np.int_] = np.array(json_dict["widths"],dtype='int64')
-#         self.heights : npt.NDArray[np.int_] = np.array(json_dict["heights"],dtype='int64')
-#         self.deadlines : npt.NDArray[np.int_] = np.array(json_dict["deadlines"],dtype='int64')
-#         self.deadline_counts : npt.NDArray[np.int_] = np.array(json_dict["deadline_counts"],dtype='int64')
-#         self.machine_width : int = json_dict["machine_config"]["width"]
-#         self.machine_min_length : int = json_dict["machine_config"]["min_length"]
-#         self.machine_max_length : int = json_dict["machine_config"]["max_length"]
+class ProblemJsonM(MultiBinProblem):
+    def __init__(self, name, json_dict):
+        self.json_dict = json_dict
+        self.name = name
+        self.widths : npt.NDArray[np.int_] = np.array(json_dict["widths"],dtype='int64')
+        self.heights : npt.NDArray[np.int_] = np.array(json_dict["heights"],dtype='int64')
+        self.deadlines : npt.NDArray[np.int_] = np.array(json_dict["deadlines"],dtype='int64')
+        self.deadline_counts : npt.NDArray[np.int_] = np.array(json_dict["deadline_counts"],dtype='int64')
+        self.machine_width : int = json_dict["machine_config"]["width"]
+        self.machine_min_length : int = json_dict["machine_config"]["min_length"]
+        self.machine_max_length : int = json_dict["machine_config"]["max_length"]
 
 
-#     @classmethod
-#     def init_from_file(cls, json_dict) -> list[ProblemJsonS]:
-#         return [cls(a, json_dict[a]) for a in json_dict]
+    @classmethod
+    def init_from_file(cls, json_dict) -> list[ProblemJsonS]:
+        return [cls(a, json_dict[a]) for a in json_dict]

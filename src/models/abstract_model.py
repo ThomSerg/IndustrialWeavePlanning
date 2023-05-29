@@ -3,6 +3,9 @@ from abc import ABCMeta, abstractmethod
 
 from timeit import default_timer as timer
 
+from src.data_structures.abstract_item_packing import AbstractItemPacking
+from src.data_structures.abstract_single_bin_packing import AbstractSingleBinPacking
+
 def constraint(func):
         def count_constraints(self):
             # g = func.__globals__
@@ -74,8 +77,9 @@ class AbstractModel(metaclass=ABCMeta):
 
 class AbstractSingleBinModel(AbstractModel):
 
-    def __init__(self):
-        pass
+    def __init__(self, ItemPacking:AbstractItemPacking, SingleBinPacking:AbstractSingleBinPacking):
+        self.ItemPacking = ItemPacking
+        self.SingleBinPacking = SingleBinPacking
 
     @constraint
     def item_count(self):
@@ -100,3 +104,9 @@ class AbstractMultiBinModel(AbstractModel):
 
     def __init__(self):
         pass
+
+class AbstractProductionModel(AbstractModel):
+
+    def __init__(self):
+        pass
+

@@ -21,7 +21,7 @@ import src.utils.fixable_type as ft
 
 from src.data_structures.abstract_single_bin_packing import AbstractSingleBinPacking
 
-@dataclass(kw_only=True)
+@dataclass(kw_only=True, eq=False)
 class SingleBinPacking(AbstractSingleBinPacking):
 
     _items: list[AbstractItemPacking]
@@ -33,10 +33,16 @@ class SingleBinPacking(AbstractSingleBinPacking):
     @property
     def items(self) -> list[AbstractItemPacking]:
         return self._items + self._items_rotated
+    
+    @property
+    def items_unique(self) -> list[AbstractItemPacking]:
+        return self._items
 
     @property
     def counts(self):
         return cpm_array([x.count + x_r.count for (x,x_r) in zip(self.items_rotated(False), self.items_rotated(True))])
+    
+
         
 
 

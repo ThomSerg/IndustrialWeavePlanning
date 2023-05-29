@@ -18,7 +18,7 @@ from src.data_structures.abstract_item_packing import AbstractItemPacking
 @dataclass(kw_only=True)
 class ItemPacking(AbstractItemPacking):
     
-    rotation: bool = False
+    
     
     def get_variables(self):
         return list(self.pos_xs) + list(self.pos_ys) + [self.count] + [self.selected] + list(self.active)

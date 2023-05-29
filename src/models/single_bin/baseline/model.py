@@ -32,6 +32,9 @@ from src.models.constraints import non_overlap
    
 
 class BaselineSBM(AbstractSingleBinModel):
+
+    ItemPacking = ItemPacking
+    single_bin_packing = SingleBinPacking
     
     # Constructor
     def __init__(self, 

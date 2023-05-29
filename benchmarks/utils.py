@@ -10,11 +10,12 @@ import matplotlib.pyplot as plt
 
 from src.data_structures.problem.problem import Problem
 #from iterative.Visualiser import show_bin_packing
-#from src.data_structures.problem.multi_bin_problem import MultiBinProblem
+from src.data_structures.problem.multi_bin_problem import MultiBinProblem
 from src.data_structures.problem.single_bin_problem import SingleBinProblem
 
 from src.models.abstract_model import AbstractMultiBinModel, AbstractSingleBinModel
 #from iterative.models.MultiBin.AbstractProductionModel import AbstractProductionModel
+from src.extensions.due_dates.models.production_model import ProductionModel
 
 import cpmpy
 
@@ -170,59 +171,57 @@ def single_bin_benchmark_model_info(models: list[AbstractSingleBinModel], proble
 def flatten(l):
     return [item for sublist in l for item in sublist]
    
-# def run_multi_bin_benchmark(
-#             solver_models: list[AbstractMultiBinModel], 
-#             new_bin_production_models: list[AbstractProductionModel],
-#             production_models: list[AbstractProductionModel],
-#             single_bin_models: list[AbstractSingleBinModel],
-#             problems: list[MultiBinProblem], 
-#             args: dict
-#         ):
+def run_multi_bin_benchmark(
+            solver_models: list[AbstractMultiBinModel], 
+            production_models: list[ProductionModel],
+            single_bin_models: list[AbstractSingleBinModel],
+            problems: list[MultiBinProblem], 
+            args: dict
+        ):
 
-#     # problems.reverse()
+    # problems.reverse()
 
-#     for problem in problems:
-#         print("PROBLEM", problem.name)
-#         print(problem.json_dict)
-#         for (solver_model, new_bin_production_model, production_model, single_bin_model) in zip(solver_models, new_bin_production_models, production_models, single_bin_models):
+    for problem in problems:
+        print("PROBLEM", problem.name)
+        print(problem.json_dict)
+        for (solver_model, production_model, single_bin_model) in zip(solver_models, production_models, single_bin_models):
 
-#             start = time.perf_counter()
-#             initialised_model = solver_model.init_from_problem(
-#                 problem,
-#                 new_bin_production_model,
-#                 production_model,
-#                 single_bin_model
-#                 )
-#             sat = initialised_model.solve(args=args)
-#             end = time.perf_counter()
+            start = time.perf_counter()
+            initialised_model = solver_model.init_from_problem(
+                problem,
+                production_model,
+                single_bin_model
+                )
+            sat = initialised_model.solve(args=args)
+            end = time.perf_counter()
 
-#             bench_save = BenchmarkSave(str(problem.json_dict), sat, initialised_model)
-#             file_directory = os.path.join(os.getcwd(), "results")
-#             file_name = os.path.join(file_directory, problem.name + ".pickle")
+            bench_save = BenchmarkSave(str(problem.json_dict), sat, initialised_model)
+            file_directory = os.path.join(os.getcwd(), "results")
+            file_name = os.path.join(file_directory, problem.name + ".pickle")
 
-#             if not os.path.exists(file_directory):
-#                 os.makedirs(file_directory)
+            if not os.path.exists(file_directory):
+                os.makedirs(file_directory)
 
-#             with open(file_name, 'wb') as handle:
-#                 pickle.dump(bench_save, handle, protocol=pickle.HIGHEST_PROTOCOL)
+            with open(file_name, 'wb') as handle:
+                pickle.dump(bench_save, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
-#             print("SAT", sat)
-#             print("TIME", end-start)
+            print("SAT", sat)
+            print("TIME", end-start)
 
-#             if sat:
-#                 stats = initialised_model.get_stats()
-#                 stats["total_time"] = end-start
+            if sat:
+                stats = initialised_model.get_stats()
+                stats["total_time"] = end-start
 
-#                 print("STATS", stats)
-#                 file_name = os.path.join(file_directory, problem.name + ".json")
-#                 with open(file_name, 'w') as handle:
-#                     handle.write(json.dumps(stats, indent=4))
+                print("STATS", stats)
+                file_name = os.path.join(file_directory, problem.name + ".json")
+                with open(file_name, 'w') as handle:
+                    handle.write(json.dumps(stats, indent=4))
 
-#                 #show_bin_packing(initialised_model.single_bin_packing)
-#                 initialised_model.visualise()
-#                 plt.savefig(os.path.join(file_directory, problem.name + '.png'))
+                #show_bin_packing(initialised_model.single_bin_packing)
+                initialised_model.visualise()
+                plt.savefig(os.path.join(file_directory, problem.name + '.png'))
 
-#                 plt.show()
+                plt.show()
 
 
 
