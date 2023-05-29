@@ -107,6 +107,7 @@ class BaselineMBM():
         self.production_model = ProductionModel(
             machine_config=self.machine_config, 
             production_schedule=self.production_schedule, 
+            fixed_single_bins=[],
             free_single_bins=self.single_bin_packings, 
             items=items,
             single_bin_model=self.single_bin_model,

@@ -34,6 +34,7 @@ class ProductionModel():
     def __init__(self,
                     machine_config: MachineConfig,
                     production_schedule: ProductionSchedule,
+                    fixed_single_bins: list[AbstractSingleBinPacking],
                     free_single_bins: list[AbstractSingleBinPacking],
                     items: list[AbstractItemPacking],
                     single_bin_model: AbstractSingleBinModel,
@@ -42,22 +43,23 @@ class ProductionModel():
         # Set attributes
         self.machine_config = machine_config
         self.production_schedule = production_schedule
+        self.fixed_single_bins = fixed_single_bins
         self.free_single_bins = free_single_bins
         self.items = items
         self.single_bin_model = single_bin_model
         
         # All bin packings
-        self.single_bin_packings = self.free_single_bins
+        self.single_bin_packings = self.fixed_single_bins + self.free_single_bins
 
         # Bin production
         self.bin_production = BinProduction(
             production_schedule=self.production_schedule, 
-            fixed_bin_packings=[],
+            fixed_bin_packings=self.fixed_single_bins,
             fixable_bin_packings=self.free_single_bins
         )
 
         # Bin packing model
-        self.single_bin_models = [
+        self.free_single_bin_models = [
             self.single_bin_model(
                 machine_config=self.machine_config, 
                 single_bin_packing=free_single_bin,
@@ -72,6 +74,9 @@ class ProductionModel():
         self.constraints_stats = {}
         # -> objective
         self.objective = 0
+        # -> preference weights
+        M = self.machine_config.max_length*self.machine_config.width
+        self.weights = [1*M, 0, 4*M, 0, 1]
 
         # To collect data about the algorithm
         self.stats = {}
@@ -122,7 +127,7 @@ class ProductionModel():
         c = []
 
         # The new bin solution must be unique
-        for (sbp1, sbp2) in itertools.combinations(self.single_bin_packings, 2):
+        for (sbp1, sbp2) in itertools.combinations(self.free_single_bins, 2):
             c.append((sbp1 == sbp2).implies((cpm_sum(sbp1.counts) == 0) | (cpm_sum(sbp2.counts) == 0)))
 
         return c
@@ -131,7 +136,7 @@ class ProductionModel():
     def symmetry_breaking(self):
         c = []
 
-        for (sbp1, sbp2) in itertools.pairwise(self.single_bin_packings):
+        for (sbp1, sbp2) in itertools.pairwise(self.free_single_bins):
             c.append((sbp1.area) * sbp2.bin.area <= ((sbp2.area) * sbp1.bin.area))
 
         return c
@@ -141,7 +146,7 @@ class ProductionModel():
         c = []
 
         # Get constraints from the new bin packing model
-        for sbm in self.single_bin_models:
+        for sbm in self.free_single_bin_models:
             c.extend(sbm.get_constraints())
 
         c_functions = [
@@ -160,7 +165,7 @@ class ProductionModel():
     
         return c
 
-    def get_objective(self):
+    def get_objective(self, weights):
 
 
         # onderproduction in elke deadline afstraffen, overproduction enkel op het einde
@@ -180,15 +185,20 @@ class ProductionModel():
         # o4 += sum(self.bin_production._bin_delays_after + self.bin_production._bin_delays_before)*400#*400 # TODO omzetten naar afstand ipv # bins
 
         # Lower left preference
-        self.o5 = objectives.lower_left_preference(self.free_single_bins)
+        if (len(self.free_single_bins) > 0):
+            self.o5 = objectives.lower_left_preference(self.free_single_bins)
+        else:
+            self.o5 = 0
 
-        # Very large number
-        M = self.free_single_bins[0].bin.width*self.free_single_bins[0].bin.max_length
-        M = self.free_single_bins[0].bin.max_length
+        return weights[0]*self.o1 + weights[1]*self.o2 + weights[2]*self.o3 + weights[4]*self.o5 #+ weight[3]*o4
 
-        weight = [2*M, 1*M, 4*M, 0, 1] # No overproduction
-
-        return weight[0]*self.o1 + weight[1]*self.o2 + weight[2]*self.o3 + weight[4]*self.o5 #+ weight[3]*o4
+    def get_weights(self):
+        return self.weights
+    
+    def determine_weights(self, preference):
+        if preference is None:
+            return self.get_weights()
+        return [p*w*len(self.get_weights()) for (p,w) in zip(preference, self.get_weights())]
 
 
     def get_variables(self):
@@ -199,16 +209,15 @@ class ProductionModel():
         return var
 
 
-    def solve(self, max_time_in_seconds=1):
+    def solve(self, max_time_in_seconds=1, preference=None):
 
         self.c = self.get_constraints()
         self.stats["nr_constraints"] = len(self.c)
         print("nr_constraints", len(self.c))
 
-        self.o = self.get_objective()
+        weights = self.determine_weights(preference)
+        self.o = self.get_objective(weights)
         self.objective += self.o
-
-        print("objective:", self.o)
 
         self.model += self.constraints
         self.model.minimize(self.objective)
@@ -224,23 +233,10 @@ class ProductionModel():
         res = s.solve( max_time_in_seconds=max_time_in_seconds)
         end_s = time.perf_counter()
         self.stats["solve_time"] = end_s - start_s
-
-        print("o1", self.o1.value())
-        print("o2", self.o2.value())
-        print("o3", self.o3.value())
-        print("o5", self.o5.value())
-
-        for fsb in self.free_single_bins:
-            print(fsb.counts.value())
-            print(fsb.area.value())
-  
-
+ 
         # Fix the solution to bound variables
         if res:
             [fsb.fix() for fsb in self.free_single_bins]
-
-        
-
 
         return res
     
@@ -274,8 +270,8 @@ class ProductionModel():
         return self.stats
     
     def visualise(self):
-        for i_packing in range(len(self.single_bin_models)):
-            self.single_bin_models[i_packing].visualise()
+        for i_packing in range(len(self.free_single_bin_models)):
+            self.free_single_bin_models[i_packing].visualise()
 
 
     def print_stats(self):
