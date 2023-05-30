@@ -3,14 +3,14 @@ from __future__ import annotations
 import numpy as np
 
 from src.data_structures.textile_item import TextileItem
-from src.data_structures.abstract_item_packing import AbstractItemPacking
+from src.models.single_bin.guillotine.model import GuillotineSBM
 from src.data_structures.machine_config import MachineConfig
 
-from ...data_structures.creel_section import CreelSection
-from ...data_structures.creel_config import CreelConfig
-from ..creel_section_model import CreelSectionModel
+from ....data_structures.creel_section import CreelSection
+from ....data_structures.creel_config import CreelConfig
+from ...creel_section_model import CreelSectionModel
 
-from ...constraints import within_color_section
+from ....constraints import within_color_section_guillotine
 
 
 class CreelModel:
@@ -19,14 +19,14 @@ class CreelModel:
     def __init__(self,
                     max_colors: int,
                     items: list[TextileItem],
-                    single_bin_packing: AbstractItemPacking,
+                    single_bin_model: GuillotineSBM,
                     machine_config: MachineConfig,
                 ):
         
         # Set attributes
         self.max_colors=max_colors
         self.items = items
-        self.single_bin_packing = single_bin_packing
+        self.single_bin_model = single_bin_model
         self.machine_config = machine_config
 
         self.creel_delay_cost = machine_config.creel_switch_penalty # TODO hierarchische structuur van machine configs maken?
@@ -41,6 +41,8 @@ class CreelModel:
 
     def get_constraints(self):
         c = []
+
+        print("heyyyyy")
 
         # Determine the minimal width of each color section based on all textile items with that color
         min_widths = [np.inf for i in range(len(self.colors))]
@@ -64,7 +66,7 @@ class CreelModel:
         c.extend(creel_section_model.get_constraints())
 
 
-        c.append(within_color_section(self.single_bin_packing, creel_section))
+        c.append(within_color_section_guillotine(self.single_bin_model, creel_section))
 
         return c
     

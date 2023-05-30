@@ -210,7 +210,8 @@ class GuillotineSBM(AbstractSingleBinModel):
             c.append(count == cpm_sum(self.sigma[:,:,:,i]) + cpm_sum(self.sigma[:,:,:,i+self.I//2]))
         c.append(self.single_bin_packing.bin.length == self.bin_length)
 
-        self.constraints.extend(c)
+        c.extend(self.constraints)
+        self.constraints = c
 
         return c
 

@@ -1,6 +1,7 @@
 
 from src.data_structures.abstract_single_bin_packing import AbstractItemPacking
 from .data_structures.creel_section import CreelSection
+from src.models.single_bin.guillotine.model import GuillotineSBM
 
 from cpmpy.expressions.python_builtins import all as cpm_all
 from cpmpy.expressions.python_builtins import any as cpm_any
@@ -29,4 +30,33 @@ def within_color_section(bin_packing: AbstractItemPacking, section: CreelSection
             )
     return cpm_all(cc)
 
+def within_color_section_guillotine(bin_model: GuillotineSBM, section: CreelSection):
+    cc = []
+
+    pattern_height = 0
+    for p in range(bin_model.P): # go over patterns
+        strip_width = 0
+        for a in range(bin_model.A): # go over strips
+
+            
+            for i in range(bin_model.I): # go over items
+                for color in bin_model.items[i].item.color.basic_colors:
+                    if a == 0:
+                        cc.append(
+                            cpm_any(bin_model.sigma[p,a,:,i]).implies(
+                                section.color_sections[section.colors.index(color)].is_here_2_fixed(strip_width, strip_width+bin_model.items[i].width)
+                            )
+                        )
+                    else:
+                        cc.append(
+                            cpm_any(bin_model.sigma[p,a,:,i]).implies(
+                                section.color_sections[section.colors.index(color)].is_here_2(strip_width, strip_width+bin_model.items[i].width)
+                            )
+                        )
+
+            strip_width += sum(bin_model.gamma[p,a,:]*bin_model.widths) 
+
+        pattern_height += bin_model.pattern_length[p]
+
+    return cpm_all(cc)
       
