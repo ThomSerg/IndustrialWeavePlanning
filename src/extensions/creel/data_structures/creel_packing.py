@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 
 from .creel_section import CreelSection
-from src.data_structures.color import Color
+from src.data_structures.color.color import Color
 from .creel_config import CreelConfig
 from src.data_structures.machine_config import MachineConfig
 
@@ -37,15 +37,15 @@ class CreelPacking(FixableObject):
 
     @property
     def count(self) -> intvar:
-        return self._creel_count
+        return self.fixable_count.value()
 
     @property
     def starts(self) -> NDVarArray[intvar]:
-        return self._creel_starts
+        return self.fixable_starts.value()
 
     @property
     def ends(self) -> NDVarArray[intvar]:
-        return self._creel_ends
+        return self.fixable_ends.value()
 
     @property
     def sections(self) -> list[CreelSection]:
@@ -58,7 +58,7 @@ class CreelPacking(FixableObject):
         return intvar_1D(0, self.max_deadline-1, self.max_creel_number)
     
     def _count_var(self):
-        return intvar(0, self._max_creel_number)
+        return intvar(0, self.max_creel_number)
 
     def _creel_sections_var(self):
         

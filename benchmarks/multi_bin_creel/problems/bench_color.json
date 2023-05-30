@@ -1,0 +1,4277 @@
+{
+    "03f1aa3f-2596-4eec-9afb-571ffb6238e2": {
+        "widths": [
+            16
+        ],
+        "heights": [
+            29
+        ],
+        "deadlines": [
+            71,
+            106,
+            270,
+            348
+        ],
+        "deadline_counts": [
+            [
+                208,
+                40,
+                122,
+                141
+            ]
+        ],
+        "colors": [
+            0
+        ],
+        "machine_config": {
+            "width": 40,
+            "min_length": 250,
+            "max_length": 250,
+            "max_creel_number": 1,
+            "max_creel_colors": 1,
+            "creel_switch_penalty": 10
+        }
+    },
+    "2ee12ba5-502c-4fd2-ab78-89b00e36cc57": {
+        "widths": [
+            28
+        ],
+        "heights": [
+            32
+        ],
+        "deadlines": [
+            87,
+            330,
+            372,
+            458
+        ],
+        "deadline_counts": [
+            [
+                119,
+                379,
+                171,
+                150
+            ]
+        ],
+        "colors": [
+            0
+        ],
+        "machine_config": {
+            "width": 40,
+            "min_length": 250,
+            "max_length": 250,
+            "max_creel_number": 2,
+            "max_creel_colors": 1,
+            "creel_switch_penalty": 10
+        }
+    },
+    "6a5e0028-42a4-4a26-b063-3523b336abb8": {
+        "widths": [
+            31
+        ],
+        "heights": [
+            30
+        ],
+        "deadlines": [
+            257,
+            343,
+            413,
+            491
+        ],
+        "deadline_counts": [
+            [
+                313,
+                405,
+                211,
+                463
+            ]
+        ],
+        "colors": [
+            0
+        ],
+        "machine_config": {
+            "width": 40,
+            "min_length": 250,
+            "max_length": 250,
+            "max_creel_number": 3,
+            "max_creel_colors": 1,
+            "creel_switch_penalty": 10
+        }
+    },
+    "11ba26ed-8b4a-4ec2-9f6c-472874d6e041": {
+        "widths": [
+            30
+        ],
+        "heights": [
+            10
+        ],
+        "deadlines": [
+            21,
+            252,
+            313,
+            459
+        ],
+        "deadline_counts": [
+            [
+                255,
+                364,
+                68,
+                494
+            ]
+        ],
+        "colors": [
+            0
+        ],
+        "machine_config": {
+            "width": 40,
+            "min_length": 250,
+            "max_length": 250,
+            "max_creel_number": 4,
+            "max_creel_colors": 1,
+            "creel_switch_penalty": 10
+        }
+    },
+    "220c8900-52aa-4a80-85a3-22060e5f1c8c": {
+        "widths": [
+            36
+        ],
+        "heights": [
+            40
+        ],
+        "deadlines": [
+            169,
+            187,
+            463,
+            475
+        ],
+        "deadline_counts": [
+            [
+                290,
+                209,
+                465,
+                194
+            ]
+        ],
+        "colors": [
+            0
+        ],
+        "machine_config": {
+            "width": 40,
+            "min_length": 250,
+            "max_length": 250,
+            "max_creel_number": 5,
+            "max_creel_colors": 1,
+            "creel_switch_penalty": 10
+        }
+    },
+    "99d1beaf-8828-455a-99aa-79c6f70ff1ba": {
+        "widths": [
+            39,
+            28
+        ],
+        "heights": [
+            21,
+            32
+        ],
+        "deadlines": [
+            130,
+            243,
+            319,
+            484
+        ],
+        "deadline_counts": [
+            [
+                326,
+                154,
+                40,
+                348
+            ],
+            [
+                186,
+                293,
+                407,
+                108
+            ]
+        ],
+        "colors": [
+            0,
+            1
+        ],
+        "machine_config": {
+            "width": 40,
+            "min_length": 250,
+            "max_length": 250,
+            "max_creel_number": 1,
+            "max_creel_colors": 1,
+            "creel_switch_penalty": 10
+        }
+    },
+    "384f78e2-8fb9-4bf1-a4a3-5d0ffd3f623f": {
+        "widths": [
+            37,
+            23
+        ],
+        "heights": [
+            27,
+            35
+        ],
+        "deadlines": [
+            52,
+            264,
+            345,
+            385
+        ],
+        "deadline_counts": [
+            [
+                229,
+                111,
+                386,
+                463
+            ],
+            [
+                374,
+                447,
+                283,
+                450
+            ]
+        ],
+        "colors": [
+            0,
+            1
+        ],
+        "machine_config": {
+            "width": 40,
+            "min_length": 250,
+            "max_length": 250,
+            "max_creel_number": 1,
+            "max_creel_colors": 2,
+            "creel_switch_penalty": 10
+        }
+    },
+    "ff824532-17bf-4fed-b771-ce11f80b6827": {
+        "widths": [
+            12,
+            23
+        ],
+        "heights": [
+            26,
+            13
+        ],
+        "deadlines": [
+            1,
+            49,
+            359,
+            387
+        ],
+        "deadline_counts": [
+            [
+                64,
+                73,
+                125,
+                279
+            ],
+            [
+                0,
+                496,
+                210,
+                421
+            ]
+        ],
+        "colors": [
+            0,
+            1
+        ],
+        "machine_config": {
+            "width": 40,
+            "min_length": 250,
+            "max_length": 250,
+            "max_creel_number": 2,
+            "max_creel_colors": 1,
+            "creel_switch_penalty": 10
+        }
+    },
+    "b1f454a7-f960-4649-a9df-3b203d9fbf8a": {
+        "widths": [
+            35,
+            21
+        ],
+        "heights": [
+            11,
+            19
+        ],
+        "deadlines": [
+            269,
+            350,
+            445,
+            483
+        ],
+        "deadline_counts": [
+            [
+                323,
+                290,
+                475,
+                481
+            ],
+            [
+                234,
+                271,
+                209,
+                315
+            ]
+        ],
+        "colors": [
+            0,
+            1
+        ],
+        "machine_config": {
+            "width": 40,
+            "min_length": 250,
+            "max_length": 250,
+            "max_creel_number": 2,
+            "max_creel_colors": 2,
+            "creel_switch_penalty": 10
+        }
+    },
+    "ac79d017-8e22-4f31-ac45-a504d32b1a66": {
+        "widths": [
+            30,
+            25
+        ],
+        "heights": [
+            22,
+            27
+        ],
+        "deadlines": [
+            52,
+            279,
+            366,
+            409
+        ],
+        "deadline_counts": [
+            [
+                236,
+                271,
+                207,
+                399
+            ],
+            [
+                60,
+                176,
+                34,
+                320
+            ]
+        ],
+        "colors": [
+            0,
+            1
+        ],
+        "machine_config": {
+            "width": 40,
+            "min_length": 250,
+            "max_length": 250,
+            "max_creel_number": 3,
+            "max_creel_colors": 1,
+            "creel_switch_penalty": 10
+        }
+    },
+    "f58a815a-15e9-4c10-87f4-175650cc8d14": {
+        "widths": [
+            10,
+            34
+        ],
+        "heights": [
+            16,
+            18
+        ],
+        "deadlines": [
+            128,
+            135,
+            343,
+            491
+        ],
+        "deadline_counts": [
+            [
+                491,
+                82,
+                158,
+                100
+            ],
+            [
+                411,
+                182,
+                438,
+                308
+            ]
+        ],
+        "colors": [
+            0,
+            1
+        ],
+        "machine_config": {
+            "width": 40,
+            "min_length": 250,
+            "max_length": 250,
+            "max_creel_number": 3,
+            "max_creel_colors": 2,
+            "creel_switch_penalty": 10
+        }
+    },
+    "45520ee9-db5a-41c7-9531-76c4e28f4567": {
+        "widths": [
+            36,
+            14
+        ],
+        "heights": [
+            19,
+            16
+        ],
+        "deadlines": [
+            27,
+            40,
+            134,
+            200
+        ],
+        "deadline_counts": [
+            [
+                257,
+                197,
+                437,
+                52
+            ],
+            [
+                42,
+                402,
+                81,
+                235
+            ]
+        ],
+        "colors": [
+            0,
+            1
+        ],
+        "machine_config": {
+            "width": 40,
+            "min_length": 250,
+            "max_length": 250,
+            "max_creel_number": 4,
+            "max_creel_colors": 1,
+            "creel_switch_penalty": 10
+        }
+    },
+    "e7041790-6267-4439-aedf-96821f768da6": {
+        "widths": [
+            14,
+            12
+        ],
+        "heights": [
+            21,
+            17
+        ],
+        "deadlines": [
+            34,
+            213,
+            448,
+            474
+        ],
+        "deadline_counts": [
+            [
+                246,
+                120,
+                450,
+                481
+            ],
+            [
+                150,
+                276,
+                24,
+                237
+            ]
+        ],
+        "colors": [
+            0,
+            1
+        ],
+        "machine_config": {
+            "width": 40,
+            "min_length": 250,
+            "max_length": 250,
+            "max_creel_number": 4,
+            "max_creel_colors": 2,
+            "creel_switch_penalty": 10
+        }
+    },
+    "203ce6be-d58f-4d66-b5f4-4b832ea98c9f": {
+        "widths": [
+            32,
+            40
+        ],
+        "heights": [
+            23,
+            16
+        ],
+        "deadlines": [
+            14,
+            206,
+            282,
+            392
+        ],
+        "deadline_counts": [
+            [
+                175,
+                61,
+                399,
+                480
+            ],
+            [
+                33,
+                82,
+                371,
+                250
+            ]
+        ],
+        "colors": [
+            0,
+            1
+        ],
+        "machine_config": {
+            "width": 40,
+            "min_length": 250,
+            "max_length": 250,
+            "max_creel_number": 5,
+            "max_creel_colors": 1,
+            "creel_switch_penalty": 10
+        }
+    },
+    "463a1fa8-4c6a-4500-aa17-97482f8c0b0a": {
+        "widths": [
+            26,
+            29
+        ],
+        "heights": [
+            38,
+            13
+        ],
+        "deadlines": [
+            221,
+            230,
+            406,
+            484
+        ],
+        "deadline_counts": [
+            [
+                256,
+                162,
+                190,
+                48
+            ],
+            [
+                55,
+                32,
+                179,
+                346
+            ]
+        ],
+        "colors": [
+            0,
+            1
+        ],
+        "machine_config": {
+            "width": 40,
+            "min_length": 250,
+            "max_length": 250,
+            "max_creel_number": 5,
+            "max_creel_colors": 2,
+            "creel_switch_penalty": 10
+        }
+    },
+    "3c8d4471-be70-4916-ad95-80c5eaabd4ed": {
+        "widths": [
+            36,
+            28,
+            31
+        ],
+        "heights": [
+            37,
+            11,
+            19
+        ],
+        "deadlines": [
+            44,
+            61,
+            440,
+            500
+        ],
+        "deadline_counts": [
+            [
+                30,
+                179,
+                47,
+                127
+            ],
+            [
+                35,
+                332,
+                305,
+                465
+            ],
+            [
+                296,
+                92,
+                367,
+                492
+            ]
+        ],
+        "colors": [
+            0,
+            1,
+            2
+        ],
+        "machine_config": {
+            "width": 40,
+            "min_length": 250,
+            "max_length": 250,
+            "max_creel_number": 1,
+            "max_creel_colors": 1,
+            "creel_switch_penalty": 10
+        }
+    },
+    "34d69b17-6f97-4dcd-add8-6d29f0e2477a": {
+        "widths": [
+            16,
+            39,
+            10
+        ],
+        "heights": [
+            10,
+            34,
+            36
+        ],
+        "deadlines": [
+            115,
+            120,
+            445,
+            460
+        ],
+        "deadline_counts": [
+            [
+                243,
+                269,
+                378,
+                217
+            ],
+            [
+                396,
+                351,
+                156,
+                337
+            ],
+            [
+                161,
+                221,
+                326,
+                253
+            ]
+        ],
+        "colors": [
+            0,
+            1,
+            2
+        ],
+        "machine_config": {
+            "width": 40,
+            "min_length": 250,
+            "max_length": 250,
+            "max_creel_number": 1,
+            "max_creel_colors": 2,
+            "creel_switch_penalty": 10
+        }
+    },
+    "128645a9-602e-4c91-9f53-6804ca848bf4": {
+        "widths": [
+            21,
+            33,
+            24
+        ],
+        "heights": [
+            36,
+            31,
+            33
+        ],
+        "deadlines": [
+            112,
+            179,
+            232,
+            317
+        ],
+        "deadline_counts": [
+            [
+                461,
+                71,
+                287,
+                314
+            ],
+            [
+                405,
+                406,
+                132,
+                120
+            ],
+            [
+                132,
+                459,
+                100,
+                206
+            ]
+        ],
+        "colors": [
+            0,
+            1,
+            2
+        ],
+        "machine_config": {
+            "width": 40,
+            "min_length": 250,
+            "max_length": 250,
+            "max_creel_number": 1,
+            "max_creel_colors": 3,
+            "creel_switch_penalty": 10
+        }
+    },
+    "a00881c1-c97c-4b4b-b433-900f71ee2615": {
+        "widths": [
+            26,
+            11,
+            11
+        ],
+        "heights": [
+            37,
+            31,
+            32
+        ],
+        "deadlines": [
+            223,
+            224,
+            384,
+            484
+        ],
+        "deadline_counts": [
+            [
+                422,
+                145,
+                149,
+                72
+            ],
+            [
+                191,
+                237,
+                179,
+                217
+            ],
+            [
+                435,
+                266,
+                343,
+                458
+            ]
+        ],
+        "colors": [
+            0,
+            1,
+            2
+        ],
+        "machine_config": {
+            "width": 40,
+            "min_length": 250,
+            "max_length": 250,
+            "max_creel_number": 2,
+            "max_creel_colors": 1,
+            "creel_switch_penalty": 10
+        }
+    },
+    "f3cbcad0-625c-4b5f-9c6c-c9379fe783b3": {
+        "widths": [
+            20,
+            33,
+            36
+        ],
+        "heights": [
+            26,
+            40,
+            15
+        ],
+        "deadlines": [
+            97,
+            279,
+            324,
+            371
+        ],
+        "deadline_counts": [
+            [
+                217,
+                489,
+                414,
+                259
+            ],
+            [
+                163,
+                116,
+                220,
+                143
+            ],
+            [
+                206,
+                345,
+                483,
+                368
+            ]
+        ],
+        "colors": [
+            0,
+            1,
+            2
+        ],
+        "machine_config": {
+            "width": 40,
+            "min_length": 250,
+            "max_length": 250,
+            "max_creel_number": 2,
+            "max_creel_colors": 2,
+            "creel_switch_penalty": 10
+        }
+    },
+    "db88af1a-36a6-4f88-a624-2908dd762e27": {
+        "widths": [
+            12,
+            29,
+            37
+        ],
+        "heights": [
+            36,
+            13,
+            28
+        ],
+        "deadlines": [
+            146,
+            147,
+            345,
+            450
+        ],
+        "deadline_counts": [
+            [
+                371,
+                218,
+                327,
+                436
+            ],
+            [
+                443,
+                147,
+                58,
+                357
+            ],
+            [
+                379,
+                148,
+                286,
+                495
+            ]
+        ],
+        "colors": [
+            0,
+            1,
+            2
+        ],
+        "machine_config": {
+            "width": 40,
+            "min_length": 250,
+            "max_length": 250,
+            "max_creel_number": 2,
+            "max_creel_colors": 3,
+            "creel_switch_penalty": 10
+        }
+    },
+    "75dc3b01-3bad-40e1-a598-554331cb8b5c": {
+        "widths": [
+            34,
+            34,
+            27
+        ],
+        "heights": [
+            32,
+            40,
+            39
+        ],
+        "deadlines": [
+            98,
+            251,
+            262,
+            297
+        ],
+        "deadline_counts": [
+            [
+                138,
+                337,
+                106,
+                54
+            ],
+            [
+                357,
+                0,
+                373,
+                288
+            ],
+            [
+                249,
+                132,
+                447,
+                31
+            ]
+        ],
+        "colors": [
+            0,
+            1,
+            2
+        ],
+        "machine_config": {
+            "width": 40,
+            "min_length": 250,
+            "max_length": 250,
+            "max_creel_number": 3,
+            "max_creel_colors": 1,
+            "creel_switch_penalty": 10
+        }
+    },
+    "4e54dd5a-90ca-4755-bd6d-16566dc104e5": {
+        "widths": [
+            36,
+            32,
+            18
+        ],
+        "heights": [
+            18,
+            12,
+            28
+        ],
+        "deadlines": [
+            130,
+            207,
+            303,
+            403
+        ],
+        "deadline_counts": [
+            [
+                171,
+                73,
+                139,
+                180
+            ],
+            [
+                427,
+                135,
+                94,
+                132
+            ],
+            [
+                475,
+                439,
+                441,
+                123
+            ]
+        ],
+        "colors": [
+            0,
+            1,
+            2
+        ],
+        "machine_config": {
+            "width": 40,
+            "min_length": 250,
+            "max_length": 250,
+            "max_creel_number": 3,
+            "max_creel_colors": 2,
+            "creel_switch_penalty": 10
+        }
+    },
+    "d6c2ffb5-2b46-4c10-a56f-235bc6562b7c": {
+        "widths": [
+            29,
+            39,
+            12
+        ],
+        "heights": [
+            25,
+            39,
+            34
+        ],
+        "deadlines": [
+            98,
+            152,
+            348,
+            401
+        ],
+        "deadline_counts": [
+            [
+                403,
+                385,
+                357,
+                213
+            ],
+            [
+                329,
+                182,
+                227,
+                464
+            ],
+            [
+                188,
+                180,
+                87,
+                308
+            ]
+        ],
+        "colors": [
+            0,
+            1,
+            2
+        ],
+        "machine_config": {
+            "width": 40,
+            "min_length": 250,
+            "max_length": 250,
+            "max_creel_number": 3,
+            "max_creel_colors": 3,
+            "creel_switch_penalty": 10
+        }
+    },
+    "996dc1c3-3e2e-4e5b-bc71-c58691b8a0ae": {
+        "widths": [
+            23,
+            30,
+            25
+        ],
+        "heights": [
+            29,
+            33,
+            17
+        ],
+        "deadlines": [
+            127,
+            134,
+            194,
+            400
+        ],
+        "deadline_counts": [
+            [
+                52,
+                195,
+                479,
+                462
+            ],
+            [
+                389,
+                488,
+                393,
+                41
+            ],
+            [
+                256,
+                177,
+                57,
+                249
+            ]
+        ],
+        "colors": [
+            0,
+            1,
+            2
+        ],
+        "machine_config": {
+            "width": 40,
+            "min_length": 250,
+            "max_length": 250,
+            "max_creel_number": 4,
+            "max_creel_colors": 1,
+            "creel_switch_penalty": 10
+        }
+    },
+    "ffad97c4-a19b-479c-af7c-2f761022e4cd": {
+        "widths": [
+            22,
+            28,
+            31
+        ],
+        "heights": [
+            17,
+            36,
+            36
+        ],
+        "deadlines": [
+            96,
+            225,
+            276,
+            285
+        ],
+        "deadline_counts": [
+            [
+                303,
+                386,
+                467,
+                500
+            ],
+            [
+                472,
+                336,
+                323,
+                166
+            ],
+            [
+                23,
+                54,
+                211,
+                68
+            ]
+        ],
+        "colors": [
+            0,
+            1,
+            2
+        ],
+        "machine_config": {
+            "width": 40,
+            "min_length": 250,
+            "max_length": 250,
+            "max_creel_number": 4,
+            "max_creel_colors": 2,
+            "creel_switch_penalty": 10
+        }
+    },
+    "7461349d-affa-4839-b5af-edc514912622": {
+        "widths": [
+            26,
+            21,
+            37
+        ],
+        "heights": [
+            39,
+            38,
+            23
+        ],
+        "deadlines": [
+            5,
+            98,
+            372,
+            379
+        ],
+        "deadline_counts": [
+            [
+                0,
+                56,
+                299,
+                368
+            ],
+            [
+                75,
+                200,
+                114,
+                118
+            ],
+            [
+                0,
+                500,
+                135,
+                210
+            ]
+        ],
+        "colors": [
+            0,
+            1,
+            2
+        ],
+        "machine_config": {
+            "width": 40,
+            "min_length": 250,
+            "max_length": 250,
+            "max_creel_number": 4,
+            "max_creel_colors": 3,
+            "creel_switch_penalty": 10
+        }
+    },
+    "dea953be-734d-42ba-952d-bc5708ee3ab6": {
+        "widths": [
+            38,
+            30,
+            32
+        ],
+        "heights": [
+            10,
+            12,
+            27
+        ],
+        "deadlines": [
+            53,
+            222,
+            280,
+            489
+        ],
+        "deadline_counts": [
+            [
+                77,
+                342,
+                379,
+                193
+            ],
+            [
+                299,
+                133,
+                307,
+                450
+            ],
+            [
+                361,
+                170,
+                469,
+                146
+            ]
+        ],
+        "colors": [
+            0,
+            1,
+            2
+        ],
+        "machine_config": {
+            "width": 40,
+            "min_length": 250,
+            "max_length": 250,
+            "max_creel_number": 5,
+            "max_creel_colors": 1,
+            "creel_switch_penalty": 10
+        }
+    },
+    "ab1f6ef0-75fa-416c-97ce-380758ac3b1b": {
+        "widths": [
+            36,
+            19,
+            11
+        ],
+        "heights": [
+            35,
+            26,
+            17
+        ],
+        "deadlines": [
+            245,
+            298,
+            392,
+            416
+        ],
+        "deadline_counts": [
+            [
+                195,
+                58,
+                496,
+                189
+            ],
+            [
+                266,
+                45,
+                374,
+                325
+            ],
+            [
+                428,
+                427,
+                32,
+                335
+            ]
+        ],
+        "colors": [
+            0,
+            1,
+            2
+        ],
+        "machine_config": {
+            "width": 40,
+            "min_length": 250,
+            "max_length": 250,
+            "max_creel_number": 5,
+            "max_creel_colors": 2,
+            "creel_switch_penalty": 10
+        }
+    },
+    "69063f20-e403-4b5f-a2b8-4302d2d83bae": {
+        "widths": [
+            35,
+            16,
+            34
+        ],
+        "heights": [
+            13,
+            22,
+            29
+        ],
+        "deadlines": [
+            263,
+            320,
+            399,
+            493
+        ],
+        "deadline_counts": [
+            [
+                161,
+                479,
+                390,
+                490
+            ],
+            [
+                162,
+                111,
+                373,
+                341
+            ],
+            [
+                307,
+                234,
+                466,
+                361
+            ]
+        ],
+        "colors": [
+            0,
+            1,
+            2
+        ],
+        "machine_config": {
+            "width": 40,
+            "min_length": 250,
+            "max_length": 250,
+            "max_creel_number": 5,
+            "max_creel_colors": 3,
+            "creel_switch_penalty": 10
+        }
+    },
+    "6fa609d7-411c-47ca-b3e1-374adff3834c": {
+        "widths": [
+            28,
+            34,
+            35,
+            40
+        ],
+        "heights": [
+            39,
+            38,
+            31,
+            35
+        ],
+        "deadlines": [
+            57,
+            179,
+            304,
+            341
+        ],
+        "deadline_counts": [
+            [
+                104,
+                316,
+                259,
+                0
+            ],
+            [
+                361,
+                78,
+                458,
+                241
+            ],
+            [
+                0,
+                48,
+                90,
+                0
+            ],
+            [
+                0,
+                174,
+                240,
+                342
+            ]
+        ],
+        "colors": [
+            0,
+            1,
+            2,
+            3
+        ],
+        "machine_config": {
+            "width": 40,
+            "min_length": 250,
+            "max_length": 250,
+            "max_creel_number": 1,
+            "max_creel_colors": 1,
+            "creel_switch_penalty": 10
+        }
+    },
+    "a98b7272-981c-4fcd-96e1-b205679e4fb0": {
+        "widths": [
+            29,
+            39,
+            24,
+            12
+        ],
+        "heights": [
+            32,
+            17,
+            29,
+            25
+        ],
+        "deadlines": [
+            105,
+            123,
+            268,
+            369
+        ],
+        "deadline_counts": [
+            [
+                125,
+                113,
+                164,
+                139
+            ],
+            [
+                301,
+                256,
+                111,
+                77
+            ],
+            [
+                418,
+                326,
+                248,
+                493
+            ],
+            [
+                120,
+                320,
+                298,
+                146
+            ]
+        ],
+        "colors": [
+            0,
+            1,
+            2,
+            3
+        ],
+        "machine_config": {
+            "width": 40,
+            "min_length": 250,
+            "max_length": 250,
+            "max_creel_number": 1,
+            "max_creel_colors": 2,
+            "creel_switch_penalty": 10
+        }
+    },
+    "2d9155d6-326e-4460-b4f6-3581bed41d6b": {
+        "widths": [
+            18,
+            21,
+            30,
+            10
+        ],
+        "heights": [
+            35,
+            35,
+            10,
+            24
+        ],
+        "deadlines": [
+            95,
+            117,
+            125,
+            289
+        ],
+        "deadline_counts": [
+            [
+                42,
+                84,
+                231,
+                392
+            ],
+            [
+                375,
+                261,
+                178,
+                211
+            ],
+            [
+                455,
+                76,
+                285,
+                368
+            ],
+            [
+                256,
+                460,
+                84,
+                173
+            ]
+        ],
+        "colors": [
+            0,
+            1,
+            2,
+            3
+        ],
+        "machine_config": {
+            "width": 40,
+            "min_length": 250,
+            "max_length": 250,
+            "max_creel_number": 1,
+            "max_creel_colors": 3,
+            "creel_switch_penalty": 10
+        }
+    },
+    "7c3ca7b2-43ad-4446-88c9-8658850f26fd": {
+        "widths": [
+            25,
+            28,
+            14,
+            31
+        ],
+        "heights": [
+            34,
+            38,
+            23,
+            37
+        ],
+        "deadlines": [
+            46,
+            68,
+            93,
+            496
+        ],
+        "deadline_counts": [
+            [
+                30,
+                221,
+                228,
+                223
+            ],
+            [
+                132,
+                0,
+                206,
+                451
+            ],
+            [
+                258,
+                0,
+                34,
+                308
+            ],
+            [
+                0,
+                0,
+                69,
+                42
+            ]
+        ],
+        "colors": [
+            0,
+            1,
+            2,
+            3
+        ],
+        "machine_config": {
+            "width": 40,
+            "min_length": 250,
+            "max_length": 250,
+            "max_creel_number": 1,
+            "max_creel_colors": 4,
+            "creel_switch_penalty": 10
+        }
+    },
+    "18dfa65f-7b2e-43bf-94a8-3cf5b65b569a": {
+        "widths": [
+            35,
+            19,
+            31,
+            14
+        ],
+        "heights": [
+            13,
+            11,
+            29,
+            40
+        ],
+        "deadlines": [
+            146,
+            249,
+            393,
+            441
+        ],
+        "deadline_counts": [
+            [
+                115,
+                276,
+                344,
+                23
+            ],
+            [
+                35,
+                299,
+                355,
+                266
+            ],
+            [
+                277,
+                495,
+                403,
+                179
+            ],
+            [
+                494,
+                359,
+                171,
+                415
+            ]
+        ],
+        "colors": [
+            0,
+            1,
+            2,
+            3
+        ],
+        "machine_config": {
+            "width": 40,
+            "min_length": 250,
+            "max_length": 250,
+            "max_creel_number": 2,
+            "max_creel_colors": 1,
+            "creel_switch_penalty": 10
+        }
+    },
+    "15f06e36-04d6-4eb8-a33c-377e177a3f7a": {
+        "widths": [
+            27,
+            12,
+            37,
+            10
+        ],
+        "heights": [
+            10,
+            38,
+            28,
+            20
+        ],
+        "deadlines": [
+            64,
+            100,
+            267,
+            322
+        ],
+        "deadline_counts": [
+            [
+                436,
+                187,
+                349,
+                62
+            ],
+            [
+                63,
+                304,
+                416,
+                31
+            ],
+            [
+                114,
+                321,
+                405,
+                272
+            ],
+            [
+                261,
+                54,
+                234,
+                356
+            ]
+        ],
+        "colors": [
+            0,
+            1,
+            2,
+            3
+        ],
+        "machine_config": {
+            "width": 40,
+            "min_length": 250,
+            "max_length": 250,
+            "max_creel_number": 2,
+            "max_creel_colors": 2,
+            "creel_switch_penalty": 10
+        }
+    },
+    "e6422c99-f399-468d-b5c5-69310f358e60": {
+        "widths": [
+            35,
+            17,
+            38,
+            35
+        ],
+        "heights": [
+            19,
+            35,
+            39,
+            11
+        ],
+        "deadlines": [
+            104,
+            114,
+            195,
+            390
+        ],
+        "deadline_counts": [
+            [
+                212,
+                7,
+                76,
+                432
+            ],
+            [
+                285,
+                370,
+                221,
+                296
+            ],
+            [
+                156,
+                60,
+                372,
+                376
+            ],
+            [
+                405,
+                360,
+                199,
+                246
+            ]
+        ],
+        "colors": [
+            0,
+            1,
+            2,
+            3
+        ],
+        "machine_config": {
+            "width": 40,
+            "min_length": 250,
+            "max_length": 250,
+            "max_creel_number": 2,
+            "max_creel_colors": 3,
+            "creel_switch_penalty": 10
+        }
+    },
+    "a725c537-03c9-416e-a684-92eb6c8e2041": {
+        "widths": [
+            26,
+            12,
+            25,
+            13
+        ],
+        "heights": [
+            27,
+            26,
+            16,
+            33
+        ],
+        "deadlines": [
+            36,
+            150,
+            189,
+            223
+        ],
+        "deadline_counts": [
+            [
+                218,
+                388,
+                202,
+                32
+            ],
+            [
+                269,
+                236,
+                374,
+                380
+            ],
+            [
+                265,
+                292,
+                388,
+                81
+            ],
+            [
+                63,
+                387,
+                236,
+                361
+            ]
+        ],
+        "colors": [
+            0,
+            1,
+            2,
+            3
+        ],
+        "machine_config": {
+            "width": 40,
+            "min_length": 250,
+            "max_length": 250,
+            "max_creel_number": 2,
+            "max_creel_colors": 4,
+            "creel_switch_penalty": 10
+        }
+    },
+    "9e6f9308-e9ae-444d-ab43-7075fa97fea5": {
+        "widths": [
+            22,
+            36,
+            28,
+            26
+        ],
+        "heights": [
+            13,
+            21,
+            38,
+            18
+        ],
+        "deadlines": [
+            75,
+            264,
+            402,
+            454
+        ],
+        "deadline_counts": [
+            [
+                303,
+                225,
+                242,
+                403
+            ],
+            [
+                71,
+                358,
+                386,
+                163
+            ],
+            [
+                392,
+                88,
+                118,
+                415
+            ],
+            [
+                44,
+                455,
+                398,
+                488
+            ]
+        ],
+        "colors": [
+            0,
+            1,
+            2,
+            3
+        ],
+        "machine_config": {
+            "width": 40,
+            "min_length": 250,
+            "max_length": 250,
+            "max_creel_number": 3,
+            "max_creel_colors": 1,
+            "creel_switch_penalty": 10
+        }
+    },
+    "09da5094-0f1a-4b65-afba-92750afa95c2": {
+        "widths": [
+            13,
+            30,
+            32,
+            25
+        ],
+        "heights": [
+            34,
+            16,
+            22,
+            30
+        ],
+        "deadlines": [
+            41,
+            185,
+            397,
+            422
+        ],
+        "deadline_counts": [
+            [
+                242,
+                141,
+                152,
+                182
+            ],
+            [
+                234,
+                240,
+                254,
+                350
+            ],
+            [
+                165,
+                258,
+                95,
+                28
+            ],
+            [
+                93,
+                461,
+                420,
+                272
+            ]
+        ],
+        "colors": [
+            0,
+            1,
+            2,
+            3
+        ],
+        "machine_config": {
+            "width": 40,
+            "min_length": 250,
+            "max_length": 250,
+            "max_creel_number": 3,
+            "max_creel_colors": 2,
+            "creel_switch_penalty": 10
+        }
+    },
+    "123553f2-4c56-4770-be7e-be0351c9550c": {
+        "widths": [
+            15,
+            16,
+            23,
+            22
+        ],
+        "heights": [
+            17,
+            19,
+            18,
+            27
+        ],
+        "deadlines": [
+            4,
+            121,
+            193,
+            282
+        ],
+        "deadline_counts": [
+            [
+                0,
+                184,
+                441,
+                358
+            ],
+            [
+                80,
+                384,
+                340,
+                361
+            ],
+            [
+                62,
+                346,
+                236,
+                320
+            ],
+            [
+                0,
+                311,
+                89,
+                271
+            ]
+        ],
+        "colors": [
+            0,
+            1,
+            2,
+            3
+        ],
+        "machine_config": {
+            "width": 40,
+            "min_length": 250,
+            "max_length": 250,
+            "max_creel_number": 3,
+            "max_creel_colors": 3,
+            "creel_switch_penalty": 10
+        }
+    },
+    "2149da7d-fe5f-40a9-a900-f67c848c4c48": {
+        "widths": [
+            40,
+            28,
+            38,
+            21
+        ],
+        "heights": [
+            31,
+            16,
+            36,
+            19
+        ],
+        "deadlines": [
+            18,
+            38,
+            125,
+            345
+        ],
+        "deadline_counts": [
+            [
+                32,
+                0,
+                160,
+                261
+            ],
+            [
+                77,
+                4,
+                77,
+                167
+            ],
+            [
+                17,
+                53,
+                336,
+                402
+            ],
+            [
+                232,
+                315,
+                20,
+                406
+            ]
+        ],
+        "colors": [
+            0,
+            1,
+            2,
+            3
+        ],
+        "machine_config": {
+            "width": 40,
+            "min_length": 250,
+            "max_length": 250,
+            "max_creel_number": 3,
+            "max_creel_colors": 4,
+            "creel_switch_penalty": 10
+        }
+    },
+    "5a3ac7ca-df9a-4112-b105-27b297669807": {
+        "widths": [
+            22,
+            37,
+            39,
+            34
+        ],
+        "heights": [
+            40,
+            37,
+            26,
+            34
+        ],
+        "deadlines": [
+            116,
+            311,
+            416,
+            421
+        ],
+        "deadline_counts": [
+            [
+                153,
+                77,
+                63,
+                192
+            ],
+            [
+                179,
+                192,
+                336,
+                322
+            ],
+            [
+                168,
+                99,
+                393,
+                232
+            ],
+            [
+                222,
+                271,
+                248,
+                183
+            ]
+        ],
+        "colors": [
+            0,
+            1,
+            2,
+            3
+        ],
+        "machine_config": {
+            "width": 40,
+            "min_length": 250,
+            "max_length": 250,
+            "max_creel_number": 4,
+            "max_creel_colors": 1,
+            "creel_switch_penalty": 10
+        }
+    },
+    "ae9ea2fd-c1cd-498c-b6aa-e82b96b26f44": {
+        "widths": [
+            12,
+            28,
+            29,
+            34
+        ],
+        "heights": [
+            27,
+            24,
+            18,
+            26
+        ],
+        "deadlines": [
+            0,
+            13,
+            142,
+            414
+        ],
+        "deadline_counts": [
+            [
+                30,
+                0,
+                393,
+                278
+            ],
+            [
+                0,
+                134,
+                460,
+                478
+            ],
+            [
+                0,
+                77,
+                243,
+                291
+            ],
+            [
+                0,
+                0,
+                479,
+                427
+            ]
+        ],
+        "colors": [
+            0,
+            1,
+            2,
+            3
+        ],
+        "machine_config": {
+            "width": 40,
+            "min_length": 250,
+            "max_length": 250,
+            "max_creel_number": 4,
+            "max_creel_colors": 2,
+            "creel_switch_penalty": 10
+        }
+    },
+    "371b22c9-7cba-46eb-a76c-f29d9077b3fe": {
+        "widths": [
+            37,
+            30,
+            17,
+            35
+        ],
+        "heights": [
+            37,
+            13,
+            35,
+            17
+        ],
+        "deadlines": [
+            27,
+            177,
+            185,
+            315
+        ],
+        "deadline_counts": [
+            [
+                39,
+                325,
+                23,
+                247
+            ],
+            [
+                149,
+                422,
+                455,
+                164
+            ],
+            [
+                131,
+                420,
+                210,
+                480
+            ],
+            [
+                152,
+                238,
+                412,
+                416
+            ]
+        ],
+        "colors": [
+            0,
+            1,
+            2,
+            3
+        ],
+        "machine_config": {
+            "width": 40,
+            "min_length": 250,
+            "max_length": 250,
+            "max_creel_number": 4,
+            "max_creel_colors": 3,
+            "creel_switch_penalty": 10
+        }
+    },
+    "c5a0206f-30b7-4966-96e0-d8bdfd86f538": {
+        "widths": [
+            23,
+            12,
+            38,
+            15
+        ],
+        "heights": [
+            27,
+            28,
+            14,
+            24
+        ],
+        "deadlines": [
+            9,
+            311,
+            408,
+            449
+        ],
+        "deadline_counts": [
+            [
+                110,
+                261,
+                270,
+                384
+            ],
+            [
+                0,
+                138,
+                308,
+                393
+            ],
+            [
+                0,
+                165,
+                243,
+                258
+            ],
+            [
+                88,
+                286,
+                360,
+                301
+            ]
+        ],
+        "colors": [
+            0,
+            1,
+            2,
+            3
+        ],
+        "machine_config": {
+            "width": 40,
+            "min_length": 250,
+            "max_length": 250,
+            "max_creel_number": 4,
+            "max_creel_colors": 4,
+            "creel_switch_penalty": 10
+        }
+    },
+    "749ea05b-cd39-4ccc-ba30-0d9af3012653": {
+        "widths": [
+            40,
+            34,
+            31,
+            36
+        ],
+        "heights": [
+            36,
+            26,
+            22,
+            10
+        ],
+        "deadlines": [
+            97,
+            98,
+            104,
+            384
+        ],
+        "deadline_counts": [
+            [
+                30,
+                0,
+                0,
+                495
+            ],
+            [
+                284,
+                16,
+                213,
+                152
+            ],
+            [
+                262,
+                88,
+                333,
+                42
+            ],
+            [
+                0,
+                85,
+                158,
+                477
+            ]
+        ],
+        "colors": [
+            0,
+            1,
+            2,
+            3
+        ],
+        "machine_config": {
+            "width": 40,
+            "min_length": 250,
+            "max_length": 250,
+            "max_creel_number": 5,
+            "max_creel_colors": 1,
+            "creel_switch_penalty": 10
+        }
+    },
+    "afb2408e-97a0-41fd-ba72-4e610a236db5": {
+        "widths": [
+            28,
+            26,
+            30,
+            23
+        ],
+        "heights": [
+            18,
+            23,
+            10,
+            28
+        ],
+        "deadlines": [
+            172,
+            204,
+            259,
+            445
+        ],
+        "deadline_counts": [
+            [
+                468,
+                388,
+                307,
+                53
+            ],
+            [
+                367,
+                114,
+                91,
+                58
+            ],
+            [
+                173,
+                269,
+                181,
+                457
+            ],
+            [
+                137,
+                278,
+                398,
+                325
+            ]
+        ],
+        "colors": [
+            0,
+            1,
+            2,
+            3
+        ],
+        "machine_config": {
+            "width": 40,
+            "min_length": 250,
+            "max_length": 250,
+            "max_creel_number": 5,
+            "max_creel_colors": 2,
+            "creel_switch_penalty": 10
+        }
+    },
+    "fa718044-926f-41b6-972b-e7c9fac69551": {
+        "widths": [
+            21,
+            10,
+            31,
+            21
+        ],
+        "heights": [
+            14,
+            39,
+            39,
+            36
+        ],
+        "deadlines": [
+            111,
+            254,
+            312,
+            400
+        ],
+        "deadline_counts": [
+            [
+                322,
+                426,
+                226,
+                248
+            ],
+            [
+                360,
+                417,
+                85,
+                94
+            ],
+            [
+                454,
+                122,
+                441,
+                211
+            ],
+            [
+                271,
+                245,
+                313,
+                325
+            ]
+        ],
+        "colors": [
+            0,
+            1,
+            2,
+            3
+        ],
+        "machine_config": {
+            "width": 40,
+            "min_length": 250,
+            "max_length": 250,
+            "max_creel_number": 5,
+            "max_creel_colors": 3,
+            "creel_switch_penalty": 10
+        }
+    },
+    "3818714b-151f-4f52-9e0c-d465f6e58b91": {
+        "widths": [
+            11,
+            27,
+            39,
+            24
+        ],
+        "heights": [
+            36,
+            28,
+            40,
+            11
+        ],
+        "deadlines": [
+            165,
+            248,
+            307,
+            480
+        ],
+        "deadline_counts": [
+            [
+                491,
+                354,
+                49,
+                266
+            ],
+            [
+                125,
+                70,
+                100,
+                152
+            ],
+            [
+                304,
+                407,
+                157,
+                203
+            ],
+            [
+                420,
+                349,
+                292,
+                359
+            ]
+        ],
+        "colors": [
+            0,
+            1,
+            2,
+            3
+        ],
+        "machine_config": {
+            "width": 40,
+            "min_length": 250,
+            "max_length": 250,
+            "max_creel_number": 5,
+            "max_creel_colors": 4,
+            "creel_switch_penalty": 10
+        }
+    },
+    "f7073533-e4d8-41bc-a08d-900a23943817": {
+        "widths": [
+            33,
+            14,
+            11,
+            15,
+            30
+        ],
+        "heights": [
+            11,
+            22,
+            39,
+            20,
+            20
+        ],
+        "deadlines": [
+            110,
+            239,
+            370,
+            458
+        ],
+        "deadline_counts": [
+            [
+                268,
+                170,
+                202,
+                355
+            ],
+            [
+                114,
+                478,
+                393,
+                419
+            ],
+            [
+                27,
+                407,
+                379,
+                407
+            ],
+            [
+                203,
+                300,
+                214,
+                371
+            ],
+            [
+                214,
+                174,
+                112,
+                179
+            ]
+        ],
+        "colors": [
+            0,
+            1,
+            2,
+            3,
+            4
+        ],
+        "machine_config": {
+            "width": 40,
+            "min_length": 250,
+            "max_length": 250,
+            "max_creel_number": 1,
+            "max_creel_colors": 1,
+            "creel_switch_penalty": 10
+        }
+    },
+    "32b19b96-6e5b-4519-adf6-58bba1fad1fc": {
+        "widths": [
+            27,
+            38,
+            35,
+            28,
+            28
+        ],
+        "heights": [
+            30,
+            14,
+            27,
+            37,
+            19
+        ],
+        "deadlines": [
+            21,
+            316,
+            325,
+            404
+        ],
+        "deadline_counts": [
+            [
+                0,
+                152,
+                252,
+                31
+            ],
+            [
+                313,
+                65,
+                53,
+                452
+            ],
+            [
+                7,
+                237,
+                320,
+                430
+            ],
+            [
+                0,
+                301,
+                268,
+                66
+            ],
+            [
+                88,
+                233,
+                258,
+                75
+            ]
+        ],
+        "colors": [
+            0,
+            1,
+            2,
+            3,
+            4
+        ],
+        "machine_config": {
+            "width": 40,
+            "min_length": 250,
+            "max_length": 250,
+            "max_creel_number": 1,
+            "max_creel_colors": 2,
+            "creel_switch_penalty": 10
+        }
+    },
+    "4327f216-b23f-4652-9e21-0e37f4017b0e": {
+        "widths": [
+            39,
+            20,
+            40,
+            25,
+            38
+        ],
+        "heights": [
+            26,
+            35,
+            13,
+            10,
+            17
+        ],
+        "deadlines": [
+            112,
+            179,
+            252,
+            354
+        ],
+        "deadline_counts": [
+            [
+                226,
+                322,
+                146,
+                75
+            ],
+            [
+                233,
+                33,
+                493,
+                47
+            ],
+            [
+                490,
+                97,
+                235,
+                405
+            ],
+            [
+                384,
+                173,
+                33,
+                206
+            ],
+            [
+                331,
+                390,
+                26,
+                22
+            ]
+        ],
+        "colors": [
+            0,
+            1,
+            2,
+            3,
+            4
+        ],
+        "machine_config": {
+            "width": 40,
+            "min_length": 250,
+            "max_length": 250,
+            "max_creel_number": 1,
+            "max_creel_colors": 3,
+            "creel_switch_penalty": 10
+        }
+    },
+    "b222b1ab-61b9-469b-9205-6e624fec1fa0": {
+        "widths": [
+            24,
+            32,
+            23,
+            20,
+            24
+        ],
+        "heights": [
+            37,
+            22,
+            27,
+            35,
+            15
+        ],
+        "deadlines": [
+            14,
+            191,
+            226,
+            370
+        ],
+        "deadline_counts": [
+            [
+                168,
+                138,
+                47,
+                221
+            ],
+            [
+                0,
+                460,
+                292,
+                250
+            ],
+            [
+                1,
+                493,
+                145,
+                319
+            ],
+            [
+                0,
+                164,
+                32,
+                231
+            ],
+            [
+                0,
+                87,
+                413,
+                86
+            ]
+        ],
+        "colors": [
+            0,
+            1,
+            2,
+            3,
+            4
+        ],
+        "machine_config": {
+            "width": 40,
+            "min_length": 250,
+            "max_length": 250,
+            "max_creel_number": 1,
+            "max_creel_colors": 4,
+            "creel_switch_penalty": 10
+        }
+    },
+    "92b5a8d2-a1a1-4d65-9cb9-67f0f63aa742": {
+        "widths": [
+            18,
+            22,
+            27,
+            24,
+            13
+        ],
+        "heights": [
+            24,
+            31,
+            11,
+            24,
+            17
+        ],
+        "deadlines": [
+            82,
+            235,
+            368,
+            423
+        ],
+        "deadline_counts": [
+            [
+                61,
+                444,
+                120,
+                25
+            ],
+            [
+                199,
+                301,
+                339,
+                245
+            ],
+            [
+                462,
+                459,
+                334,
+                384
+            ],
+            [
+                473,
+                248,
+                396,
+                308
+            ],
+            [
+                456,
+                169,
+                296,
+                217
+            ]
+        ],
+        "colors": [
+            0,
+            1,
+            2,
+            3,
+            4
+        ],
+        "machine_config": {
+            "width": 40,
+            "min_length": 250,
+            "max_length": 250,
+            "max_creel_number": 1,
+            "max_creel_colors": 5,
+            "creel_switch_penalty": 10
+        }
+    },
+    "649aecfd-b85c-4062-b1c0-798d90b93c32": {
+        "widths": [
+            15,
+            32,
+            25,
+            13,
+            39
+        ],
+        "heights": [
+            20,
+            39,
+            39,
+            39,
+            40
+        ],
+        "deadlines": [
+            136,
+            151,
+            246,
+            310
+        ],
+        "deadline_counts": [
+            [
+                383,
+                260,
+                26,
+                0
+            ],
+            [
+                203,
+                0,
+                364,
+                197
+            ],
+            [
+                0,
+                307,
+                437,
+                203
+            ],
+            [
+                92,
+                5,
+                336,
+                151
+            ],
+            [
+                0,
+                144,
+                0,
+                328
+            ]
+        ],
+        "colors": [
+            0,
+            1,
+            2,
+            3,
+            4
+        ],
+        "machine_config": {
+            "width": 40,
+            "min_length": 250,
+            "max_length": 250,
+            "max_creel_number": 2,
+            "max_creel_colors": 1,
+            "creel_switch_penalty": 10
+        }
+    },
+    "2eac60b1-6f8c-47ac-b0d8-bfdc6fd305f4": {
+        "widths": [
+            39,
+            34,
+            11,
+            24,
+            20
+        ],
+        "heights": [
+            17,
+            35,
+            28,
+            22,
+            21
+        ],
+        "deadlines": [
+            117,
+            132,
+            325,
+            409
+        ],
+        "deadline_counts": [
+            [
+                343,
+                294,
+                231,
+                244
+            ],
+            [
+                39,
+                132,
+                159,
+                66
+            ],
+            [
+                20,
+                109,
+                161,
+                339
+            ],
+            [
+                57,
+                312,
+                401,
+                158
+            ],
+            [
+                375,
+                352,
+                278,
+                180
+            ]
+        ],
+        "colors": [
+            0,
+            1,
+            2,
+            3,
+            4
+        ],
+        "machine_config": {
+            "width": 40,
+            "min_length": 250,
+            "max_length": 250,
+            "max_creel_number": 2,
+            "max_creel_colors": 2,
+            "creel_switch_penalty": 10
+        }
+    },
+    "a009e54d-d4c3-4ca5-88a3-0e4374968a28": {
+        "widths": [
+            15,
+            27,
+            33,
+            19,
+            14
+        ],
+        "heights": [
+            32,
+            19,
+            21,
+            11,
+            22
+        ],
+        "deadlines": [
+            83,
+            129,
+            167,
+            320
+        ],
+        "deadline_counts": [
+            [
+                306,
+                90,
+                312,
+                292
+            ],
+            [
+                249,
+                451,
+                390,
+                427
+            ],
+            [
+                13,
+                385,
+                68,
+                114
+            ],
+            [
+                311,
+                74,
+                324,
+                463
+            ],
+            [
+                236,
+                436,
+                334,
+                392
+            ]
+        ],
+        "colors": [
+            0,
+            1,
+            2,
+            3,
+            4
+        ],
+        "machine_config": {
+            "width": 40,
+            "min_length": 250,
+            "max_length": 250,
+            "max_creel_number": 2,
+            "max_creel_colors": 3,
+            "creel_switch_penalty": 10
+        }
+    },
+    "212fbbdc-475b-4518-ad32-0256e0551159": {
+        "widths": [
+            33,
+            20,
+            18,
+            11,
+            21
+        ],
+        "heights": [
+            12,
+            12,
+            10,
+            17,
+            31
+        ],
+        "deadlines": [
+            59,
+            319,
+            327,
+            348
+        ],
+        "deadline_counts": [
+            [
+                286,
+                380,
+                248,
+                289
+            ],
+            [
+                335,
+                305,
+                310,
+                232
+            ],
+            [
+                184,
+                24,
+                358,
+                398
+            ],
+            [
+                97,
+                429,
+                81,
+                151
+            ],
+            [
+                108,
+                256,
+                61,
+                108
+            ]
+        ],
+        "colors": [
+            0,
+            1,
+            2,
+            3,
+            4
+        ],
+        "machine_config": {
+            "width": 40,
+            "min_length": 250,
+            "max_length": 250,
+            "max_creel_number": 2,
+            "max_creel_colors": 4,
+            "creel_switch_penalty": 10
+        }
+    },
+    "b4bc2c40-9eb9-46ad-aab2-fafa8651dd91": {
+        "widths": [
+            27,
+            17,
+            17,
+            16,
+            17
+        ],
+        "heights": [
+            23,
+            28,
+            38,
+            15,
+            10
+        ],
+        "deadlines": [
+            22,
+            62,
+            142,
+            480
+        ],
+        "deadline_counts": [
+            [
+                0,
+                164,
+                244,
+                469
+            ],
+            [
+                213,
+                328,
+                123,
+                123
+            ],
+            [
+                92,
+                58,
+                454,
+                217
+            ],
+            [
+                19,
+                86,
+                410,
+                198
+            ],
+            [
+                380,
+                61,
+                467,
+                34
+            ]
+        ],
+        "colors": [
+            0,
+            1,
+            2,
+            3,
+            4
+        ],
+        "machine_config": {
+            "width": 40,
+            "min_length": 250,
+            "max_length": 250,
+            "max_creel_number": 2,
+            "max_creel_colors": 5,
+            "creel_switch_penalty": 10
+        }
+    },
+    "ee30f48e-977e-4638-8b80-35dc286a9ed2": {
+        "widths": [
+            24,
+            38,
+            10,
+            29,
+            39
+        ],
+        "heights": [
+            16,
+            36,
+            13,
+            38,
+            15
+        ],
+        "deadlines": [
+            96,
+            410,
+            440,
+            484
+        ],
+        "deadline_counts": [
+            [
+                458,
+                308,
+                273,
+                215
+            ],
+            [
+                105,
+                341,
+                29,
+                24
+            ],
+            [
+                142,
+                349,
+                372,
+                137
+            ],
+            [
+                313,
+                416,
+                178,
+                322
+            ],
+            [
+                247,
+                384,
+                235,
+                455
+            ]
+        ],
+        "colors": [
+            0,
+            1,
+            2,
+            3,
+            4
+        ],
+        "machine_config": {
+            "width": 40,
+            "min_length": 250,
+            "max_length": 250,
+            "max_creel_number": 3,
+            "max_creel_colors": 1,
+            "creel_switch_penalty": 10
+        }
+    },
+    "dfa5fce0-c2cb-48d5-807a-33bdd5152dab": {
+        "widths": [
+            33,
+            24,
+            38,
+            17,
+            14
+        ],
+        "heights": [
+            38,
+            24,
+            13,
+            21,
+            22
+        ],
+        "deadlines": [
+            94,
+            114,
+            129,
+            410
+        ],
+        "deadline_counts": [
+            [
+                36,
+                213,
+                126,
+                301
+            ],
+            [
+                222,
+                206,
+                0,
+                167
+            ],
+            [
+                0,
+                202,
+                256,
+                379
+            ],
+            [
+                0,
+                95,
+                160,
+                42
+            ],
+            [
+                273,
+                316,
+                274,
+                382
+            ]
+        ],
+        "colors": [
+            0,
+            1,
+            2,
+            3,
+            4
+        ],
+        "machine_config": {
+            "width": 40,
+            "min_length": 250,
+            "max_length": 250,
+            "max_creel_number": 3,
+            "max_creel_colors": 2,
+            "creel_switch_penalty": 10
+        }
+    },
+    "638969b8-9c32-4d83-b29a-acfc820a126f": {
+        "widths": [
+            21,
+            35,
+            22,
+            17,
+            39
+        ],
+        "heights": [
+            27,
+            34,
+            10,
+            24,
+            17
+        ],
+        "deadlines": [
+            170,
+            315,
+            459,
+            491
+        ],
+        "deadline_counts": [
+            [
+                375,
+                343,
+                152,
+                395
+            ],
+            [
+                312,
+                347,
+                146,
+                125
+            ],
+            [
+                111,
+                306,
+                397,
+                412
+            ],
+            [
+                70,
+                48,
+                481,
+                315
+            ],
+            [
+                316,
+                233,
+                286,
+                426
+            ]
+        ],
+        "colors": [
+            0,
+            1,
+            2,
+            3,
+            4
+        ],
+        "machine_config": {
+            "width": 40,
+            "min_length": 250,
+            "max_length": 250,
+            "max_creel_number": 3,
+            "max_creel_colors": 3,
+            "creel_switch_penalty": 10
+        }
+    },
+    "f1f4dde9-ac82-4357-b2b0-5eb44a9391df": {
+        "widths": [
+            10,
+            23,
+            14,
+            30,
+            35
+        ],
+        "heights": [
+            23,
+            13,
+            31,
+            32,
+            34
+        ],
+        "deadlines": [
+            0,
+            54,
+            318,
+            437
+        ],
+        "deadline_counts": [
+            [
+                42,
+                381,
+                418,
+                168
+            ],
+            [
+                1,
+                397,
+                328,
+                156
+            ],
+            [
+                0,
+                342,
+                332,
+                136
+            ],
+            [
+                0,
+                193,
+                310,
+                82
+            ],
+            [
+                0,
+                0,
+                109,
+                94
+            ]
+        ],
+        "colors": [
+            0,
+            1,
+            2,
+            3,
+            4
+        ],
+        "machine_config": {
+            "width": 40,
+            "min_length": 250,
+            "max_length": 250,
+            "max_creel_number": 3,
+            "max_creel_colors": 4,
+            "creel_switch_penalty": 10
+        }
+    },
+    "8e910368-7628-4666-a882-5f8dd7cef994": {
+        "widths": [
+            15,
+            11,
+            16,
+            27,
+            36
+        ],
+        "heights": [
+            11,
+            36,
+            26,
+            20,
+            36
+        ],
+        "deadlines": [
+            178,
+            181,
+            250,
+            363
+        ],
+        "deadline_counts": [
+            [
+                171,
+                44,
+                474,
+                199
+            ],
+            [
+                217,
+                363,
+                180,
+                196
+            ],
+            [
+                304,
+                82,
+                169,
+                173
+            ],
+            [
+                175,
+                389,
+                488,
+                68
+            ],
+            [
+                474,
+                356,
+                103,
+                380
+            ]
+        ],
+        "colors": [
+            0,
+            1,
+            2,
+            3,
+            4
+        ],
+        "machine_config": {
+            "width": 40,
+            "min_length": 250,
+            "max_length": 250,
+            "max_creel_number": 3,
+            "max_creel_colors": 5,
+            "creel_switch_penalty": 10
+        }
+    },
+    "f5ed5844-55cf-4af9-9db4-2e28c929d96c": {
+        "widths": [
+            26,
+            29,
+            31,
+            31,
+            37
+        ],
+        "heights": [
+            40,
+            38,
+            17,
+            26,
+            16
+        ],
+        "deadlines": [
+            140,
+            223,
+            256,
+            477
+        ],
+        "deadline_counts": [
+            [
+                157,
+                381,
+                326,
+                459
+            ],
+            [
+                150,
+                242,
+                0,
+                177
+            ],
+            [
+                267,
+                274,
+                411,
+                496
+            ],
+            [
+                240,
+                89,
+                388,
+                38
+            ],
+            [
+                0,
+                227,
+                43,
+                390
+            ]
+        ],
+        "colors": [
+            0,
+            1,
+            2,
+            3,
+            4
+        ],
+        "machine_config": {
+            "width": 40,
+            "min_length": 250,
+            "max_length": 250,
+            "max_creel_number": 4,
+            "max_creel_colors": 1,
+            "creel_switch_penalty": 10
+        }
+    },
+    "dc485c91-3a9c-448d-99ce-e08c5da6c073": {
+        "widths": [
+            24,
+            27,
+            11,
+            31,
+            37
+        ],
+        "heights": [
+            26,
+            27,
+            39,
+            15,
+            28
+        ],
+        "deadlines": [
+            131,
+            263,
+            318,
+            384
+        ],
+        "deadline_counts": [
+            [
+                429,
+                71,
+                375,
+                146
+            ],
+            [
+                303,
+                281,
+                473,
+                482
+            ],
+            [
+                383,
+                178,
+                397,
+                498
+            ],
+            [
+                103,
+                71,
+                492,
+                304
+            ],
+            [
+                192,
+                405,
+                362,
+                21
+            ]
+        ],
+        "colors": [
+            0,
+            1,
+            2,
+            3,
+            4
+        ],
+        "machine_config": {
+            "width": 40,
+            "min_length": 250,
+            "max_length": 250,
+            "max_creel_number": 4,
+            "max_creel_colors": 2,
+            "creel_switch_penalty": 10
+        }
+    },
+    "6b825cc4-8eba-4c3e-b7fc-81675ff948f1": {
+        "widths": [
+            10,
+            34,
+            32,
+            12,
+            33
+        ],
+        "heights": [
+            32,
+            36,
+            40,
+            38,
+            17
+        ],
+        "deadlines": [
+            53,
+            228,
+            238,
+            248
+        ],
+        "deadline_counts": [
+            [
+                54,
+                38,
+                116,
+                111
+            ],
+            [
+                154,
+                287,
+                187,
+                115
+            ],
+            [
+                14,
+                0,
+                207,
+                15
+            ],
+            [
+                301,
+                383,
+                424,
+                137
+            ],
+            [
+                93,
+                431,
+                357,
+                204
+            ]
+        ],
+        "colors": [
+            0,
+            1,
+            2,
+            3,
+            4
+        ],
+        "machine_config": {
+            "width": 40,
+            "min_length": 250,
+            "max_length": 250,
+            "max_creel_number": 4,
+            "max_creel_colors": 3,
+            "creel_switch_penalty": 10
+        }
+    },
+    "291a483a-79a6-48e6-98d4-f211127540b4": {
+        "widths": [
+            32,
+            25,
+            27,
+            16,
+            19
+        ],
+        "heights": [
+            16,
+            10,
+            32,
+            30,
+            28
+        ],
+        "deadlines": [
+            35,
+            111,
+            380,
+            402
+        ],
+        "deadline_counts": [
+            [
+                133,
+                207,
+                101,
+                21
+            ],
+            [
+                321,
+                322,
+                216,
+                423
+            ],
+            [
+                0,
+                253,
+                405,
+                214
+            ],
+            [
+                329,
+                138,
+                415,
+                39
+            ],
+            [
+                101,
+                312,
+                441,
+                275
+            ]
+        ],
+        "colors": [
+            0,
+            1,
+            2,
+            3,
+            4
+        ],
+        "machine_config": {
+            "width": 40,
+            "min_length": 250,
+            "max_length": 250,
+            "max_creel_number": 4,
+            "max_creel_colors": 4,
+            "creel_switch_penalty": 10
+        }
+    },
+    "45ea13e2-7cb5-43b7-84b3-72b31155aaae": {
+        "widths": [
+            39,
+            18,
+            11,
+            30,
+            21
+        ],
+        "heights": [
+            12,
+            29,
+            35,
+            31,
+            21
+        ],
+        "deadlines": [
+            80,
+            157,
+            201,
+            279
+        ],
+        "deadline_counts": [
+            [
+                135,
+                73,
+                230,
+                147
+            ],
+            [
+                238,
+                223,
+                384,
+                134
+            ],
+            [
+                224,
+                29,
+                24,
+                59
+            ],
+            [
+                460,
+                247,
+                291,
+                378
+            ],
+            [
+                215,
+                261,
+                293,
+                254
+            ]
+        ],
+        "colors": [
+            0,
+            1,
+            2,
+            3,
+            4
+        ],
+        "machine_config": {
+            "width": 40,
+            "min_length": 250,
+            "max_length": 250,
+            "max_creel_number": 4,
+            "max_creel_colors": 5,
+            "creel_switch_penalty": 10
+        }
+    },
+    "d7828f97-19c0-45a9-b74c-d31dbcab88db": {
+        "widths": [
+            23,
+            13,
+            35,
+            35,
+            38
+        ],
+        "heights": [
+            22,
+            11,
+            32,
+            14,
+            20
+        ],
+        "deadlines": [
+            127,
+            145,
+            325,
+            340
+        ],
+        "deadline_counts": [
+            [
+                41,
+                356,
+                60,
+                441
+            ],
+            [
+                48,
+                31,
+                184,
+                172
+            ],
+            [
+                357,
+                54,
+                106,
+                136
+            ],
+            [
+                363,
+                343,
+                488,
+                46
+            ],
+            [
+                303,
+                278,
+                153,
+                238
+            ]
+        ],
+        "colors": [
+            0,
+            1,
+            2,
+            3,
+            4
+        ],
+        "machine_config": {
+            "width": 40,
+            "min_length": 250,
+            "max_length": 250,
+            "max_creel_number": 5,
+            "max_creel_colors": 1,
+            "creel_switch_penalty": 10
+        }
+    },
+    "a6d604e8-c863-415e-bbf7-6b5c8cff3b37": {
+        "widths": [
+            17,
+            11,
+            21,
+            22,
+            34
+        ],
+        "heights": [
+            30,
+            16,
+            19,
+            22,
+            26
+        ],
+        "deadlines": [
+            189,
+            409,
+            468,
+            475
+        ],
+        "deadline_counts": [
+            [
+                141,
+                65,
+                83,
+                149
+            ],
+            [
+                329,
+                382,
+                212,
+                326
+            ],
+            [
+                200,
+                311,
+                390,
+                301
+            ],
+            [
+                48,
+                168,
+                286,
+                315
+            ],
+            [
+                30,
+                183,
+                132,
+                206
+            ]
+        ],
+        "colors": [
+            0,
+            1,
+            2,
+            3,
+            4
+        ],
+        "machine_config": {
+            "width": 40,
+            "min_length": 250,
+            "max_length": 250,
+            "max_creel_number": 5,
+            "max_creel_colors": 2,
+            "creel_switch_penalty": 10
+        }
+    },
+    "bbcf628e-7d62-4111-963a-f8c41cdeedd6": {
+        "widths": [
+            16,
+            17,
+            12,
+            31,
+            11
+        ],
+        "heights": [
+            32,
+            24,
+            33,
+            31,
+            31
+        ],
+        "deadlines": [
+            68,
+            249,
+            288,
+            311
+        ],
+        "deadline_counts": [
+            [
+                55,
+                258,
+                167,
+                486
+            ],
+            [
+                246,
+                263,
+                356,
+                465
+            ],
+            [
+                384,
+                220,
+                173,
+                469
+            ],
+            [
+                92,
+                220,
+                315,
+                36
+            ],
+            [
+                148,
+                236,
+                80,
+                446
+            ]
+        ],
+        "colors": [
+            0,
+            1,
+            2,
+            3,
+            4
+        ],
+        "machine_config": {
+            "width": 40,
+            "min_length": 250,
+            "max_length": 250,
+            "max_creel_number": 5,
+            "max_creel_colors": 3,
+            "creel_switch_penalty": 10
+        }
+    },
+    "d03e9625-a78f-4b2b-b38c-f9aa17d62b1d": {
+        "widths": [
+            17,
+            19,
+            34,
+            16,
+            12
+        ],
+        "heights": [
+            12,
+            27,
+            14,
+            21,
+            21
+        ],
+        "deadlines": [
+            101,
+            353,
+            434,
+            477
+        ],
+        "deadline_counts": [
+            [
+                31,
+                294,
+                120,
+                63
+            ],
+            [
+                462,
+                324,
+                464,
+                36
+            ],
+            [
+                349,
+                76,
+                330,
+                322
+            ],
+            [
+                31,
+                337,
+                99,
+                235
+            ],
+            [
+                358,
+                283,
+                498,
+                168
+            ]
+        ],
+        "colors": [
+            0,
+            1,
+            2,
+            3,
+            4
+        ],
+        "machine_config": {
+            "width": 40,
+            "min_length": 250,
+            "max_length": 250,
+            "max_creel_number": 5,
+            "max_creel_colors": 4,
+            "creel_switch_penalty": 10
+        }
+    },
+    "a89b7dcc-ea14-46b5-87ce-81c8bdddd96f": {
+        "widths": [
+            26,
+            32,
+            14,
+            31,
+            25
+        ],
+        "heights": [
+            15,
+            17,
+            34,
+            27,
+            34
+        ],
+        "deadlines": [
+            58,
+            142,
+            267,
+            409
+        ],
+        "deadline_counts": [
+            [
+                336,
+                45,
+                66,
+                307
+            ],
+            [
+                218,
+                35,
+                218,
+                420
+            ],
+            [
+                366,
+                301,
+                488,
+                105
+            ],
+            [
+                166,
+                410,
+                289,
+                354
+            ],
+            [
+                32,
+                26,
+                156,
+                390
+            ]
+        ],
+        "colors": [
+            0,
+            1,
+            2,
+            3,
+            4
+        ],
+        "machine_config": {
+            "width": 40,
+            "min_length": 250,
+            "max_length": 250,
+            "max_creel_number": 5,
+            "max_creel_colors": 5,
+            "creel_switch_penalty": 10
+        }
+    }
+}

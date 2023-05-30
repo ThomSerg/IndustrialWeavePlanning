@@ -1,6 +1,6 @@
 from __future__ import annotations
-from .data_structures.creel_packing import CreelPacking
-from .models.creel_packing_model import CreelPackingModel
+from ...data_structures.creel_packing import CreelPacking
+from ...models.creel_packing_model import CreelPackingModel
 
 import numpy as np
 import math
@@ -16,6 +16,8 @@ from cpmpy.expressions.python_builtins import max as cpm_max
 from cpmpy.expressions.python_builtins import min as cpm_min
 from cpmpy.expressions.python_builtins import sum as cpm_sum
 from cpmpy.expressions.variables import cpm_array
+
+from src.extensions.creel.constraints import within_color_section
 
 class CreelModel:
 
@@ -88,7 +90,7 @@ class CreelModel:
                         color_ranges[basic_color] = color_ranges.get(basic_color, []) + item_color_ranges.get(basic_color, [])
 
             for basic_color in self.colors:
-                color_ranges[basic_color] = self.interval_union(color_ranges[basic_color])
+                color_ranges[basic_color] = self.interval_union(color_ranges.get(basic_color, []))
 
             bin_color_ranges.append(color_ranges)
 
@@ -99,7 +101,7 @@ class CreelModel:
  
         # Iterate over all bins
         for i_deadline in range(len(self.bin_production.deadlines)):
-            for i_bin,(bin_active,bin_start,bin_end,bin_packing) in enumerate(zip(self.bin_production.fixed_bin_active[:,i_deadline], self.bin_production.bin_starts[:,i_deadline], self.bin_production.bin_ends[:,i_deadline], self.bin_production._fixed_bin_packings)):
+            for i_bin,(bin_active,bin_start,bin_end,bin_packing) in enumerate(zip(self.bin_production.fixed_bin_active[:,i_deadline], self.bin_production.bin_starts[:,i_deadline], self.bin_production.bin_ends[:,i_deadline], self.bin_production.fixed_bin_packings)):
  
                 # Iterate over all creel sections
                 for i_section,(section,section_start,section_end) in enumerate(zip(self.creel_packing.sections, self.creel_packing.starts, self.creel_packing.ends)):
@@ -111,7 +113,7 @@ class CreelModel:
                     cc = []
                     for color in colors: # Go over each color
                         for (x1,x2) in bin_color_ranges[i_bin][color]: # Look where that color is located inside the bin
-                            cc.append(section.color_sections[section._colors.index(color)].is_here_2_fixed(x1,x2)) # Constraint the color section
+                            cc.append(section.color_sections[section.colors.index(color)].is_here_2_fixed(x1,x2)) # Constraint the color section
                    
                     # Look for correct section where bin is located
                     c.append(
@@ -141,44 +143,18 @@ class CreelModel:
         self.f = []
         self.cond = []
         for i_deadline in range(len(self.bin_production.deadlines)):
-            for bin_packing,bin_active,bin_start,bin_end in zip(self.bin_production._free_bin_packings,self.bin_production.free_bin_active[:,i_deadline], self.bin_production.bin_starts[-len(self.bin_production.free_bin_active):,i_deadline],self.bin_production.bin_ends[-len(self.bin_production.free_bin_active):,i_deadline]):
+            for bin_packing,bin_active,bin_start,bin_end in zip(self.bin_production.fixable_bin_packings,self.bin_production.bin_active[:,i_deadline], self.bin_production.bin_starts[-len(self.bin_production.bin_active):,i_deadline],self.bin_production.bin_ends[-len(self.bin_production.bin_active):,i_deadline]):
                 for i_section,(section,section_start,section_end) in enumerate(zip(self.creel_packing.sections, self.creel_packing.starts, self.creel_packing.ends)):
                     
 
                     # The bin color range must be compatible with the section color range
-                    cc = []
-                    for item in bin_packing.items:
-
-                        for x in range(item.nr_width_repeats()):
-                            ccc = []
-                            for color in item.item.color.basic_colors:
-                                ccc.append(
-                                        section.color_sections[section._colors.index(color)].is_here_2(cpm_min(item.free_pos_xs_arr[:,x]), cpm_max(item.free_pos_xs_arr[:,x])+item.width)
-                                )
-                            cc.append(
-                                (cpm_any(item.free_active_arr[:,x])).implies(
-                                    cpm_all(ccc)
-                                )
-                            )
-                        
-                        # Pre-fixed ranges
-                        if item.has_fixed_packing():
-                            fixed_color_ranges = self.color_range_from_item(item.fixed_packing)
-                            for color in item.item.color.basic_colors:
-                                c_ranges = fixed_color_ranges.get(color,[])
-  
-                                for c_range in c_ranges:
-                                    cc.append(
-                                        section.color_sections[section._colors.index(color)].is_here_2_fixed(c_range[0],c_range[1])
-                                    )
-
-                        
+                    cc = within_color_section(bin_packing, section)
 
                     # Look for correct section where bin is located
                     c.append(
                         (i_section < self.creel_packing.count).implies( # Active creel section
                             ((section_start <= bin_start) & (bin_end <= section_end)).implies( # Bin lies within creel section
-                                cpm_all(cc)
+                                cc
                             )
                         )
                     )
@@ -200,7 +176,7 @@ class CreelModel:
  
         # A change in creel config causes a delay TODO code combineren
         for i_deadline in range(len(self.bin_production.deadlines)):
-            for bin_packing,bin_active,bin_start,bin_end in zip(self.bin_production._free_bin_packings,self.bin_production.free_bin_active[:,i_deadline], self.bin_production.bin_starts[-len(self.bin_production.free_bin_active):,i_deadline],self.bin_production.bin_ends[-len(self.bin_production.free_bin_active):,i_deadline]):
+            for bin_packing,bin_active,bin_start,bin_end in zip(self.bin_production.fixable_bin_packings,self.bin_production.bin_active[:,i_deadline], self.bin_production.bin_starts[-len(self.bin_production.bin_active):,i_deadline],self.bin_production.bin_ends[-len(self.bin_production.bin_active):,i_deadline]):
                 for i_section,(section,section_start,section_end) in enumerate(zip(self.creel_packing.sections, self.creel_packing.starts, self.creel_packing.ends)):
                     
                     if i_section >= 1: 
@@ -211,7 +187,7 @@ class CreelModel:
                         )
 
         for i_deadline in range(len(self.bin_production.deadlines)):
-            for i_bin,(bin_active,bin_start,bin_end,bin_packing) in enumerate(zip(self.bin_production.bin_active[:,i_deadline], self.bin_production.bin_starts[:,i_deadline], self.bin_production.bin_ends[:,i_deadline], self.bin_production._fixed_bin_packings)):
+            for i_bin,(bin_active,bin_start,bin_end,bin_packing) in enumerate(zip(self.bin_production.bin_active[:,i_deadline], self.bin_production.bin_starts[:,i_deadline], self.bin_production.bin_ends[:,i_deadline], self.bin_production.fixable_bin_packings)):
                 for i_section,(section,section_start,section_end) in enumerate(zip(self.creel_packing.sections, self.creel_packing.starts, self.creel_packing.ends)):
                         
                     if i_section >= 1: 

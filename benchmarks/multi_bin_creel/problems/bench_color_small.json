@@ -1,0 +1,191 @@
+{
+    "1_5_3": {
+        "widths": [
+            16,
+            29,
+            38,
+            24,
+            20
+        ],
+        "heights": [
+            17,
+            38,
+            30,
+            16,
+            35
+        ],
+        "deadlines": [
+            466
+        ],
+        "deadline_counts": [
+            [
+                234
+            ],
+            [
+                350
+            ],
+            [
+                478
+            ],
+            [
+                107
+            ],
+            [
+                392
+            ]
+        ],
+        "colors": [
+            0,
+            1,
+            2,
+            3,
+            4
+        ],
+        "machine_config": {
+            "width": 40,
+            "min_length": 250,
+            "max_length": 250,
+            "max_creel_number": 5,
+            "max_creel_colors": 3,
+            "creel_switch_penalty": 10
+        }
+    },
+    "3_5_3": {
+        "widths": [
+            13,
+            17,
+            33,
+            12,
+            31
+        ],
+        "heights": [
+            30,
+            11,
+            33,
+            21,
+            39
+        ],
+        "deadlines": [
+            191,
+            293,
+            385
+        ],
+        "deadline_counts": [
+            [
+                463,
+                296,
+                180
+            ],
+            [
+                479,
+                333,
+                41
+            ],
+            [
+                272,
+                255,
+                364
+            ],
+            [
+                68,
+                494,
+                78
+            ],
+            [
+                189,
+                495,
+                207
+            ]
+        ],
+        "colors": [
+            0,
+            1,
+            2,
+            3,
+            4
+        ],
+        "machine_config": {
+            "width": 40,
+            "min_length": 250,
+            "max_length": 250,
+            "max_creel_number": 5,
+            "max_creel_colors": 3,
+            "creel_switch_penalty": 10
+        }
+    },
+    "5_5_3": {
+        "widths": [
+            25,
+            24,
+            39,
+            39,
+            24
+        ],
+        "heights": [
+            39,
+            28,
+            21,
+            32,
+            29
+        ],
+        "deadlines": [
+            130,
+            134,
+            306,
+            319,
+            484
+        ],
+        "deadline_counts": [
+            [
+                0,
+                217,
+                60,
+                212,
+                407
+            ],
+            [
+                1,
+                213,
+                0,
+                183,
+                284
+            ],
+            [
+                265,
+                0,
+                326,
+                246,
+                111
+            ],
+            [
+                137,
+                269,
+                376,
+                328,
+                283
+            ],
+            [
+                389,
+                0,
+                135,
+                30,
+                439
+            ]
+        ],
+        "colors": [
+            0,
+            1,
+            2,
+            3,
+            4
+        ],
+        "machine_config": {
+            "width": 40,
+            "min_length": 250,
+            "max_length": 250,
+            "max_creel_number": 5,
+            "max_creel_colors": 3,
+            "creel_switch_penalty": 10
+        }
+    }
+}
