@@ -10,7 +10,7 @@ from src.data_structures.problem.single_bin_problem import SingleBinProblem
 
 from src.data_structures.color.color_collection import ColorCollection
 from src.data_structures.color.composite_color import CompositeColor
-from src.data_structures.color.color import Color
+from src.data_structures.color import color
 
 # class ProblemJsonCM(ColoredMultiBinProblem):
 #     def __init__(self, name, json_dict):
@@ -53,11 +53,11 @@ class ProblemJsonCS(ColoredSingleBinProblem):
         self.max_creel_number: int = 1#json_dict["machine_config"]["max_creel_number"]
         self.max_creel_colors: int = 1#json_dict["machine_config"]["max_creel_colors"]
         self.color_collection = ColorCollection(composite_colors=[
-            CompositeColor(0, [Color.RED]),
-            CompositeColor(1, [Color.GREEN]),
-            CompositeColor(2, [Color.BLUE]),
-            CompositeColor(3, [Color.PURPLE]),
-            CompositeColor(4, [Color.CYAN]),
+            CompositeColor(0, [color.RED]),
+            CompositeColor(1, [color.GREEN]),
+            CompositeColor(2, [color.BLUE]),
+            CompositeColor(3, [color.PURPLE]),
+            CompositeColor(4, [color.CYAN]),
         ])
         self.creel_switch_penalty = 10
 
