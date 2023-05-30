@@ -3,8 +3,8 @@ import itertools
 
 import numpy as np
 import math
-import time
-import signal
+
+
 
 from src.data_structures.machine_config import MachineConfig
 from .single_bin_packing import SingleBinPacking
@@ -21,14 +21,7 @@ from cpmpy.expressions.python_builtins import sum as cpm_sum
 
 from src.models.constraints import non_overlap
 
-# def handler(signum, frame):
-#     print("Forever is over!")
-#     raise Exception("end of time")
 
-# try:
-#     signal.signal(signal.SIGALRM, handler)
-# except:
-#     pass
    
 
 class BaselineSBM(AbstractSingleBinModel):
@@ -107,7 +100,7 @@ class BaselineSBM(AbstractSingleBinModel):
                 # Stay within the width
                 c.append(pxs <= self.single_bin_packing.bin.width - item.widths[i_instance])
                 # stay within the height
-                c.append(pys + item.heights[i_instance] <= item.bin_config.max_packing_zone)
+                c.append(pys + item.heights[i_instance] <= self.single_bin_packing.bin.length)
   
         return c
     
@@ -168,19 +161,6 @@ class BaselineSBM(AbstractSingleBinModel):
         return c
 
 
-    
-    
-    def get_constraints_per_type(self):
-        return {
-            "item_active": self.item_active(),
-            "item_count": self.item_count(),
-            "item_selection" : self.item_selection(),
-            "within_bin": self.within_bin(),
-            "no_overlap": self.no_overlap(),
-            "anti_symmetry": self.anti_symmetry(),
-            "bin_height": self.bin_height(),
-        }
-
     def get_constraints(self):
         c = []
 
@@ -191,7 +171,7 @@ class BaselineSBM(AbstractSingleBinModel):
             self.within_bin,
             self.no_overlap,
             self.anti_symmetry,
-            self.bin_height,
+            self.bin_length,
         ]
 
         for c_f in c_functions:
@@ -200,8 +180,6 @@ class BaselineSBM(AbstractSingleBinModel):
         c.extend(self.constraints)
         self.constraints = c
 
-        print(c)
-        
         return c
 
     def get_objective(self):
@@ -224,44 +202,6 @@ class BaselineSBM(AbstractSingleBinModel):
         return self.single_bin_packing.get_variables()
 
 
-    def solve(self, max_time_in_seconds=1):
-
-        self.c = self.get_constraints()
-        print("constraints", self.c)
-        self.stats["nr_constraints"] = len(self.c)
-
-        self.o = self.get_objective()
-        self.objective += self.o
-
-        self.model += self.constraints
-        self.model.minimize(self.objective)
-        
-        self.sat = False
-
-        print("Transferring...")
-        #try:
-        start_t = time.perf_counter()
-        #signal.alarm(60) 
-        s = CPM_ortools(self.model)
-        #signal.alarm(0)
-        end_t = time.perf_counter()
-        self.stats["transfer_time"] = end_t - start_t
-
-        print("Solving...")
-        start_s = time.perf_counter()
-        res = s.solve( max_time_in_seconds=max_time_in_seconds)
-        end_s = time.perf_counter()
-        self.stats["solve_time"] = end_s - start_s
-        # except: 
-        #     return False
-
-        # Fix the solution to bound variables
-        if res:
-            self.sat = True
-            self.single_bin_packing.fix()
-
-        return res
-    
     def fix(self):
         self.single_bin_packing.fix()
     
@@ -269,6 +209,8 @@ class BaselineSBM(AbstractSingleBinModel):
         return sum([item.free_max_count for item in self.single_bin_packing.items])
     
     def get_stats(self):
+        self.stats["constraints"] = self.constraints_stats
+
         if self.sat:
             self.stats["density"] = float(self.single_bin_packing.density)
             self.stats["bin_length"] = int(self.single_bin_packing.bin.length)
@@ -276,7 +218,6 @@ class BaselineSBM(AbstractSingleBinModel):
             self.stats["counts"] = np.array(self.single_bin_packing.counts).astype(int).tolist()
             self.stats["objective"] = int(self.o.value())
             self.stats["nr_variables"] = len(self.get_variables())
-            #self.stats["ortools_nr_constraints"] = len(self.model.constraints)
             self.stats["ortools_objective"] = int(self.model.objective_value())
         else:
             self.stats["nr_variables"] = len(self.get_variables())
