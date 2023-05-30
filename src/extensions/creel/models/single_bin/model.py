@@ -3,14 +3,20 @@ from __future__ import annotations
 import numpy as np
 
 from src.data_structures.textile_item import TextileItem
-from src.models.single_bin.guillotine.model import GuillotineSBM
+from src.data_structures.abstract_item_packing import AbstractItemPacking
 from src.data_structures.machine_config import MachineConfig
 
-from ....data_structures.creel_section import CreelSection
-from ....data_structures.creel_config import CreelConfig
-from ...creel_section_model import CreelSectionModel
+from ...data_structures.creel_section import CreelSection
+from ...data_structures.creel_config import CreelConfig
+from ..creel_section_model import CreelSectionModel
+from src.models.single_bin_creel.abstract_single_bin_creel_model import AbstractSBMCreel
 
-from ....constraints import within_color_section_guillotine
+from cpmpy.expressions.python_builtins import all as cpm_all
+from cpmpy.expressions.python_builtins import any as cpm_any
+from cpmpy.expressions.python_builtins import max as cpm_max
+from cpmpy.expressions.python_builtins import min as cpm_min
+from cpmpy.expressions.python_builtins import sum as cpm_sum
+from cpmpy.expressions.variables import cpm_array
 
 
 class CreelModel:
@@ -19,7 +25,7 @@ class CreelModel:
     def __init__(self,
                     max_colors: int,
                     items: list[TextileItem],
-                    single_bin_model: GuillotineSBM,
+                    single_bin_model: AbstractSBMCreel,
                     machine_config: MachineConfig,
                 ):
         
@@ -39,10 +45,10 @@ class CreelModel:
 
         self.colors = colors
 
+    
+
     def get_constraints(self):
         c = []
-
-        print("heyyyyy")
 
         # Determine the minimal width of each color section based on all textile items with that color
         min_widths = [np.inf for i in range(len(self.colors))]
@@ -66,7 +72,7 @@ class CreelModel:
         c.extend(creel_section_model.get_constraints())
 
 
-        c.append(within_color_section_guillotine(self.single_bin_model, creel_section))
+        c.append(self.single_bin_model.within_color_section(creel_section))
 
         return c
     
