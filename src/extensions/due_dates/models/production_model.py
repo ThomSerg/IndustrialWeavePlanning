@@ -63,7 +63,6 @@ class ProductionModel():
             self.single_bin_model(
                 machine_config=self.machine_config, 
                 single_bin_packing=free_single_bin,
-                is_end_packing=True
             ) for free_single_bin in self.free_single_bins]
 
         # CPMpy 
@@ -76,7 +75,7 @@ class ProductionModel():
         self.objective = 0
         # -> preference weights
         M = self.machine_config.max_length*self.machine_config.width
-        self.weights = [1*M, 0, 4*M, 0, 1]
+        self.weights = [1*M, 1*M, 4*M, 0, 1]
 
         # To collect data about the algorithm
         self.stats = {}
@@ -195,10 +194,13 @@ class ProductionModel():
     def get_weights(self):
         return self.weights
     
-    def determine_weights(self, preference):
+    def get_weights_filter(self, overproduction_objective=False):
+        return [1, overproduction_objective, 1, 1, 1]
+
+    def determine_weights(self, preference, overproduction_objective=False):
         if preference is None:
             return self.get_weights()
-        return [p*w*len(self.get_weights()) for (p,w) in zip(preference, self.get_weights())]
+        return [p*w*f*len(self.get_weights()) for (p,w,f) in zip(preference, self.get_weights(), self.get_weights_filter(overproduction_objective))]
 
 
     def get_variables(self):
@@ -209,13 +211,13 @@ class ProductionModel():
         return var
 
 
-    def solve(self, max_time_in_seconds=1, preference=None):
+    def solve(self, max_time_in_seconds=1, preference=None, overproduction_objective=False):
 
         self.c = self.get_constraints()
         self.stats["nr_constraints"] = len(self.c)
         print("nr_constraints", len(self.c))
 
-        weights = self.determine_weights(preference)
+        weights = self.determine_weights(preference, overproduction_objective)
         self.o = self.get_objective(weights)
         self.objective += self.o
 

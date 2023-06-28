@@ -220,7 +220,7 @@ class LnsMBM():
 
     
         # Solve to get partial solution
-        sat = self.temp_model.solve(max_time_in_seconds, self.get_preference())
+        sat = self.temp_model.solve(max_time_in_seconds, self.get_preference(), overproduction_objective=True)
         print("Packing SAT:", sat)
         print("nr constraints:", len(self.temp_model.constraints))
 
