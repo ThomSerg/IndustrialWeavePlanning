@@ -3,6 +3,7 @@ import itertools
 
 import math
 import time
+from timeit import default_timer as timer
 
 import numpy as np
 from src.data_structures.bin import Bin
@@ -298,6 +299,8 @@ class AnchorSBM(AbstractSingleBinModel):
     def get_constraints(self):
         c = []
 
+        start = timer()
+
         c_functions = [
             self.item_count,
             self.item_selection,
@@ -315,6 +318,9 @@ class AnchorSBM(AbstractSingleBinModel):
 
         #c.extend(self.constraints)
         self.constraints = c
+
+        end = timer()
+        self.constraints["constraint_time"] = end-start
         
         return c
 

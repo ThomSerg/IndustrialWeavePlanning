@@ -20,9 +20,8 @@ class GuillotineSBMCreel(GuillotineSBM, AbstractSBMCreel):
     def __init__(self, 
                     machine_config: MachineConfig, 
                     single_bin_packing: SingleBinPacking,
-                    is_end_packing: bool = False
                 ):
-        super().__init__(machine_config, single_bin_packing, is_end_packing)
+        super().__init__(machine_config, single_bin_packing)
 
         self.creel_model = CreelModel(
             self.machine_config.max_creel_colors,
@@ -66,4 +65,4 @@ class GuillotineSBMCreel(GuillotineSBM, AbstractSBMCreel):
         return super().get_constraints()
     
     def get_name():
-        return "AnchorMBM&Creel"
+        return "Guillotine&Creel"

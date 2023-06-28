@@ -46,12 +46,12 @@ class ProblemJsonCS(ColoredSingleBinProblem):
         self.widths : npt.NDArray[np.int_] = np.array(json_dict["widths"],dtype='int64')
         self.heights : npt.NDArray[np.int_] = np.array(json_dict["heights"],dtype='int64')
         #self.counts : npt.NDArray[np.int_] = np.array(json_dict["counts"],dtype='int64')
-        self.colors = [i for i in range(len(json_dict["widths"]))] #np.arange(0,len(json_dict["widths"]))#npt.NDArray[np.int_] = np.array(json_dict["colors"],dtype='int64')
+        self.colors : npt.NDArray[np.int_] = np.array(json_dict["colors"],dtype='int64')
         self.machine_width : int = json_dict["machine_config"]["width"]
         self.machine_min_length : int = json_dict["machine_config"]["min_length"]
         self.machine_max_length : int = json_dict["machine_config"]["max_length"]
         self.max_creel_number: int = 1#json_dict["machine_config"]["max_creel_number"]
-        self.max_creel_colors: int = 1#json_dict["machine_config"]["max_creel_colors"]
+        self.max_creel_colors: int = json_dict["machine_config"]["max_creel_colors"]
         self.color_collection = ColorCollection(composite_colors=[
             CompositeColor(0, [color.RED]),
             CompositeColor(1, [color.GREEN]),
@@ -59,7 +59,7 @@ class ProblemJsonCS(ColoredSingleBinProblem):
             CompositeColor(3, [color.PURPLE]),
             CompositeColor(4, [color.CYAN]),
         ])
-        self.creel_switch_penalty = 10
+        self.creel_switch_penalty = 0
 
     @classmethod
     def init_from_file(cls, json_dict) -> list[ProblemJsonCS]:
