@@ -2,6 +2,8 @@ import numpy as np
 import numpy.typing as npt
 from abc import ABCMeta, abstractmethod
 
+import math
+
 from src.data_structures.abstract_item_packing import AbstractItemPacking
 from src.data_structures.machine_config import MachineConfig
 from src.data_structures.item import Item
@@ -36,6 +38,7 @@ class Problem(metaclass=ABCMeta):
         return [
             ItemPacking(
                     item=i, 
+                    max_count=math.floor((self.machine_width*self.machine_max_length)/i.area),
                     bin_config=self.get_bin_config(),
                 ) for i in self.get_items()
         ]
@@ -43,6 +46,7 @@ class Problem(metaclass=ABCMeta):
         return [
             ItemPacking(
                     item=i, 
+                    max_count=math.floor((self.machine_width*self.machine_max_length)/i.area),
                     bin_config=self.get_bin_config(),
                     rotation=True
                 ) for i in self.get_items()

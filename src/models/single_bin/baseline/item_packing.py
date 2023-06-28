@@ -2,6 +2,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 from cpmpy.expressions.variables import NDVarArray, intvar, boolvar, cpm_array
+from src.utils.cpm_extensions import intvar_1D
 
 from src.utils.fixable_object import FixableObject
 import src.utils.fixable_type as ft
@@ -11,8 +12,6 @@ from src.data_structures.abstract_item_packing import AbstractItemPacking
 @dataclass(kw_only=True)
 class ItemPacking(AbstractItemPacking):
 
-    
-    
     fixable_rotation: ft.FixableBoolArray = None
 
     def __post_init__(self):
@@ -37,15 +36,11 @@ class ItemPacking(AbstractItemPacking):
         return self.item.height * self.rotations + self.item.width * (1 - self.rotations)    
 
     def _pos_xs_var(self):
-        if (self.max_count == 1):
-            return cpm_array([intvar(0, self.bin_config.width)])
-        return intvar(0, self.bin_config.width, self.max_count)
+        return intvar_1D(0, self.bin_config.width - self.item.smallest_side, self.max_count)
 
     def _pos_ys_var(self):
-        if (self.max_count == 1):
-            return cpm_array([intvar(self.bin_config.min_packing_zone, self.bin_config.max_packing_zone)])
-        return intvar(self.bin_config.min_packing_zone, self.bin_config.max_packing_zone, self.max_count)
-
+        return intvar_1D(0, self.bin_config.max_length - self.item.smallest_side, self.max_count)
+    
     def _count_var(self):
         return intvar(0, self.max_count)
     

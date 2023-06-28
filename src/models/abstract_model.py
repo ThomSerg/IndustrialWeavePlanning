@@ -1,7 +1,7 @@
 from __future__ import annotations
 from abc import ABCMeta, abstractmethod
 
-#import signal
+
 from contextlib import contextmanager
 from timeit import default_timer as timer
 import threading
@@ -9,9 +9,14 @@ import _thread
 
 
 from cpmpy.solvers import CPM_ortools 
+from cpmpy import Model
 
 from src.data_structures.abstract_item_packing import AbstractItemPacking
 from src.data_structures.abstract_single_bin_packing import AbstractSingleBinPacking
+from src.data_structures.machine_config import MachineConfig
+from src.data_structures.abstract_single_bin_packing import AbstractSingleBinPacking
+
+from src.utils.configuration import Configuration
 
 def constraint(func):
         def count_constraints(self):
@@ -48,10 +53,6 @@ def handler(signum, frame):
     print("Forever is over!")
     raise Exception("end of time")
 
-try:
-    signal.signal(signal.SIGALRM, handler)
-except:
-    pass
 
 class TimeoutException(Exception):
     def __init__(self, msg=''):
@@ -64,7 +65,7 @@ def time_limit(seconds, msg=''):
     try:
         yield
     except KeyboardInterrupt:
-        raise TimeoutException("Timed out for operation {}".format(msg))
+        raise TimeoutException("Timed out for operation \"{}\"".format(msg))
     finally:
         # if the action ends in specified time, timer is canceled
         timer.cancel()
@@ -72,18 +73,24 @@ def time_limit(seconds, msg=''):
 
 class Alarm():
 
-    alarm = None
+    def __init__(self, config:Configuration):
+        self.config = config
 
-    def watchdog():
-        print('Watchdog expired. Exiting...')
-        raise Exception("end of time")
+        if config.linux:
+            import signal
+            self.signal = signal.signal(signal.SIGALRM, handler)
 
     def start(self, timeout):
-        self.alarm = threading.Timer(timeout, Alarm.watchdog)
-        self.alarm.start()
+        if self.config.linux:
+            self.signal.alarm(timeout)
+        else:
+            print("Warning, timeout protection only supported on Linux!")
 
     def cancel(self):
-        self.alarm.cancel()
+        if self.config.linux:
+            self.signal.alarm(0)
+        else:
+            pass
 
 class AbstractModel(metaclass=ABCMeta):
 
@@ -108,19 +115,20 @@ class AbstractModel(metaclass=ABCMeta):
     @abstractmethod
     def get_objective(self): pass
 
-    def solve(self, max_time_in_seconds=1, constraint_creation_timeout=60*2, constraint_transfer_timeout=60):
+    def solve(self, config:Configuration, max_time_in_seconds=1, constraint_creation_timeout=60*3, constraint_transfer_timeout=60*2):
 
-        alarm = Alarm()
+        alarm = Alarm(config=config)
         
         self.sat = False
 
-        
         try:
+            print("Collecting constraints ...")
             with time_limit(constraint_creation_timeout, 'creation'):
-                #alarm.start(constraint_creation_timeout) 
+                alarm.start(constraint_creation_timeout) 
                 self.c = self.get_constraints()
                 self.stats["nr_constraints"] = len(self.c)
-                #alarm.cancel()
+                print("nr constraints:", len(self.c))
+                alarm.cancel()
 
             self.o = self.get_objective()
             self.objective += self.o
@@ -131,9 +139,9 @@ class AbstractModel(metaclass=ABCMeta):
             print("Transferring...")
             with time_limit(constraint_transfer_timeout, 'transfer'):
                 start_t = timer()
-                #alarm.start(constraint_transfer_timeout) 
+                alarm.start(constraint_transfer_timeout) 
                 s = CPM_ortools(self.model)
-                #alarm.cancel()
+                alarm.cancel()
                 end_t = timer()
                 self.stats["transfer_time"] = end_t - start_t
 
@@ -142,7 +150,8 @@ class AbstractModel(metaclass=ABCMeta):
             res = s.solve( max_time_in_seconds=max_time_in_seconds)
             end_s = timer()
             self.stats["solve_time"] = end_s - start_s
-        except: 
+        except TimeoutException as e: 
+            print(e)
             return False
 
         # Fix the solution to bound variables
@@ -163,9 +172,24 @@ class AbstractModel(metaclass=ABCMeta):
 
 class AbstractSingleBinModel(AbstractModel):
 
-    def __init__(self, ItemPacking:AbstractItemPacking, SingleBinPacking:AbstractSingleBinPacking):
-        self.ItemPacking = ItemPacking
-        self.SingleBinPacking = SingleBinPacking
+
+    # Constructor
+    def __init__(self, 
+                    machine_config: MachineConfig, 
+                    single_bin_packing: AbstractSingleBinPacking
+                ):
+
+        # Save the provided arguments as attributes
+        self.machine_config = machine_config
+        self.single_bin_packing = single_bin_packing
+
+        # CPMpy model data
+        self.constraints = []
+        self.objective = 0
+        self.model = Model()
+
+        # To collect data about the algorithm
+        self.stats = {}
 
     @constraint
     def item_count(self):
@@ -179,8 +203,11 @@ class AbstractSingleBinModel(AbstractModel):
         return [ ( item.selected == (item.count != 0) ) for item in self.single_bin_packing.items]
     
     @constraint
-    def bin_length(self):
+    def bin_height(self):
         # The bin length should be at least its minimal value
+        return [ 
+            self.single_bin_packing.bin.config.max_length == self.single_bin_packing.bin.length,
+            ]
         return [ 
             self.single_bin_packing.bin.config.min_length <= self.single_bin_packing.bin.length,
             self.single_bin_packing.bin.length <= self.single_bin_packing.bin.config.max_length 

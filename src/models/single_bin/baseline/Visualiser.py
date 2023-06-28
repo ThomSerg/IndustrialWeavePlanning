@@ -17,7 +17,7 @@ def show_bin_packing(bin_pack: SingleBinPacking):
     np.random.seed(seed=42)
 
     bin_width = bin_pack.bin.width
-    bin_height = bin_pack.bin.length
+    bin_height = bin_pack.bin.max_length
 
     #bin_height /= bin_width
         
@@ -29,6 +29,17 @@ def show_bin_packing(bin_pack: SingleBinPacking):
     
     ax.set_xlim((0, 1))
     ax.set_ylim((0, 1))
+
+    ax.add_patch(
+        plt.Rectangle(
+            (0,0),
+            1,
+            1,
+            edgecolor='green',
+            facecolor="white",
+            linewidth=5
+        )
+    )
 
     cmap = get_cmap(len(bin_pack.items))
 

@@ -14,7 +14,7 @@ from src.models.single_bin.baseline.item_packing import ItemPacking
 from .Visualiser import show_bin_packing
 from src.models.abstract_model import AbstractSingleBinModel, constraint
 
-from cpmpy import Model
+
 from cpmpy.solvers import CPM_ortools 
 from cpmpy.expressions.python_builtins import all, any
 from cpmpy.expressions.python_builtins import sum as cpm_sum
@@ -28,40 +28,29 @@ class BaselineSBM(AbstractSingleBinModel):
 
     ItemPacking = ItemPacking
     single_bin_packing = SingleBinPacking
-    
+
     # Constructor
     def __init__(self, 
                     machine_config: MachineConfig, 
                     single_bin_packing: SingleBinPacking
                 ):
-
-        # Save the provided arguments as attributes
-        self.machine_config = machine_config
-        self.single_bin_packing = single_bin_packing
-
-        # CPMpy model data
-        self.constraints = []
-        self.objective = 0
-        self.model = Model()
-
-        # To collect data about the algorithm
-        self.stats = {}
-
+        super().__init__(machine_config, single_bin_packing)
+    
 
     # Alternative constructor from problem formulation
     @classmethod
-    def init_from_problem(cls, problem: ColoredSingleBinProblem) -> Model:
+    def init_from_problem(cls, problem: ColoredSingleBinProblem) -> BaselineSBM:
         # Create items to pack
-        items = [
-            ItemPacking(
-                    item=i, 
-                    max_count=math.floor((problem.machine_width*problem.machine_max_length)/i.area), 
-                    bin_config=problem.get_bin_config(),
-                ) for i in problem.get_items()
-        ]
+        # items = [
+        #     ItemPacking(
+        #             item=i, 
+        #             max_count=math.floor((problem.machine_width*problem.machine_max_length)/i.area), 
+        #             bin_config=problem.get_bin_config(),
+        #         ) for i in problem.get_items()
+        # ]
         # Create the packing variables
         sbp = SingleBinPacking(
-                _items=items,
+                _items=problem.get_item_packing(ItemPacking),
                 bin=Bin(config=problem.get_bin_config()),
             )
         # Construct the model
@@ -171,7 +160,7 @@ class BaselineSBM(AbstractSingleBinModel):
             self.within_bin,
             self.no_overlap,
             self.anti_symmetry,
-            self.bin_length,
+            self.bin_height,
         ]
 
         for c_f in c_functions:
@@ -209,8 +198,7 @@ class BaselineSBM(AbstractSingleBinModel):
         return sum([item.free_max_count for item in self.single_bin_packing.items])
     
     def get_stats(self):
-        self.stats["constraints"] = self.constraints_stats
-
+        
         if self.sat:
             self.stats["density"] = float(self.single_bin_packing.density)
             self.stats["bin_length"] = int(self.single_bin_packing.bin.length)
@@ -221,6 +209,8 @@ class BaselineSBM(AbstractSingleBinModel):
             self.stats["ortools_objective"] = int(self.model.objective_value())
         else:
             self.stats["nr_variables"] = len(self.get_variables())
+
+        self.stats["constraints"] = self.constraints_stats
 
         return self.stats
     

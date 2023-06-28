@@ -1,4 +1,4 @@
-import time
+from timeit import default_timer as timer
 import pickle
 import os
 import json
@@ -17,7 +17,11 @@ from src.models.abstract_model import AbstractMultiBinModel, AbstractSingleBinMo
 #from iterative.models.MultiBin.AbstractProductionModel import AbstractProductionModel
 from src.extensions.due_dates.models.production_model import ProductionModel
 
+from src.utils.configuration import Configuration
+
 import cpmpy
+
+
 
 
 class BenchmarkSave():
@@ -33,6 +37,8 @@ class BenchmarkSave():
 
 def run_single_bin_benchmark(models: list[AbstractSingleBinModel], problems: list[SingleBinProblem], max_time_seconds=20):
 
+    config = Configuration()
+
     # problems.reverse()
     
     for problem in problems:
@@ -40,55 +46,57 @@ def run_single_bin_benchmark(models: list[AbstractSingleBinModel], problems: lis
         print(problem.json_dict)
         for model in models:
 
-            start = time.perf_counter()
+            start = timer()
             initialised_model = model.init_from_problem(problem)
-            sat = initialised_model.solve(max_time_seconds)#60*4)
-            end = time.perf_counter()
-
-            bench_save = BenchmarkSave(str(problem.json_dict), sat, initialised_model)
-            file_directory = os.path.join(os.getcwd(), model.get_name())
-            file_name = os.path.join(file_directory, problem.name + ".pickle")
-
-            if not os.path.exists(file_directory):
-                os.makedirs(file_directory)
-
-            with open(file_name, 'wb') as handle:
-                pickle.dump(bench_save, handle, protocol=pickle.HIGHEST_PROTOCOL)
+            sat = initialised_model.solve(config=config, max_time_in_seconds=max_time_seconds)
+            end = timer()
 
             print("SAT", sat)
             print("TIME", end-start)
 
-            
             stats = initialised_model.get_stats()
             stats["total_time"] = end-start
-
             print("STATS", stats)
+
+            #bench_save = BenchmarkSave(str(problem.json_dict), sat, initialised_model)
+            file_directory = os.path.join(os.getcwd(), model.get_name())
+            #file_name = os.path.join(file_directory, problem.name + ".pickle")
+
+            if not os.path.exists(file_directory):
+                os.makedirs(file_directory)
+
+            # with open(file_name, 'wb') as handle:
+            #     pickle.dump(bench_save, handle, protocol=pickle.HIGHEST_PROTOCOL)
+
+            
             file_name = os.path.join(file_directory, problem.name + ".json")
             with open(file_name, 'w') as handle:
                 handle.write(json.dumps(stats, indent=4))
 
             if sat:
-                #show_bin_packing(initialised_model.single_bin_packing)
                 initialised_model.visualise()
                 plt.savefig(os.path.join(file_directory, problem.name + '.png'))
-
                 plt.show()
       
 
 def run_single_bin_benchmark_repeated(models: list[AbstractSingleBinModel], problems: list[SingleBinProblem], start_index=0, max_time_seconds=20, nr_repeats=1):
 
+    config = Configuration()
+
     # problems.reverse()
 
     for problem in problems:
-        print("PROBLEM", problem.name)
-        print(problem.json_dict)
+
+        print("PROBLEM", problem.name, problem.json_dict)
+
         for model in models:
+            print("Running model [" + str(model) + "]")
             for i_repeat in range(nr_repeats):
 
-                start = time.perf_counter()
+                start = timer()
                 initialised_model = model.init_from_problem(problem)
-                sat = initialised_model.solve(max_time_seconds)#60*4)
-                end = time.perf_counter()
+                sat = initialised_model.solve(config=config, max_time_in_seconds=max_time_seconds)#60*4)
+                end = timer()
 
                 bench_save = BenchmarkSave(str(problem.json_dict), sat, initialised_model)
                 file_directory = os.path.join(os.getcwd(), "results", model.get_name())
@@ -186,14 +194,14 @@ def run_multi_bin_benchmark(
         print(problem.json_dict)
         for (solver_model, production_model, single_bin_model) in zip(solver_models, production_models, single_bin_models):
 
-            start = time.perf_counter()
+            start = timer()
             initialised_model = solver_model.init_from_problem(
                 problem,
                 production_model,
                 single_bin_model
                 )
             sat = initialised_model.solve(args=args)
-            end = time.perf_counter()
+            end = timer()
 
             bench_save = BenchmarkSave(str(problem.json_dict), sat, initialised_model)
             file_directory = os.path.join(os.getcwd(), "results")

@@ -16,7 +16,7 @@ class Bin(FixableObject):
     fixable_length: ft.FixableInt = None
 
     def __post_init__(self):
-        if self.fixable_length is None: self.fixable_length = ft.FixableInt(fixable_parent=self, free_value=intvar(1, self.config.max_length))
+        if self.fixable_length is None: self.fixable_length = ft.FixableInt(fixable_parent=self, free_value=intvar(self.config.min_length, self.config.max_length))
 
     def get_variables(self):
         return [self.length]
@@ -32,6 +32,10 @@ class Bin(FixableObject):
     @property
     def max_length(self) -> int:
         return self.config.max_length
+    
+    @property
+    def min_length(self) -> int:
+        return self.config.min_length
 
     @property
     def area(self) -> intvar:

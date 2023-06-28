@@ -37,22 +37,10 @@ class AnchorSBM(AbstractSingleBinModel):
     # Constructor
     def __init__(self, 
                     machine_config: MachineConfig, 
-                    single_bin_packing: SingleBinPacking,
-                    is_end_packing: bool = False
+                    single_bin_packing: SingleBinPacking
                 ):
 
-        # Save the provided arguments as attributes
-        self.machine_config = machine_config
-        self.single_bin_packing = single_bin_packing
-        self.is_end_packing = is_end_packing
-
-        # CPMpy model data
-        self.constraints = []
-        self.objective = 0
-        self.model = Model()
-
-        # To collect data about the algorithm
-        self.stats = {}
+        super().__init__(machine_config, single_bin_packing)
 
     # Alternative constructor from problem formulation
     @classmethod
@@ -63,11 +51,11 @@ class AnchorSBM(AbstractSingleBinModel):
                 _items_rotated=problem.get_item_packing_rotated(ItemPacking),
                 bin=Bin(config=problem.get_bin_config()),
             )
+
         # Construct the model
         return cls(
             problem.get_machine_config(),
             sbp,
-            True
         )
     
     # Name of the model
@@ -110,6 +98,18 @@ class AnchorSBM(AbstractSingleBinModel):
                             ))
     
         return c
+    
+    @constraint
+    def within_bin(self):
+        c = []
+
+        # for item in self.single_bin_packing.items:
+        #     l = max(((self.single_bin_packing.bin.min_length // item.height - 1), 0))
+        #     u = max(((self.single_bin_packing.bin.max_length // item.height - 1), 0))
+        #     for y in range(l,u):
+        #         c.extend(item.pos_ys_arr[y,:] - item.heights[y,:] <= self.single_bin_packing.bin.length)
+        
+        return c
 
     @constraint
     def no_overlap(self):
@@ -133,19 +133,11 @@ class AnchorSBM(AbstractSingleBinModel):
             w_1, w_2 = item_1.width, item_2.width
             h_1, h_2 = item_1.height, item_2.height
 
-
-            #y_1_lower = max((math.floor(((min_y_2 - 0.5)*h_2 - 1.5*h_1) / h_1), 0))
-            # TODO fix multiple bin sections
             y_1_lower = 0
 
             for y_1 in range(y_1_lower, max_y_1+1):
                 
                 for x_1 in range(0, max_x_1):
-
-                    
-                    # if y_1 < min_y_1:
-                    #     y_2_lower = max((math.floor(((y_1 - 0.5)*h_1 - 1.5*h_2) / h_2), min_y_2))
-                    # else:
 
                     # y2*h2 + 2*h2-1 > y1*h1
                     y_2_lower = max((math.ceil((y_1*h_1 - 2*h_2 + 1)/h_2), 0))
@@ -156,7 +148,6 @@ class AnchorSBM(AbstractSingleBinModel):
                     x_2_lower = max((math.ceil((x_1*w_1 - 2*w_2 + 1)/w_2), 0))
                     x_2_upper = min((math.floor(((x_1+2)*w_1 - 1)/w_2), max_x_2-1))
 
-
                     for y_2 in range(y_2_lower, y_2_upper+1):
                         for x_2 in range(x_2_lower, x_2_upper+1):
 
@@ -164,12 +155,7 @@ class AnchorSBM(AbstractSingleBinModel):
                             pos_x_2 = pos_xs_2[y_2,x_2]
                             pos_y_1 = pos_ys_1[y_1,x_1]
                             pos_y_2 = pos_ys_2[y_2,x_2]
-                            
-                            c_y_1 = float(y_1*h_1) + 0.5*h_1
-                            c_y_2 = float(y_2*h_2) + 0.5*h_2
-                            c_x_1 = float(x_1*w_1) + 0.5*w_1
-                            c_x_2 = float(x_2*w_2) + 0.5*w_2
-                            
+                                                        
                             # TODO test met nieuwe formulering
                             a_1 = item_2.max_move_x[y_2,x_2]
                             c_1 = ((x_2+1)*w_2) - (x_2*w_2 - item_2.min_move_x[y_2,x_2])
@@ -184,121 +170,35 @@ class AnchorSBM(AbstractSingleBinModel):
                             # items die zeker overlappen, haalde niet veel uit, zelfde aantal constraints, klein beetje sneller (0.5s), ook iets sneller transfer time
                             # -> komt neer op dat één item in een ander ligt
                             if (min(d_1,d_2) > max(b_1,b_2)) and (min(c_1,c_2) > max(a_1,a_2)):
-        
-
-                            # if (math.floor(c_x_1) > (x_2*w_2) + (item_2.max_move_x[y_2,x_2] - (x_2+1)*w_2) and \
-                            #     math.ceil(c_x_1) < ((x_2+1)*w_2) - (x_2*w_2 - item_2.min_move_x[y_2,x_2]) and \
-                            #     math.floor(c_y_1) > (y_2*h_2) + (item_2.max_move_y[y_2,x_2] - (y_2+1)*h_2) and \
-                            #     math.ceil(c_y_1) < ((y_2+1)*h_2) - (y_2*h_2 - item_2.min_move_y[y_2,x_2])) \
-                            #     or \
-                            #    (math.floor(c_x_2) > (x_1*w_1) + (item_1.max_move_x[y_1,x_1] - (x_1+1)*w_1) and \
-                            #     math.ceil(c_x_2) < ((x_1+1)*w_1) - (x_1*w_1 - item_1.min_move_x[y_1,x_1]) and \
-                            #     math.floor(c_y_2) > (y_1*h_1) + (item_1.max_move_y[y_1,x_1] - (y_1+1)*h_1) and \
-                            #     math.ceil(c_y_2) < ((y_1+1)*h_1) - (y_1*h_1 - item_1.min_move_y[y_1,x_1])):
 
                                 if y_2 < min_y_2 and item_2.active_arr[y_2,x_2]:
                                     c.append(~item_1.active_arr[y_1,x_1])
                                 elif y_1 < min_y_1 and item_1.active_arr[y_1,x_1]:
                                     c.append(~item_2.active_arr[y_2,x_2])
                                 else:
-                                    # print( all([item_1.active_arr[y_1,x_1],item_2.active_arr[y_2,x_2]]))
-                                    # print(~ all([item_1.active_arr[y_1,x_1],item_2.active_arr[y_2,x_2]]))
-                                    # print(not all([item_1.active_arr[y_1,x_1],item_2.active_arr[y_2,x_2]]))
                                     c.append(~all([item_1.active_arr[y_1,x_1],item_2.active_arr[y_2,x_2]]))
                                 continue
 
                             consequence = []
-
-                            ## TODO deze van de center representatie weg doen
-                            if y_2 < min_y_2:
-                                if c_y_1 <= c_y_2:
-                                    consequence.append( (pos_y_1 + h_1 <= pos_y_2) )
-                                if c_y_2 <= c_y_1:
-                                    consequence.append( (int(pos_y_2) + int(h_2) <= pos_y_1) )
-                                if c_x_1 <= c_x_2:
-                                    consequence.append( (pos_x_1 + w_1 <= pos_x_2) )
-                                if c_x_2 <= c_x_1:
-                                    consequence.append( (int(pos_x_2) + int(w_2) <= pos_x_1) )
-
-                                #print(consequence)
-
                             
-                                if item_2.active_arr[y_2,x_2]:
-                                    c.append(
-                                        (item_1.active_arr[y_1,x_1]).implies(
-                                            any(consequence)
-                                        )
-                                    )
-                            elif y_1 < min_y_1:
-                                if c_y_1 <= c_y_2:
-                                    consequence.append( (int(pos_y_1) + int(h_1) <= pos_y_2) )
-                                if c_y_2 <= c_y_1:
-                                    consequence.append( (pos_y_2 + h_2 <= pos_y_1) )
-                                if c_x_1 <= c_x_2:
-                                    consequence.append( (int(pos_x_1) + int(w_1) <= pos_x_2) )
-                                if c_x_2 <= c_x_1:
-                                    consequence.append( (pos_x_2 + w_2 <= pos_x_1) )
+                            if y_1*h_1 <= y_2*h_2:
+                            #if c_y_1 <= c_y_2:
+                                consequence.append( (pos_y_1 + h_1 <= pos_y_2) )
+                            if y_2*h_2 <= y_1*h_1:
+                            #if c_y_2 <= c_y_1:
+                                consequence.append( (pos_y_2 + h_2 <= pos_y_1) )
+                            if x_1*w_1 <= x_2*w_2:
+                            #if c_x_1 <= c_x_2:
+                                consequence.append( (pos_x_1 + w_1 <= pos_x_2) )
+                            if x_2*w_2 <= x_1*w_1:
+                            #if c_x_2 <= c_x_1:
+                                consequence.append( (pos_x_2 + w_2 <= pos_x_1) )
 
-                                #print(consequence)
-
-                            
-                                if item_1.active_arr[y_1,x_1]:
-                                    c.append(
-                                        (item_2.active_arr[y_2,x_2]).implies(
-                                            any(consequence)
-                                        )
-                                    )
-                            else:
-                                if y_1*h_1 <= y_2*h_2:
-                                #if c_y_1 <= c_y_2:
-                                    consequence.append( (pos_y_1 + h_1 <= pos_y_2) )
-                                if y_2*h_2 <= y_1*h_1:
-                                #if c_y_2 <= c_y_1:
-                                    consequence.append( (pos_y_2 + h_2 <= pos_y_1) )
-                                if x_1*w_1 <= x_2*w_2:
-                                #if c_x_1 <= c_x_2:
-                                    consequence.append( (pos_x_1 + w_1 <= pos_x_2) )
-                                if x_2*w_2 <= x_1*w_1:
-                                #if c_x_2 <= c_x_1:
-                                    consequence.append( (pos_x_2 + w_2 <= pos_x_1) )
-
-                                c.append(
-                                    (item_1.active_arr[y_1,x_1] & item_2.active_arr[y_2,x_2]).implies(
-                                        any(consequence)
-                                    )
+                            c.append(
+                                (item_1.active_arr[y_1,x_1] & item_2.active_arr[y_2,x_2]).implies(
+                                    any(consequence)
                                 )
-
-                            # Andere formulering is sneller
-                            # if y_1 < min_y_1:
-                            #     if item_1.active_arr[y_1,x_1]:
-                            #         c.append(
-                            #             (item_2.active_arr[y_2,x_2]).implies(
-                            #                 (int(pos_x_1) + int(w_1) <= pos_x_2) |
-                            #                 (pos_x_2 + w_2 <= int(pos_x_1)) | # TODO kan verbeteren met inzicht obv relatieve positie middelpunten
-                            #                 (int(pos_y_1) + int(h_1) <= pos_y_2) |
-                            #                 (pos_y_2 + h_2 <= int(pos_y_1))
-                            #             )
-                            #         )
-                            # elif y_2 < min_y_2:
-                            #     if item_2.active_arr[y_2,x_2]:
-                            #         c.append(
-                            #             (item_1.active_arr[y_1,x_1]).implies(
-                            #                 (pos_x_1 + w_1 <= int(pos_x_2)) |
-                            #                 (int(pos_x_2) + int(w_2) <= pos_x_1) | # TODO kan verbeteren met inzicht obv relatieve positie middelpunten
-                            #                 (pos_y_1 + h_1 <= int(pos_y_2)) |
-                            #                 (int(pos_y_2) + int(h_2) <= pos_y_1)
-                            #             )
-                            #         )
-                            # else:
-
-                            #     c.append(
-                            #         (item_1.active_arr[y_1,x_1] & item_2.active_arr[y_2,x_2]).implies(
-                            #             (pos_x_1 + w_1 <= pos_x_2) |
-                            #             (pos_x_2 + w_2 <= pos_x_1) | # TODO kan verbeteren met inzicht obv relatieve positie middelpunten
-                            #             (pos_y_1 + h_1 <= pos_y_2) |
-                            #             (pos_y_2 + h_2 <= pos_y_1)
-                            #         )
-                            #     )
+                            )
 
     
         # Two items of the same type should not overlap
@@ -354,11 +254,35 @@ class AnchorSBM(AbstractSingleBinModel):
         return c
     
     @constraint
+    def anti_symmetry(self):
+        c = []
+
+        # Items of the same type have a predetermined spacial order
+        for item in self.single_bin_packing.items:
+            for (i_instance_1, i_instance_2) in itertools.pairwise(range(item.nr_width_repeats()*item.nr_length_repeats())): 
+
+                c.append(
+                    (
+                        (item.active[i_instance_1]) & (item.active[i_instance_2])
+                    ).implies(
+                        (item.pos_xs[i_instance_1] < item.pos_xs[i_instance_2]) |
+                        (
+                            (item.pos_xs[i_instance_1] == item.pos_xs[i_instance_2]) &
+                            (item.pos_ys[i_instance_1] < item.pos_ys[i_instance_2]) 
+                        )
+                    )
+                )
+        
+        return c
+    
+    @constraint
     def bin_capacity(self):
         c = []
 
         # The total sum of the packed items' areas should not exceed the total bin area
+        #c.append(sum([item.count*item.item.area for item in self.single_bin_packing.items]) <= self.single_bin_packing.bin.area)
         c.append(sum([sum(item.active)*item.item.area for item in self.single_bin_packing.items]) <= self.single_bin_packing.bin.area)
+
 
         return c
 
@@ -377,7 +301,9 @@ class AnchorSBM(AbstractSingleBinModel):
         c_functions = [
             self.item_count,
             self.item_selection,
+            #self.within_bin,
             self.no_overlap,
+            #self.anti_symmetry,
             self.bin_height,
             self.bin_capacity
         ]
@@ -385,7 +311,9 @@ class AnchorSBM(AbstractSingleBinModel):
         for c_f in c_functions:
             c.extend(c_f())
 
-        c.extend(self.constraints)
+        #c.append(self.single_bin_packing.counts == [2, 0, 0, 0, 0, 0, 1, 0, 0, 1])
+
+        #c.extend(self.constraints)
         self.constraints = c
         
         return c
@@ -396,8 +324,7 @@ class AnchorSBM(AbstractSingleBinModel):
         o1 = objectives.waste(self.single_bin_packing)
 
         # Preference for lower left corner
-        o4 = cpm_sum([ cpm_sum(item.pos_xs_arr*item.active_arr) + cpm_sum(item.pos_ys_arr*item.active_arr) 
-            for item in self.single_bin_packing.items if ((len(item.pos_xs_arr.flatten()) != 0) and (len(item.pos_ys_arr.flatten()) != 0) and (len(item.active_arr.flatten()) != 0))])
+        o4 = cpm_sum([((item.pos_xs[i_instance] + item.pos_ys[i_instance])*(item.active[i_instance])) for item in self.single_bin_packing.items for i_instance in range(item.nr_length_repeats()*item.nr_width_repeats())])
 
         # Very large number
         M = self.single_bin_packing.bin.width*self.single_bin_packing.bin.max_length
@@ -409,36 +336,6 @@ class AnchorSBM(AbstractSingleBinModel):
 
     def get_variables(self):
         return self.single_bin_packing.get_variables()
-
-
-    def solve(self, max_time_in_seconds=1):
-        
-        self.c = self.get_constraints()
-        self.stats["nr_constraints"] = len(self.c)
-
-        self.o = self.get_objective()
-        self.objective += self.o
-
-        self.model += self.constraints
-        self.model.minimize(self.objective)
-    
-        print("Transferring...")
-        start_t = time.perf_counter()
-        s = CPM_ortools(self.model)
-        end_t = time.perf_counter()
-        self.stats["transfer_time"] = end_t - start_t
-
-        print("Solving...")
-        start_s = time.perf_counter()
-        res = s.solve( max_time_in_seconds=max_time_in_seconds)
-        end_s = time.perf_counter()
-        self.stats["solve_time"] = end_s - start_s
-
-        # Fix the solution to bound variables
-        if res:
-            self.single_bin_packing.fix()
-
-        return res
     
     def fix(self):
         self.single_bin_packing.fix()
@@ -458,6 +355,8 @@ class AnchorSBM(AbstractSingleBinModel):
         self.stats["nr_variables"] = len(self.get_variables())
         #self.stats["ortools_nr_constraints"] = len(self.model.constraints)
         self.stats["ortools_objective"] = int(self.model.objective_value())
+
+        self.stats["constraints"] = self.constraints_stats
 
         return self.stats
 

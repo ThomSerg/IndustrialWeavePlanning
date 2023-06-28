@@ -31,26 +31,13 @@ class GuillotineSBM(AbstractSingleBinModel):
 
     def __init__(self, 
                     machine_config: MachineConfig, 
-                    single_bin_packing: SingleBinPacking,
-                    is_end_packing: bool = False
+                    single_bin_packing: SingleBinPacking
                 ):
-
-        # Save the provided arguments as attributes
-        self.machine_config = machine_config
-        self.single_bin_packing = single_bin_packing
-        self.is_end_packing = is_end_packing
-
-        # Will at the end containt all constraints for later retrieval
-        self.constraints = []
-
-        self.stats = {}
+        super().__init__(machine_config, single_bin_packing)
 
         self.init_variables()
         self.model = Model()
-        self.cpm_vars = []
-        self.vals = []
-
-        
+       
 
     @classmethod
     def init_from_problem(cls, problem) -> GuillotineSBM:
@@ -62,22 +49,21 @@ class GuillotineSBM(AbstractSingleBinModel):
         return cls(
             problem.get_machine_config(),
             sbp,
-            True
         )
     
     def get_name():
         return "Guillotine"
 
     def init_variables(self):
-        self.bin_length = self.machine_config.max_length #intvar(self.machine_config.min_length, self.machine_config.max_length) # the bin length
+        self.bin_length = self.single_bin_packing.bin.length #intvar(self.machine_config.min_length, self.machine_config.max_length) # the bin length
         self.bin_width = self.machine_config.width # the bin width
         self.items = self.single_bin_packing.items
         self.widths = sorted(set([item.width for item in self.items]))
         self.heights = [item.height for item in self.items]
 
-        self.P = self.bin_length // min(self.heights) # upper limit on number of cutting patterns
+        self.P = self.machine_config.max_length // min(self.heights) # upper limit on number of cutting patterns
         self.Pmin = min(self.widths) # minimum length of cutting pattern
-        self.Pmax = self.bin_length # maximum length of cutting pattern
+        self.Pmax = self.machine_config.max_length # maximum length of cutting pattern
 
         self.A = self.bin_width // min(self.widths) # upper bound on number of strips
         self.B = self.Pmax // min(self.heights) # upper bound on number of vertical cuts
@@ -208,7 +194,7 @@ class GuillotineSBM(AbstractSingleBinModel):
 
         for i,count in enumerate(self.single_bin_packing.counts):
             c.append(count == cpm_sum(self.sigma[:,:,:,i]) + cpm_sum(self.sigma[:,:,:,i+self.I//2]))
-        c.append(self.single_bin_packing.bin.length == self.bin_length)
+        #c.append(self.single_bin_packing.bin.length == self.bin_length)
 
         c.extend(self.constraints)
         self.constraints = c
@@ -228,37 +214,14 @@ class GuillotineSBM(AbstractSingleBinModel):
     def get_variables(self):
         return self.beta.tolist() + self.pattern_length.tolist() + self.gamma.flatten().tolist() + self.sigma.flatten().tolist()
     
-    def solve(self, max_time_in_seconds=1):
-
-        self.c = self.get_constraints()
-        self.stats["nr_constraints"] = len(self.c)
-        self.model += self.c
-
-        self.o = self.get_objective()
-        self.model.minimize(self.o)
-
-        print("Transferring...")
-        start_t = time.perf_counter()
-        s = CPM_ortools(self.model)
-        s.solution_hint(self.cpm_vars, self.vals)
-        end_t = time.perf_counter()
-        self.stats["transfer_time"] = end_t - start_t
-
-        print("Solving...")
-        start_s = time.perf_counter()
-        res = s.solve( max_time_in_seconds=max_time_in_seconds)
-        end_s = time.perf_counter()
-        self.stats["solve_time"] = end_s - start_s
-
-        return res
     
     def fix(self):
         self.single_bin_packing.fix()
 
     def get_stats(self):
 
-        self.stats["density"] = float(np.sum([np.sum(self.sigma[:,:,:,i]).value()*self.items[i].item.area for i in range(self.I)]) / (self.bin_length*self.bin_width))
-        self.stats["bin_length"] = int(self.bin_length)
+        self.stats["density"] = float(np.sum([np.sum(self.sigma[:,:,:,i]).value()*self.items[i].item.area for i in range(self.I)]) / (self.bin_length.value()*self.bin_width))
+        self.stats["bin_length"] = int(self.bin_length.value())
         self.stats["fulfilled"] = np.array([np.sum(self.sigma.value()[:,:,:,i]) + np.sum(self.sigma.value()[:,:,:,i+self.I//2]) for i in range(self.I//2)]).astype(int).tolist()
         self.stats["counts"] = np.array(self.single_bin_packing.counts).astype(int).tolist()
 
@@ -266,6 +229,8 @@ class GuillotineSBM(AbstractSingleBinModel):
         self.stats["nr_variables"] = len(self.get_variables())
         #self.stats["ortools_nr_constraints"] = len(self.model.constraints)
         self.stats["ortools_objective"] = int(self.model.objective_value())
+
+        self.stats["constraints"] = self.constraints_stats
 
         return self.stats
 

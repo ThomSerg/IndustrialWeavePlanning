@@ -33,7 +33,7 @@ def show_bin_packing(bin_pack: SingleBinPacking):
             show_item(ax, item, bin_width, bin_height, cmap(i%(len(bin_pack.items)//2)))
 
     show_bin_length(ax, bin_pack.bin)
-    show_solving_zone(ax, bin_pack.bin, bin_height)
+    #show_solving_zone(ax, bin_pack.bin, bin_height)
 
     #return plt.show()
 
@@ -43,7 +43,7 @@ def show_bin_length(ax:Axes, bin: Bin):
 def show_solving_zone(ax:Axes, bin:Bin, bin_height):
     ax.add_patch(
                     plt.Rectangle(
-                        (bin.config.min_packing_zone/bin_height,0),
+                        (0,0),
                         (bin.config.max_packing_zone - bin.config.min_packing_zone)/bin_height,
                         1,
                         edgecolor='green',
