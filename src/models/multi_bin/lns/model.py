@@ -57,14 +57,15 @@ class LnsMBM():
         return "MultiLnsModel"
     
     # Solve the model
-    def solve(self, args: dict):
+    def solve(self, args: dict, bin_solutions=None):
         nr_iterations = args.get("nr_iterations", 1)
         packing_timeout = args.get("packing_timeout", 60)
         production_timeout = args.get("production_timeout", 5)
 
         start_time = time.perf_counter()
         
-        bin_solutions = []      # To collect the bin packings in between iterations
+        if bin_solutions is None: bin_solutions = []
+        # bin_solutions = []      # To collect the bin packings in between iterations
         self.models = []        # To collect the models of every iteration
         sat = False             # Whether the total model is SAT
 
