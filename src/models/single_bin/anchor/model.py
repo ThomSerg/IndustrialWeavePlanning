@@ -104,11 +104,17 @@ class AnchorSBM(AbstractSingleBinModel):
     def within_bin(self):
         c = []
 
-        # for item in self.single_bin_packing.items:
-        #     l = max(((self.single_bin_packing.bin.min_length // item.height - 1), 0))
-        #     u = max(((self.single_bin_packing.bin.max_length // item.height - 1), 0))
-        #     for y in range(l,u):
-        #         c.extend(item.pos_ys_arr[y,:] - item.heights[y,:] <= self.single_bin_packing.bin.length)
+        for item in self.single_bin_packing.items:
+            l = max(((self.single_bin_packing.bin.min_length // item.height - 1), 0))
+            #u = max(((self.single_bin_packing.bin.max_length // item.height - 1), 0))
+            for y in range(l,item.nr_length_repeats()):
+                for x in range(item.nr_width_repeats()):
+                    c.append(
+                        item.active_arr[y,x].implies(
+                            item.pos_ys_arr[y,x] + item.heights_arr[y,x] <= self.single_bin_packing.bin.length
+                        )
+                    )
+        #     #c.extend((item.pos_ys_arr[l:,:] + item.heights_arr[l:,:])*item.active_arr[l:,:] <= self.single_bin_packing.bin.length)
         
         return c
 
@@ -255,46 +261,14 @@ class AnchorSBM(AbstractSingleBinModel):
         return c
     
     @constraint
-    def anti_symmetry(self):
-        c = []
-
-        # Items of the same type have a predetermined spacial order
-        for item in self.single_bin_packing.items:
-            for (i_instance_1, i_instance_2) in itertools.pairwise(range(item.nr_width_repeats()*item.nr_length_repeats())): 
-
-                c.append(
-                    (
-                        (item.active[i_instance_1]) & (item.active[i_instance_2])
-                    ).implies(
-                        (item.pos_xs[i_instance_1] < item.pos_xs[i_instance_2]) |
-                        (
-                            (item.pos_xs[i_instance_1] == item.pos_xs[i_instance_2]) &
-                            (item.pos_ys[i_instance_1] < item.pos_ys[i_instance_2]) 
-                        )
-                    )
-                )
-        
-        return c
-    
-    @constraint
     def bin_capacity(self):
         c = []
 
         # The total sum of the packed items' areas should not exceed the total bin area
-        #c.append(sum([item.count*item.item.area for item in self.single_bin_packing.items]) <= self.single_bin_packing.bin.area)
-        c.append(sum([sum(item.active)*item.item.area for item in self.single_bin_packing.items]) <= self.single_bin_packing.bin.area)
-
+        #c.append(sum([sum(item.active)*item.item.area for item in self.single_bin_packing.items]) <= self.single_bin_packing.bin.area)
 
         return c
 
-    def get_constraints_per_type(self):
-        return {
-            "determine_item_count": self.item_count(),
-            "item_selection": self.item_selection(),
-            "no_overlap": self.no_overlap(),
-            "bin_height": self.bin_height(),
-            "bin_capacity": self.bin_capacity(),
-        }
 
     def get_constraints(self):
         c = []
@@ -304,23 +278,25 @@ class AnchorSBM(AbstractSingleBinModel):
         c_functions = [
             self.item_count,
             self.item_selection,
-            #self.within_bin,
             self.no_overlap,
-            #self.anti_symmetry,
             self.bin_height,
             self.bin_capacity
         ]
 
+        if self.machine_config.min_length != self.machine_config.max_length:
+            c_functions.append(
+                self.within_bin
+            )
+
         for c_f in c_functions:
             c.extend(c_f())
 
-        #c.append(self.single_bin_packing.counts == [2, 0, 0, 0, 0, 0, 1, 0, 0, 1])
+        c.append(self.single_bin_packing.bin.length < self.single_bin_packing.bin.max_length)
 
-        #c.extend(self.constraints)
         self.constraints = c
 
         end = timer()
-        self.constraints["constraint_time"] = end-start
+        self.stats["constraint_time"] = end-start
         
         return c
 

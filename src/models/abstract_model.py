@@ -205,9 +205,9 @@ class AbstractSingleBinModel(AbstractModel):
     @constraint
     def bin_height(self):
         # The bin length should be at least its minimal value
-        return [ 
-            self.single_bin_packing.bin.config.max_length == self.single_bin_packing.bin.length,
-            ]
+        # return [ 
+        #     self.single_bin_packing.bin.config.max_length == self.single_bin_packing.bin.length,
+        #     ]
         return [ 
             self.single_bin_packing.bin.config.min_length <= self.single_bin_packing.bin.length,
             self.single_bin_packing.bin.length <= self.single_bin_packing.bin.config.max_length 
