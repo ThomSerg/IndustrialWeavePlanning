@@ -200,7 +200,7 @@ class BaselineSBM(AbstractSingleBinModel):
     def get_stats(self):
         
         if self.sat:
-            super.get_stats()
+            super().get_stats()
         else:
             self.stats.nr_variables = len(self.get_variables())
 
