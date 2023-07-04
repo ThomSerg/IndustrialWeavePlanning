@@ -220,17 +220,14 @@ class GuillotineSBM(AbstractSingleBinModel):
 
     def get_stats(self):
 
-        self.stats["density"] = float(np.sum([np.sum(self.sigma[:,:,:,i]).value()*self.items[i].item.area for i in range(self.I)]) / (self.bin_length.value()*self.bin_width))
-        self.stats["bin_length"] = int(self.bin_length.value())
-        self.stats["fulfilled"] = np.array([np.sum(self.sigma.value()[:,:,:,i]) + np.sum(self.sigma.value()[:,:,:,i+self.I//2]) for i in range(self.I//2)]).astype(int).tolist()
-        self.stats["counts"] = np.array(self.single_bin_packing.counts).astype(int).tolist()
+        self.stats.total_density = float(np.sum([np.sum(self.sigma[:,:,:,i]).value()*self.items[i].item.area for i in range(self.I)]) / (self.bin_length.value()*self.bin_width))
+        self.stats.bin_length = int(self.bin_length.value())
+        self.stats.fulfilled = np.array([np.sum(self.sigma.value()[:,:,:,i]) + np.sum(self.sigma.value()[:,:,:,i+self.I//2]) for i in range(self.I//2)]).astype(int).tolist()
+        self.stats.counts = np.array(self.single_bin_packing.counts).astype(int).tolist()
 
-        self.stats["objective"] = int(self.o.value())
-        self.stats["nr_variables"] = len(self.get_variables())
-        #self.stats["ortools_nr_constraints"] = len(self.model.constraints)
-        self.stats["ortools_objective"] = int(self.model.objective_value())
-
-        self.stats["constraints"] = self.constraints_stats
+        self.stats.objective = int(self.o.value())
+        self.stats.nr_variables = len(self.get_variables())
+        self.stats.constraints = self.constraints_stats
 
         return self.stats
 

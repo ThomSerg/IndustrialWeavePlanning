@@ -1,12 +1,9 @@
 
 import itertools
-from dataclasses import dataclass
-
 import math
 import numpy as np
 import numpy.typing as npt
-from timeit import default_timer as timer
-from typing import List, Optional
+import time
 
 from cpmpy import *
 from cpmpy.solvers import CPM_ortools 
@@ -21,16 +18,15 @@ from src.data_structures.production_schedule import ProductionSchedule
 from src.data_structures.abstract_single_bin_packing import AbstractSingleBinPacking
 
 
-from src.models.abstract_model import AbstractSingleBinModel, constraint, Alarm, TimeoutException, AbstractStats
+from src.models.abstract_model import AbstractSingleBinModel, constraint
 
 from src.data_structures.abstract_item_packing import AbstractItemPacking
 from src.extensions.due_dates import objectives
-from src.utils.configuration import Configuration
 
 #from iterative.creel.CreelModel import CreelModel
 
 
-class ProductionModel():
+class ProductionModelVariableLength():
 
     
 
@@ -82,7 +78,7 @@ class ProductionModel():
         self.weights = [1*M, 1*M, 4*M, 0, 1]
 
         # To collect data about the algorithm
-        self.stats = stats()
+        self.stats = {}
 
     @constraint
     def bin_active(self):
@@ -92,12 +88,6 @@ class ProductionModel():
         # If it is active, it should be repeated at least once
         for a,b in zip(self.bin_production.bin_active[-1,:],self.bin_production.bin_repeats[-1,:]):
             c.append(a == (b!=0))
-
-        # TODO test performance
-        # # If a bin is not active, it should not be repeated
-        # c.append(cpm_all((~self.bin_production._bin_active).implies(self.bin_production.bin_repeats==0)))
-        # # If a bin is active, it should be repeated at least once
-        # c.append(cpm_all((self.bin_production._bin_active).implies(self.bin_production.bin_repeats!=0)))
 
         return c
 
@@ -215,78 +205,63 @@ class ProductionModel():
         return var
 
 
-    def solve(self, config:Configuration, max_time_in_seconds=1, preference=None, overproduction_objective=False, constraint_creation_timeout=60*3, constraint_transfer_timeout=60*2):
-        
+    def solve(self, max_time_in_seconds=1, preference=None, overproduction_objective=False):
 
-        alarm = Alarm(config=config)
-        
-        self.sat = False
+        self.c = self.get_constraints()
+        self.stats["nr_constraints"] = len(self.c)
+        print("nr_constraints", len(self.c))
 
-        try:
-            print("Collecting constraints ...")
+        weights = self.determine_weights(preference, overproduction_objective)
+        self.o = self.get_objective(weights)
+        self.objective += self.o
 
-            alarm.start(constraint_creation_timeout) 
-            self.c = self.get_constraints()
-            self.stats.nr_constraints = len(self.c)
-            print("nr_constraints", len(self.c))
-            alarm.cancel()
+        self.model += self.constraints
+        self.model.minimize(self.objective)
 
-            weights = self.determine_weights(preference, overproduction_objective)
-            self.o = self.get_objective(weights)
-            self.objective += self.o
+        print("Transferring...")
+        start_t = time.perf_counter()
+        s = CPM_ortools(self.model)
+        end_t = time.perf_counter()
+        self.stats["transfer_time"] = end_t - start_t
 
-            self.model += self.constraints
-            self.model.minimize(self.objective)
-
-            print("Transferring...")
-
-            start_t = timer()
-            alarm.start(constraint_transfer_timeout) 
-            s = CPM_ortools(self.model)
-            alarm.cancel()
-            end_t = timer()
-            self.stats.transfer_time = end_t - start_t
-
-            print("Solving...")
-            start_s = timer()
-            res = s.solve( max_time_in_seconds=max_time_in_seconds)
-            end_s = timer()
-            self.stats.solve_time = end_s - start_s
+        print("Solving...")
+        start_s = time.perf_counter()
+        res = s.solve( max_time_in_seconds=max_time_in_seconds)
+        end_s = time.perf_counter()
+        self.stats["solve_time"] = end_s - start_s
  
-        except TimeoutException as e: 
-            print(e)
-            return False
-        
         # Fix the solution to bound variables
         if res:
             [fsb.fix() for fsb in self.free_single_bins]
 
         return res
-        
     
     def get_stats(self):
         # TODO nieuwe statistieken voor multi bin packing algoritmen
         
-        
-        self.stats.nr_solutions = len(self.single_bin_packings)
-        self.stats.deadlines = self.production_schedule.deadlines.astype(int).tolist()
-        self.stats.deadline_betweens = self.bin_production.deadline_betweens.astype(int).tolist()
-        self.stats.solution_repeats = np.array(self.bin_production.bin_repeats.value()).astype(int).tolist()
+        self.stats["objective"] = int(self.o.value())
+        self.stats["nr_variables"] = len(self.get_variables())
+
+        self.stats["nr_solutions"] = len(self.single_bin_packings)
+        self.stats["deadlines"] = self.production_schedule.deadlines.astype(int).tolist()
+        self.stats["deadline_betweens"] = self.bin_production.deadline_betweens.astype(int).tolist()
+        self.stats["solution_repeats"] = np.array(self.bin_production.bin_repeats.value()).astype(int).tolist()
+        # a = self.bin_production._item_counts[:-1,:].value()
         a = np.array([fsb.counts for fsb in self.free_single_bins])
-        self.stats.bins = a.astype(int).tolist()
-        self.stats.densities = [float(sol.density) for sol in self.single_bin_packings]
-        self.stats.total_density = float(sum([sum(repeats)*sol.density for (repeats,sol) in zip(self.bin_production.bin_repeats.value(), self.single_bin_packings)]) / sum(self.bin_production.bin_repeats.value()))
-        self.stats.bin_lengths = [int(sbp.bin.length) for sbp in self.single_bin_packings]
-        self.stats.required = self.production_schedule.requirements.counts.astype(int).tolist()
-        self.stats.fulfilled = self.bin_production.item_counts.value().astype(int).tolist()
+        self.stats["bins"] = a.astype(int).tolist()
+        self.stats["densities"] = [float(sol.density) for sol in self.single_bin_packings]
+        self.stats["total_density"] = float(sum([sum(repeats)*sol.density for (repeats,sol) in zip(self.bin_production.bin_repeats.value(), self.single_bin_packings)]) / sum(self.bin_production.bin_repeats.value()))
+        self.stats["bin_lengths"] = [int(sbp.bin.length) for sbp in self.single_bin_packings]
+        self.stats["required"] = self.production_schedule.requirements.counts.astype(int).tolist()
+        self.stats["fulfilled"] = self.bin_production.item_counts.value().astype(int).tolist()
         underproduction_filter = np.vectorize(lambda x: max((x,0)))
         a =  np.cumsum(self.production_schedule.get_requirements(), axis=1) - np.cumsum(self.bin_production.item_counts, axis=1)
         a = underproduction_filter(a)
-        self.stats.underproduction = np.array(a.value()).astype(int).tolist()
+        self.stats["underproduction"] = np.array(a.value()).astype(int).tolist()
         overproduction_filter = np.vectorize(lambda x: max((x,0)))
         b = np.cumsum(self.bin_production.item_counts, axis=1) - np.cumsum(self.production_schedule.get_requirements(), axis=1)
         b = overproduction_filter(b)
-        self.stats.overproduction = np.array(b.value()).astype(int).tolist()
+        self.stats["overproduction"] = np.array(b.value()).astype(int).tolist()
 
         return self.stats
     
@@ -296,7 +271,35 @@ class ProductionModel():
 
 
     def print_stats(self):
-
+        # print("NR solutions:", len(self.single_bin_solutions))
+        # print("Solution repeats:")
+        # print(self.bin_production.bin_repeats.value())
+        # print("Bins:")
+        # a = self.bin_production._item_counts[:-1,:]
+        # a = np.append(a, np.array([fsb.counts for fsb in self.free_single_bins]), axis=0)
+        # print(a)
+        # print("Densities:", [sol.density for sol in self.single_bin_solutions])
+        # print([sol.area for sol in self.single_bin_solutions])
+        # print([sol.overflow_area for sol in self.single_bin_solutions])
+        # print("Total density:", sum([sum(repeats)*sol.density for (repeats,sol) in zip(self.bin_production.bin_repeats.value(), self.single_bin_solutions)]) / sum(self.bin_production.bin_repeats.value()))
+        # print("Deadlines:")
+        # print(self.production_schedule.deadlines)
+        # print("Deadline betweens")
+        # print(self.bin_production._deadline_betweens)
+        # print("Required:")
+        # print(self.production_schedule.requirements.counts)
+        # print("Fulfilled:")
+        # print(self.bin_production.item_counts.value())
+        # print("Underproduction:")
+        # underproduction_filter = np.vectorize(lambda x: max((x,0)))
+        # a =  np.cumsum(self.production_schedule.get_requirements(), axis=1) - np.cumsum(self.bin_production.item_counts, axis=1)
+        # a = underproduction_filter(a)
+        # print(a.value())
+        # print("Overproduction:")
+        # overproduction_filter = np.vectorize(lambda x: max((x,0)))
+        # b = np.cumsum(self.bin_production.item_counts, axis=1) - np.cumsum(self.production_schedule.get_requirements(), axis=1)
+        # b = overproduction_filter(b)
+        # print(b.value())
 
         self.single_bin_solutions = self.single_bin_packings
 
@@ -305,7 +308,6 @@ class ProductionModel():
         print(self.bin_production.bin_repeats.value())
         print("Bins:")
         a = self.bin_production._item_counts
-        a[-1] = a[-1].value()
         print(a)
         print("Densities:", [sol.density for sol in self.single_bin_solutions])
         print("Total density:", sum([sum(repeats)*sol.density for (repeats,sol) in zip(self.bin_production.bin_repeats.value(), self.single_bin_solutions)]) / sum(self.bin_production.bin_repeats.value()))
@@ -328,23 +330,6 @@ class ProductionModel():
         b = overproduction_filter(b)
         print(b.value())
 
-
-@dataclass
-class stats(AbstractStats):
-
-    nr_solutions : int = None
-    deadlines : List[int] = None
-    deadline_betweens : List[int] = None
-    solution_repeats : List[List[int]] = None
-
-    bins : List[List[int]] = None
-    densities : List[int] = None
-    
-    bin_lengths : List[int] = None
-    required : List[List[int]] = None
-    fulfilled : List[List[int]] = None
-    underproduction : List[List[int]] = None
-    overproduction : List[List[int]] = None
 
 
 

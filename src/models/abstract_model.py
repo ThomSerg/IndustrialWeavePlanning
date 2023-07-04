@@ -1,11 +1,16 @@
 from __future__ import annotations
 from abc import ABCMeta, abstractmethod
+from dataclasses import dataclass
+from dataclasses_json import dataclass_json
 
 
 from contextlib import contextmanager
 from timeit import default_timer as timer
+from typing import List, Optional, Dict
 import threading
 import _thread
+
+import numpy as np
 
 
 from cpmpy.solvers import CPM_ortools 
@@ -17,6 +22,7 @@ from src.data_structures.machine_config import MachineConfig
 from src.data_structures.abstract_single_bin_packing import AbstractSingleBinPacking
 
 from src.utils.configuration import Configuration
+
 
 def constraint(func):
         def count_constraints(self):
@@ -113,7 +119,7 @@ class AbstractModel(metaclass=ABCMeta):
     def get_constraints(self): pass
 
     @abstractmethod
-    def get_objective(self): pass
+    def get_objective(self): pass 
 
     def solve(self, config:Configuration, max_time_in_seconds=1, constraint_creation_timeout=60*3, constraint_transfer_timeout=60*2):
 
@@ -123,12 +129,12 @@ class AbstractModel(metaclass=ABCMeta):
 
         try:
             print("Collecting constraints ...")
-            with time_limit(constraint_creation_timeout, 'creation'):
-                alarm.start(constraint_creation_timeout) 
-                self.c = self.get_constraints()
-                self.stats["nr_constraints"] = len(self.c)
-                print("nr constraints:", len(self.c))
-                alarm.cancel()
+
+            alarm.start(constraint_creation_timeout) 
+            self.c = self.get_constraints()
+            self.stats.nr_constraints = len(self.c)
+            print("nr constraints:", len(self.c))
+            alarm.cancel()
 
             self.o = self.get_objective()
             self.objective += self.o
@@ -137,41 +143,38 @@ class AbstractModel(metaclass=ABCMeta):
             self.model.minimize(self.objective)
 
             print("Transferring...")
-            with time_limit(constraint_transfer_timeout, 'transfer'):
-                start_t = timer()
-                alarm.start(constraint_transfer_timeout) 
-                s = CPM_ortools(self.model)
-                alarm.cancel()
-                end_t = timer()
-                self.stats["transfer_time"] = end_t - start_t
+
+            start_t = timer()
+            alarm.start(constraint_transfer_timeout) 
+            s = CPM_ortools(self.model)
+            alarm.cancel()
+            end_t = timer()
+            self.stats.transfer_time = end_t - start_t
 
             print("Solving...")
             start_s = timer()
             res = s.solve( max_time_in_seconds=max_time_in_seconds)
             end_s = timer()
-            self.stats["solve_time"] = end_s - start_s
+            self.stats.solve_time = end_s - start_s
         except TimeoutException as e: 
             print(e)
             return False
-
-        # Fix the solution to bound variables
-        if res:
-            self.sat = True
-            self.single_bin_packing.fix()
 
         return res
 
     #@abstractmethod
     def get_repeats(self): pass
 
-    @abstractmethod
-    def get_stats(self): pass
+    def get_stats(self):
+        self.stats.objective = int(self.o.value())
+        self.stats.nr_variables = len(self.get_variables())
+        self.stats.constraints = self.constraints_stats
+
 
     @abstractmethod
     def fix(self): pass
 
 class AbstractSingleBinModel(AbstractModel):
-
 
     # Constructor
     def __init__(self, 
@@ -189,7 +192,7 @@ class AbstractSingleBinModel(AbstractModel):
         self.model = Model()
 
         # To collect data about the algorithm
-        self.stats = {}
+        self.stats = SingleBinStats()
 
     @constraint
     def item_count(self):
@@ -213,6 +216,21 @@ class AbstractSingleBinModel(AbstractModel):
             self.single_bin_packing.bin.length <= self.single_bin_packing.bin.config.max_length 
             ]
 
+    def solve(self, config:Configuration, max_time_in_seconds=1, constraint_creation_timeout=60*3, constraint_transfer_timeout=60*2):
+        res = super().solve(config=config, max_time_in_seconds=max_time_in_seconds, constraint_creation_timeout=constraint_creation_timeout, constraint_transfer_timeout=constraint_transfer_timeout)
+        # Fix the solution to bound variables
+        if res:
+            self.sat = True
+            self.single_bin_packing.fix()
+
+        return res
+
+    def get_stats(self):
+        super().get_stats()
+        self.stats.total_density = float(self.single_bin_packing.density)
+        self.stats.bin_length = int(self.single_bin_packing.bin.length)
+        self.stats.fulfilled = np.array(self.single_bin_packing.counts).astype(int).tolist()
+        self.stats.counts = np.array(self.single_bin_packing.counts).astype(int).tolist()
 
 
 
@@ -225,4 +243,26 @@ class AbstractProductionModel(AbstractModel):
 
     def __init__(self):
         pass
+
+@dataclass_json
+@dataclass
+class AbstractStats():
+    objective : int = None
+    nr_variables : int = None
+    total_density : int = None
+    constraints : List[Dict] = None
+
+    constraint_time : int = None
+    transfer_time : int = None
+    solve_time : int = None
+    total_time : int = None
+    
+@dataclass_json
+@dataclass
+class SingleBinStats(AbstractStats):
+    bin_length : int = None
+    fulfilled : List[int] = None
+    counts : List[int] = None
+    
+    
 

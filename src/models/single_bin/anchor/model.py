@@ -1,9 +1,12 @@
 from __future__ import annotations
 import itertools
+from dataclasses import dataclass
+from dataclasses_json import dataclass_json
 
 import math
 import time
 from timeit import default_timer as timer
+from typing import List, Optional, Dict
 
 import numpy as np
 from src.data_structures.bin import Bin
@@ -21,7 +24,7 @@ from cpmpy.expressions.python_builtins import sum as cpm_sum
 from cpmpy.expressions.variables import intvar, boolvar, NDVarArray, cpm_array, _IntVarImpl, _genname
 from cpmpy.expressions.globalconstraints import Element, Xor
 
-from src.models.abstract_model import AbstractSingleBinModel, constraint
+from src.models.abstract_model import AbstractSingleBinModel, constraint, SingleBinStats
 from src.data_structures.problem.problem import Problem
 
 from src.models import objectives
@@ -42,6 +45,7 @@ class AnchorSBM(AbstractSingleBinModel):
                 ):
 
         super().__init__(machine_config, single_bin_packing)
+        self.stats = stats()
 
     # Alternative constructor from problem formulation
     @classmethod
@@ -66,10 +70,6 @@ class AnchorSBM(AbstractSingleBinModel):
     # ---------------------------------------------------------------------------- #
     #                                  Constraits                                  #
     # ---------------------------------------------------------------------------- #
-
-
-
-    
     
     @constraint
     def unselected_items(self):
@@ -291,12 +291,10 @@ class AnchorSBM(AbstractSingleBinModel):
         for c_f in c_functions:
             c.extend(c_f())
 
-        c.append(self.single_bin_packing.bin.length < self.single_bin_packing.bin.max_length)
-
         self.constraints = c
 
         end = timer()
-        self.stats["constraint_time"] = end-start
+        self.stats.constraint_time = end-start
         
         return c
 
@@ -326,23 +324,17 @@ class AnchorSBM(AbstractSingleBinModel):
         return sum([item.nr_width_repeats()*item.nr_length_repeats() for item in self.single_bin_packing.items])
 
     def get_stats(self):
-
-        self.stats["density"] = float(self.single_bin_packing.density)
-        self.stats["bin_length"] = int(self.single_bin_packing.bin.length)
-        self.stats["fulfilled"] = np.array(self.single_bin_packing.counts).astype(int).tolist()
-        self.stats["counts"] = np.array(self.single_bin_packing.counts).astype(int).tolist()
-        self.stats["repeats_width"] = [item.nr_width_repeats() for item in self.single_bin_packing.items]
-        self.stats["repeats_length"] = [item.nr_length_repeats() for item in self.single_bin_packing.items]
-        self.stats["objective"] = int(self.o.value())
-        self.stats["nr_variables"] = len(self.get_variables())
-        #self.stats["ortools_nr_constraints"] = len(self.model.constraints)
-        self.stats["ortools_objective"] = int(self.model.objective_value())
-
-        self.stats["constraints"] = self.constraints_stats
+        super().get_stats()
+        self.stats.repeats_width = [item.nr_width_repeats() for item in self.single_bin_packing.items]
+        self.stats.repeats_length = [item.nr_length_repeats() for item in self.single_bin_packing.items]
 
         return self.stats
 
     def visualise(self):
         return show_bin_packing(self.single_bin_packing)
 
-            
+@dataclass_json
+@dataclass
+class stats(SingleBinStats):
+    repeats_width : List[int] = None
+    repeats_length : List[int] = None    

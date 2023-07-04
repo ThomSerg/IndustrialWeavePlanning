@@ -200,17 +200,9 @@ class BaselineSBM(AbstractSingleBinModel):
     def get_stats(self):
         
         if self.sat:
-            self.stats["density"] = float(self.single_bin_packing.density)
-            self.stats["bin_length"] = int(self.single_bin_packing.bin.length)
-            self.stats["fulfilled"] = np.array(self.single_bin_packing.counts).astype(int).tolist()
-            self.stats["counts"] = np.array(self.single_bin_packing.counts).astype(int).tolist()
-            self.stats["objective"] = int(self.o.value())
-            self.stats["nr_variables"] = len(self.get_variables())
-            self.stats["ortools_objective"] = int(self.model.objective_value())
+            super.get_stats()
         else:
-            self.stats["nr_variables"] = len(self.get_variables())
-
-        self.stats["constraints"] = self.constraints_stats
+            self.stats.nr_variables = len(self.get_variables())
 
         return self.stats
     

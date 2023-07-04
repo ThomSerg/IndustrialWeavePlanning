@@ -1,3 +1,4 @@
+import pprint
 from timeit import default_timer as timer
 import pickle
 import os
@@ -35,15 +36,24 @@ class BenchmarkSave():
         self.sat = sat
         self.model = model
 
-def run_single_bin_benchmark(models: list[AbstractSingleBinModel], problems: list[SingleBinProblem], max_time_seconds=20):
+def run_single_bin_benchmark(
+            models: list[AbstractSingleBinModel], 
+            problems: list[SingleBinProblem], 
+            max_time_seconds=20,
+            reverse: bool = False,
+            pickle_export: bool = False,
+            figure_export: bool = False,
+        ):
 
     config = Configuration()
 
-    # problems.reverse()
+    if reverse:
+        problems.reverse()
     
     for problem in problems:
         print("PROBLEM", problem.name)
         print(problem.json_dict)
+
         for model in models:
 
             start = timer()
@@ -54,29 +64,34 @@ def run_single_bin_benchmark(models: list[AbstractSingleBinModel], problems: lis
             print("SAT", sat)
             print("TIME", end-start)
 
-            stats = initialised_model.get_stats()
-            stats["total_time"] = end-start
-            print("STATS", stats)
-
-            #bench_save = BenchmarkSave(str(problem.json_dict), sat, initialised_model)
-            file_directory = os.path.join(os.getcwd(), model.get_name())
-            #file_name = os.path.join(file_directory, problem.name + ".pickle")
-
+            
+            file_directory = os.path.join(os.getcwd(), "results", model.get_name())
             if not os.path.exists(file_directory):
                 os.makedirs(file_directory)
 
-            # with open(file_name, 'wb') as handle:
-            #     pickle.dump(bench_save, handle, protocol=pickle.HIGHEST_PROTOCOL)
+            if pickle_export:
+                bench_save = BenchmarkSave(str(problem.json_dict), sat, initialised_model)
+                file_name = os.path.join(file_directory, problem.name + ".pickle")
 
-            
-            file_name = os.path.join(file_directory, problem.name + ".json")
-            with open(file_name, 'w') as handle:
-                handle.write(json.dumps(stats, indent=4))
+                with open(file_name, 'wb') as handle:
+                    pickle.dump(bench_save, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
             if sat:
+                stats = initialised_model.get_stats()
+                stats.total_time = end-start
+                # print("STATS")
+                # pprint.pprint(stats)
+                print("STATS", stats)
+
+                file_name = os.path.join(file_directory, problem.name + ".json")
+                with open(file_name, 'w') as handle:
+                    handle.write(json.dumps(stats, indent=4))
+
+      
                 initialised_model.visualise()
-                plt.savefig(os.path.join(file_directory, problem.name + '.png'))
-                plt.show()
+                if figure_export:
+                    plt.savefig(os.path.join(file_directory, problem.name + '.png'))
+                    plt.show()
       
 
 def run_single_bin_benchmark_repeated(models: list[AbstractSingleBinModel], problems: list[SingleBinProblem], start_index=0, max_time_seconds=20, nr_repeats=1):
@@ -116,12 +131,15 @@ def run_single_bin_benchmark_repeated(models: list[AbstractSingleBinModel], prob
                 if sat:
                     initialised_model.fix()
                     stats = initialised_model.get_stats()
-                    stats["total_time"] = end-start
+                    stats.total_time = end-start
 
+                    # print("STATS")
+                    # pprint.pprint(stats)
                     print("STATS", stats)
+
                     file_name = os.path.join(file_directory, problem.name + "_" + str(i_repeat) + ".json")
                     with open(file_name, 'w') as handle:
-                        handle.write(json.dumps(stats, indent=4))
+                        handle.write(json.dumps(stats.to_dict(), indent=4))
 
                     #show_bin_packing(initialised_model.single_bin_packing)
                     initialised_model.visualise()
@@ -180,56 +198,67 @@ def flatten(l):
     return [item for sublist in l for item in sublist]
    
 def run_multi_bin_benchmark(
-            solver_models: list[AbstractMultiBinModel], 
+            multi_bin_models: list[AbstractMultiBinModel], 
             production_models: list[ProductionModel],
             single_bin_models: list[AbstractSingleBinModel],
             problems: list[MultiBinProblem], 
-            args: dict
+            args: dict,
+            reverse: bool = False,
+            pickle_export: bool = False,
+            figure_export: bool = False,
         ):
+    
+    config = Configuration()
 
-    # problems.reverse()
+    if reverse:
+        problems.reverse()
 
     for problem in problems:
         print("PROBLEM", problem.name)
         print(problem.json_dict)
-        for (solver_model, production_model, single_bin_model) in zip(solver_models, production_models, single_bin_models):
+
+        for (solver_model, production_model, single_bin_model) in zip(multi_bin_models, production_models, single_bin_models):
 
             start = timer()
             initialised_model = solver_model.init_from_problem(
-                problem,
-                production_model,
-                single_bin_model
-                )
-            sat = initialised_model.solve(args=args)
+                                                problem,
+                                                production_model,
+                                                single_bin_model
+                                            )
+            sat = initialised_model.solve(config=config, args=args)
             end = timer()
-
-            bench_save = BenchmarkSave(str(problem.json_dict), sat, initialised_model)
-            file_directory = os.path.join(os.getcwd(), "results")
-            file_name = os.path.join(file_directory, problem.name + ".pickle")
-
-            if not os.path.exists(file_directory):
-                os.makedirs(file_directory)
-
-            with open(file_name, 'wb') as handle:
-                pickle.dump(bench_save, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
             print("SAT", sat)
             print("TIME", end-start)
 
+            file_directory = os.path.join(os.getcwd(), "results", solver_model.get_name())
+            if not os.path.exists(file_directory):
+                os.makedirs(file_directory)
+
+            if pickle_export:
+                bench_save = BenchmarkSave(str(problem.json_dict), sat, initialised_model)
+                file_name = os.path.join(file_directory, problem.name + ".pickle")
+
+                with open(file_name, 'wb') as handle:
+                    pickle.dump(bench_save, handle, protocol=pickle.HIGHEST_PROTOCOL)
+
             if sat:
                 stats = initialised_model.get_stats()
-                stats["total_time"] = end-start
+                stats.total_time = end-start
 
+                # print("STATS")
+                # pprint.pprint(stats)
                 print("STATS", stats)
+
                 file_name = os.path.join(file_directory, problem.name + ".json")
                 with open(file_name, 'w') as handle:
                     handle.write(json.dumps(stats, indent=4))
 
-                #show_bin_packing(initialised_model.single_bin_packing)
-                initialised_model.visualise()
-                plt.savefig(os.path.join(file_directory, problem.name + '.png'))
 
-                plt.show()
+                initialised_model.visualise()
+                if figure_export:
+                    plt.savefig(os.path.join(file_directory, problem.name + '.png'))
+                    plt.show()
 
 
 
