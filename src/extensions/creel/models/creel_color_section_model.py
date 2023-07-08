@@ -26,7 +26,7 @@ class CreelColorSectionModel:
         for (i,j) in itertools.pairwise(range(self.creel_color_section.max_repeats)):
             c.append(
                 (j < self.creel_color_section.count).implies(
-                    self.creel_color_section.ends[i] <= self.creel_color_section.starts[j]
+                    self.creel_color_section.ends[i] < self.creel_color_section.starts[j]
                 )
             )
 
