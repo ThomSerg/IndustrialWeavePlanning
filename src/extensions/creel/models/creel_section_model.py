@@ -29,10 +29,6 @@ class CreelSectionModel:
         #demand = flatten([ccs. for ccs in self.creel_section.color_sections])
         demand = flatten([[i < ccs.count for i in range(ccs.max_repeats)] for ccs in self.creel_section.color_sections])
 
-        print(starts)
-        print(durations)
-        print(ends)
-        print(demand)
 
         
         # Limit number of colors at each position

@@ -5,6 +5,8 @@ import time
 import itertools
 
 from dataclasses import dataclass, field
+from cpmpy.expressions.python_builtins import sum as cpm_sum
+from cpmpy.expressions.python_builtins import any as cpm_any
 
 
 from src.data_structures.bin_config import BinConfig
@@ -17,7 +19,9 @@ from src.data_structures.item import Item
 from src.models.abstract_model import AbstractProductionModel
 from src.data_structures.problem.multi_bin_problem import MultiBinProblem
 
-from src.models.abstract_model import AbstractSingleBinModel
+from src.models.abstract_model import AbstractSingleBinModel, constraint
+
+from src.extensions.due_dates.models.production_model import ProductionModel
 
 class LnsMBM():
 
@@ -336,3 +340,30 @@ class LnsMBM():
     
     def visualise(self):
         return self.temp_model.visualise()
+    
+class ProductionModelLNS(ProductionModel):
+
+    @constraint
+    def unique_new_bin(self):
+        c = []
+
+        # The new bin solution must be unique
+        c.expend(super().unique_new_bin())
+
+        for sbpfree in self.free_single_bins:
+            for sbpfixed in self.fixed_single_bins:
+                c.append(~(sbpfree == sbpfixed))
+
+        return c
+
+    @constraint
+    def usefull_bin(self):
+        # The newly created bins should be used at least once to avoid creating garbage
+        return [cpm_any([ba for ba in self.bin_production.bin_active[len(self.bin_production.bin_active)-1,:]])] 
+    
+
+    def get_constraints(self):
+        c = super().get_constraints()
+        c.append(self.usefull_bin())
+        self.constraints = c
+        return c

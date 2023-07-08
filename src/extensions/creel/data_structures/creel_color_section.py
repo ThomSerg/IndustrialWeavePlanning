@@ -24,7 +24,7 @@ class CreelColorSection(FixableObject):
     fixable_widths: ft.FixableIntArray = None
 
     def __post_init__(self):
-        self.max_repeats = math.floor(self.total_width / self.min_width)
+        self.max_repeats = math.floor((self.total_width + 1) / (self.min_width + 1))
         if self.fixable_count is None: self.fixable_count = ft.FixableInt(fixable_parent=self, free_value=intvar(0, self.max_repeats))
         if self.fixable_starts is None: self.fixable_starts = ft.FixableIntArray(fixable_parent=self, free_value=self._starts_var()) # TODO: better bounds?
         if self.fixable_widths is None: self.fixable_widths = ft.FixableIntArray(fixable_parent=self, free_value=self._widths_var())

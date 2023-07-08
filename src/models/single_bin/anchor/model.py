@@ -265,7 +265,7 @@ class AnchorSBM(AbstractSingleBinModel):
         c = []
 
         # The total sum of the packed items' areas should not exceed the total bin area
-        #c.append(sum([sum(item.active)*item.item.area for item in self.single_bin_packing.items]) <= self.single_bin_packing.bin.area)
+        c.append(sum([sum(item.active)*item.item.area for item in self.single_bin_packing.items]) <= self.single_bin_packing.bin.area)
 
         return c
 
