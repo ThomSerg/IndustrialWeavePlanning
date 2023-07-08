@@ -21,10 +21,9 @@ class AnchorSBMCreel(AnchorSBM, AbstractSBMCreel):
     def __init__(self, 
                     machine_config: MachineConfig, 
                     single_bin_packing: AbstractSingleBinPacking,
-                    is_end_packing: bool = False
                 ):
 
-        super().__init__(machine_config, single_bin_packing, is_end_packing)
+        super().__init__(machine_config, single_bin_packing)
 
         self.creel_model = CreelModel(
             self.machine_config.max_creel_colors,
