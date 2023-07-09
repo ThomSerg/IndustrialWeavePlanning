@@ -13,6 +13,7 @@ from src.models.single_bin_creel.abstract_single_bin_creel_model import Abstract
 
 from cpmpy.expressions.python_builtins import all as cpm_all
 from cpmpy.expressions.python_builtins import any as cpm_any
+from cpmpy.expressions.python_builtins import sum as cpm_sum
 
 
 class GuillotineSBMCreel(GuillotineSBM, AbstractSBMCreel):
@@ -44,19 +45,26 @@ class GuillotineSBMCreel(GuillotineSBM, AbstractSBMCreel):
                         if a == 0:
                             cc.append(
                                 cpm_any(self.sigma[p,a,:,i]).implies(
-                                    section.color_sections[section.colors.index(color)].is_here_2_fixed(strip_width, strip_width+self.items[i].width)
+                                    section.color_sections[section.colors.index(color)].is_here_2_fixed(strip_width, strip_width+self.items[i].item.width)# strip_width+cpm_sum(self.gamma[p,a,:]*self.widths))
                                 )
                             )
                         else:
                             cc.append(
                                 cpm_any(self.sigma[p,a,:,i]).implies(
-                                    section.color_sections[section.colors.index(color)].is_here_2(strip_width, strip_width+self.items[i].width)
+                                    section.color_sections[section.colors.index(color)].is_here_2(strip_width, strip_width+self.items[i].item.width)#strip_width+cpm_sum(self.gamma[p,a,:]*self.widths))
                                 )
                             )
 
-                strip_width += sum(self.gamma[p,a,:]*self.widths) 
+                strip_width += cpm_sum(self.gamma[p,a,:]*self.widths)
+            
 
             pattern_height += self.pattern_length[p]
+
+        # cc.append(self.pattern_length[0] != 0)
+        # cc.extend(self.pattern_length[1:] == 0)
+        # #cc.append(cpm_sum([cpm_sum(self.sigma[0,:,:,i].flatten()) > 0 for i in range(self.I)]) == 3)
+        # cc.append(cpm_sum([a.fixable_count.value() > 0 for a in section.color_sections]) > 1)
+        # cc.append(cpm_any(self.sigma[0,:,:,7]))
 
         return cpm_all(cc)
 
