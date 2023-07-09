@@ -37,12 +37,11 @@ class AnchorSBMCreel(AnchorSBM, AbstractSBMCreel):
         # The bin color range must be compatible with the section color range
         cc = []
         for item in self.single_bin_packing.items:
-
             for x in range(item.nr_width_repeats()):
                 ccc = []
                 for color in item.item.color.basic_colors:
                     ccc.append(
-                            section.color_sections[section.colors.index(color)].is_here_2(cpm_min(item.pos_xs_arr[:,x]), cpm_max(item.pos_xs_arr[:,x])+item.width)
+                        section.color_sections[section.colors.index(color)].is_here_2(cpm_min(item.pos_xs_arr[:,x]), cpm_max(item.pos_xs_arr[:,x])+item.width)
                     )
                 cc.append(
                     (cpm_any(item.active_arr[:,x])).implies(

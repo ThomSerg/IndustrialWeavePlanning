@@ -280,7 +280,8 @@ class AnchorSBM(AbstractSingleBinModel):
             self.item_selection,
             self.no_overlap,
             self.bin_height,
-            self.bin_capacity
+            self.bin_capacity,
+            self.unselected_items
         ]
 
         if self.machine_config.min_length != self.machine_config.max_length:
@@ -291,6 +292,7 @@ class AnchorSBM(AbstractSingleBinModel):
         for c_f in c_functions:
             c.extend(c_f())
 
+        c.extend(self.constraints)
         self.constraints = c
 
         end = timer()
