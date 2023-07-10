@@ -60,12 +60,6 @@ class GuillotineSBMCreel(GuillotineSBM, AbstractSBMCreel):
 
             pattern_height += self.pattern_length[p]
 
-        # cc.append(self.pattern_length[0] != 0)
-        # cc.extend(self.pattern_length[1:] == 0)
-        # #cc.append(cpm_sum([cpm_sum(self.sigma[0,:,:,i].flatten()) > 0 for i in range(self.I)]) == 3)
-        # cc.append(cpm_sum([a.fixable_count.value() > 0 for a in section.color_sections]) > 1)
-        # cc.append(cpm_any(self.sigma[0,:,:,7]))
-
         return cpm_all(cc)
 
     def get_constraints(self):

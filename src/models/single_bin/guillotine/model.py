@@ -66,7 +66,7 @@ class GuillotineSBM(AbstractSingleBinModel):
         self.Pmax = self.machine_config.max_length # maximum length of cutting pattern
 
         self.A = self.bin_width // min(self.widths) # upper bound on number of strips
-        self.B = self.Pmax // min(self.heights) # upper bound on number of vertical cuts
+        self.B = self.P #self.Pmax // min(self.heights) # upper bound on number of vertical cuts
 
         
         self.W = len(self.widths) # number of unique widths
@@ -79,11 +79,11 @@ class GuillotineSBM(AbstractSingleBinModel):
 
     def get_constraints_per_type(self):
         return {
-            "constraints" : self.get_constraints(),
+            "guillotine_constraints" : self.guillotine_constraints(),
         }
     
     @constraint
-    def get_constraints(self):
+    def guillotine_constraints(self):
         
         c = []
 
@@ -196,9 +196,14 @@ class GuillotineSBM(AbstractSingleBinModel):
             c.append(count == cpm_sum(self.sigma[:,:,:,i]) + cpm_sum(self.sigma[:,:,:,i+self.I//2]))
         #c.append(self.single_bin_packing.bin.length == self.bin_length)
 
+        return c
+    
+    def get_constraints(self):
+        c = []
+        c.extend(self.guillotine_constraints())
+
         c.extend(self.constraints)
         self.constraints = c
-
         return c
 
 
