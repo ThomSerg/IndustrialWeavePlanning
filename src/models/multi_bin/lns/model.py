@@ -23,6 +23,8 @@ from src.models.abstract_model import AbstractSingleBinModel, constraint
 
 from src.extensions.due_dates.models.production_model import ProductionModel
 
+from src.utils.configuration import Configuration
+
 class LnsMBM():
 
     # Constructor
@@ -61,7 +63,7 @@ class LnsMBM():
         return "MultiLnsModel"
     
     # Solve the model
-    def solve(self, args: dict, bin_solutions=None):
+    def solve(self, config:Configuration, args: dict, bin_solutions=None):
         nr_iterations = args.get("nr_iterations", 1)
         packing_timeout = args.get("packing_timeout", 60)
         production_timeout = args.get("production_timeout", 5)
@@ -82,6 +84,7 @@ class LnsMBM():
             print("--- CREATING NEW BIN ---")
             # Solve model to create one new bin in the context of the previously achieved production
             sat_, model = self.solve_one_bin(
+                config=config,
                 bin_solutions=bin_solutions.copy(), 
                 max_new_bin_repeat=max_new_bin_repeat, 
                 previous_bin_production=previous_bin_production,
@@ -112,6 +115,7 @@ class LnsMBM():
         print("--- LAST MODEL ---")
         # Solve production problem without new bin
         sat_, model = self.solve_packing(
+            config=config,
             bin_solutions=bin_solutions.copy(), 
             overproduction=True,
             max_time_in_seconds=production_timeout
@@ -204,6 +208,7 @@ class LnsMBM():
 
     # Solve production planning without new bin
     def solve_packing(self, 
+                        config:Configuration,
                         bin_solutions=field(default_factory=lambda: []),    # The bin packings
                         overproduction=False,                               # Whether overproduction is allowed
                         max_time_in_seconds=5                               # Limit solver time
@@ -225,7 +230,7 @@ class LnsMBM():
 
     
         # Solve to get partial solution
-        sat = self.temp_model.solve(max_time_in_seconds, self.get_preference(), overproduction_objective=True)
+        sat = self.temp_model.solve(config, max_time_in_seconds, self.get_preference(), overproduction_objective=True)
         print("Packing SAT:", sat)
         print("nr constraints:", len(self.temp_model.constraints))
 
@@ -235,6 +240,7 @@ class LnsMBM():
     
     # Solve production planning with a new bin
     def solve_one_bin(self, 
+                        config:Configuration,
                         bin_solutions=field(default_factory=lambda: []),    # The previous bin packings
                         previous_bin_production=None,                       # The previously achieved production 
                         max_new_bin_repeat=None,                            # Limit on how many times the newly created bin may be repeated
@@ -251,7 +257,7 @@ class LnsMBM():
         # Bin config
         temp_bin_config = BinConfig(
             width=self.machine_config.width,
-            min_length=self.machine_config.max_length-max([max((item.height, item.width)) for item in temp_items]), #temp_machine_config.min_length,
+            min_length=self.machine_config.min_length,#-max([max((item.height, item.width)) for item in temp_items]), #temp_machine_config.min_length,
             max_length=self.machine_config.max_length,
         )
         temp_items = self.filter_items(temp_items, temp_bin_config) # TODO niet logisch pas, min length van bin zou hier afhankelijk van moeten zijn
@@ -280,18 +286,6 @@ class LnsMBM():
             )]
 
         # Create model
-        # self.temp_model = self.production_model(
-        #     machine_config=self.machine_config, 
-        #     production_schedule=self.production_schedule, 
-        #     fixed_single_bin_solutions=bin_solutions,
-        #     free_single_bins=free_single_bins, 
-        #     items=temp_items,
-        #     single_bin_model=self.single_bin_model,
-        #     nr_new_bins=nr_new_bins,
-        #     max_new_bin_repeat=max_new_bin_repeat,
-        #     is_end_packing=True,
-        #     fixed_bin_production=previous_bin_production
-        # )
         self.temp_model = self.production_model(
             machine_config=self.machine_config, 
             production_schedule=self.production_schedule, 
@@ -302,7 +296,7 @@ class LnsMBM():
         )
 
         # Solve to get partial solution
-        sat = self.temp_model.solve(max_time_in_seconds, self.get_preference())
+        sat = self.temp_model.solve(config, max_time_in_seconds, self.get_preference())
         print("Packing SAT:", sat)
         print("nr constraints:", len(self.temp_model.constraints))
 
@@ -335,7 +329,7 @@ class LnsMBM():
     def get_stats(self):
         stats = {}
         for i, model in enumerate(self.models):
-            stats[i] = model.get_stats()
+            stats[i] = model.get_stats().to_json()
         return stats
     
     def visualise(self):
@@ -348,7 +342,7 @@ class ProductionModelLNS(ProductionModel):
         c = []
 
         # The new bin solution must be unique
-        c.expend(super().unique_new_bin())
+        c.extend(super().unique_new_bin())
 
         for sbpfree in self.free_single_bins:
             for sbpfixed in self.fixed_single_bins:
@@ -363,6 +357,7 @@ class ProductionModelLNS(ProductionModel):
     
 
     def get_constraints(self):
+        c = []
         c = super().get_constraints()
         c.append(self.usefull_bin())
         self.constraints = c

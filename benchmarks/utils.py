@@ -244,7 +244,7 @@ def run_multi_bin_benchmark(
 
             if sat:
                 stats = initialised_model.get_stats()
-                stats.total_time = end-start
+                stats["total_time"] = end-start
 
                 # print("STATS")
                 # pprint.pprint(stats)

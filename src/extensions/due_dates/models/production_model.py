@@ -90,14 +90,14 @@ class ProductionModel():
 
         # If a bin is not active, it should not be repeated
         # If it is active, it should be repeated at least once
-        for a,b in zip(self.bin_production.bin_active[-1,:],self.bin_production.bin_repeats[-1,:]):
-            c.append(a == (b!=0))
+        # for a,b in zip(self.bin_production.bin_active[-1,:],self.bin_production.bin_repeats[-1,:]):
+        #     c.append(a == (b!=0))
 
         # TODO test performance
         # # If a bin is not active, it should not be repeated
-        # c.append(cpm_all((~self.bin_production._bin_active).implies(self.bin_production.bin_repeats==0)))
+        c.append(cpm_all((~self.bin_production.bin_active).implies(self.bin_production.bin_repeats==0)))
         # # If a bin is active, it should be repeated at least once
-        # c.append(cpm_all((self.bin_production._bin_active).implies(self.bin_production.bin_repeats!=0)))
+        c.append(cpm_all((self.bin_production.bin_active).implies(self.bin_production.bin_repeats!=0)))
 
         return c
 
@@ -114,6 +114,43 @@ class ProductionModel():
             c.extend((bp_a_1 & ~bp_a_2).implies(bp_o_1 < bp_o_2)) # TODO combinations
 
         return c
+    
+    @constraint
+    def bin_starts(self):
+        c = []
+
+        # Get the start and end position of each bin section in terms of the total number of predecessing repeats
+        between_deadline_repeats = np.insert(self.bin_production.deadline_betweens,0,0)
+        deadlines_shifted = np.insert(self.bin_production.deadlines,0,-1)
+
+        for i_deadline in range(len(self.bin_production.deadlines)):
+            for i_bin in range(self.bin_production.nr_packings):
+
+                c.append(
+                    (self.bin_production.bin_order[i_bin,i_deadline] == 0).implies(
+                        self.bin_production.bin_starts[i_bin,i_deadline] == deadlines_shifted[i_deadline] + self.bin_production.bin_delays_before[i_bin,i_deadline] + 1
+                    )
+                )
+                c.append(
+                    (self.bin_production.bin_order[i_bin,i_deadline] > 0).implies(
+                        self.bin_production.bin_starts[i_bin,i_deadline] == cpm_sum( (self.bin_production.bin_ends[:,i_deadline] + self.bin_production.bin_delays_after[:,i_deadline])*(self.bin_production.bin_order[:,i_deadline] == self.bin_production.bin_order[i_bin,i_deadline]-1)) + self.bin_production.bin_delays_before[i_bin,i_deadline] + 1
+                    )
+                )
+
+        return c
+                    
+    
+    @constraint
+    def bin_ends(self):
+        c = []
+
+        c.extend(
+            self.bin_production.bin_ends == self.bin_production.bin_starts + self.bin_production.bin_repeats - 1
+        )
+
+        return c
+
+
 
     @constraint
     def deadline_capacity(self):
@@ -121,7 +158,11 @@ class ProductionModel():
 
         # There can only be as many bins in each deadline as there is time
         for i_deadline in range(len(self.bin_production.deadline_betweens)):
-            c.append(sum(self.bin_production.bin_repeats[:,i_deadline]) <= self.bin_production.deadline_betweens[i_deadline])
+            c.extend(
+                (
+                    self.bin_production.bin_ends[:,i_deadline] +
+                    self.bin_production.bin_delays_after[:,i_deadline]
+                )*self.bin_production.bin_active[:,i_deadline] <= self.bin_production.deadlines[i_deadline])
 
         return c
 
@@ -155,6 +196,8 @@ class ProductionModel():
         c_functions = [
             self.bin_active,
             self.bin_order,
+            self.bin_starts,
+            self.bin_ends,
             self.deadline_capacity,
             self.unique_new_bin,
             self.symmetry_breaking
@@ -271,7 +314,12 @@ class ProductionModel():
         self.stats.nr_solutions = len(self.single_bin_packings)
         self.stats.deadlines = self.production_schedule.deadlines.astype(int).tolist()
         self.stats.deadline_betweens = self.bin_production.deadline_betweens.astype(int).tolist()
+        
         self.stats.solution_repeats = np.array(self.bin_production.bin_repeats.value()).astype(int).tolist()
+        self.stats.solution_starts = np.array(self.bin_production.bin_starts.value()).astype(int).tolist()
+        self.stats.solution_ends = np.array(self.bin_production.bin_ends.value()).astype(int).tolist()
+        self.stats.solution_active = np.array(self.bin_production.bin_active.value()).astype(bool).tolist()
+        
         a = np.array([fsb.counts for fsb in self.free_single_bins])
         self.stats.bins = a.astype(int).tolist()
         self.stats.densities = [float(sol.density) for sol in self.single_bin_packings]
@@ -303,9 +351,15 @@ class ProductionModel():
         print("NR solutions:", len(self.single_bin_solutions))
         print("Solution repeats:")
         print(self.bin_production.bin_repeats.value())
+        print("Starts:")
+        print(self.bin_production.bin_starts.value())
+        print("Ends:")
+        print(self.bin_production.bin_ends.value())
+        print("Active:")
+        print(self.bin_production.bin_active.value())
         print("Bins:")
         a = self.bin_production._item_counts
-        a[-1] = a[-1].value()
+        #a[-1] = a[-1].value()
         print(a)
         print("Densities:", [sol.density for sol in self.single_bin_solutions])
         print("Total density:", sum([sum(repeats)*sol.density for (repeats,sol) in zip(self.bin_production.bin_repeats.value(), self.single_bin_solutions)]) / sum(self.bin_production.bin_repeats.value()))
@@ -336,6 +390,9 @@ class stats(AbstractStats):
     deadlines : List[int] = None
     deadline_betweens : List[int] = None
     solution_repeats : List[List[int]] = None
+    solution_starts : List[List[int]] = None
+    solution_ends : List[List[int]] = None
+    solution_active : List[List[bool]] = None
 
     bins : List[List[int]] = None
     densities : List[int] = None
