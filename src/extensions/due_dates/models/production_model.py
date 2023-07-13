@@ -78,7 +78,7 @@ class ProductionModel():
         # -> objective
         self.objective = 0
         # -> preference weights
-        M = self.machine_config.max_length*self.machine_config.width
+        M = self.machine_config.max_length*self.machine_config.width//100 # Fix for integer overflow or-tools
         self.weights = [1*M, 1*M, 4*M, 0, 1]
 
         # To collect data about the algorithm

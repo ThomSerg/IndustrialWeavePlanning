@@ -21,6 +21,8 @@ from src.models.abstract_model import AbstractSingleBinModel
 
 from src.extensions.due_dates.models.production_model import ProductionModel
 
+from src.utils.configuration import Configuration
+
 
 class BaselineMBM():
 
@@ -57,7 +59,7 @@ class BaselineMBM():
     def get_name():
         return "MultiBaselineModel"
 
-    def solve(self, args: dict):
+    def solve(self, config:Configuration, args: dict):
         nr_packings = args.get("nr_packings", 1)
         timeout = args.get("timeout", 20)
         weights = args.get("weights", None)
@@ -68,7 +70,7 @@ class BaselineMBM():
 
         bin_config = BinConfig(
             width=self.machine_config.width,
-            min_length=self.machine_config.max_length-max([max((item.height, item.width)) for item in items]), # TODO
+            min_length=self.machine_config.min_length,#-max([max((item.height, item.width)) for item in items]), # TODO
             max_length=self.machine_config.max_length,
         )
 
@@ -115,7 +117,7 @@ class BaselineMBM():
 
         
 
-        sat = self.production_model.solve(timeout)
+        sat = self.production_model.solve(config,timeout)
         print("Packing SAT:", sat)
         print("nr constraints:", len(self.production_model.constraints))
 
@@ -136,7 +138,7 @@ class BaselineMBM():
     
 
     def get_stats(self):
-        return self.production_model.get_stats()
+        return self.production_model.get_stats().to_dict()
     
     def visualise(self):
         self.production_model.visualise()
