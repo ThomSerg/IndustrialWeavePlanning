@@ -329,7 +329,7 @@ class LnsMBM():
     def get_stats(self):
         stats = {}
         for i, model in enumerate(self.models):
-            stats[i] = model.get_stats().to_json()
+            stats[i] = model.get_stats().to_dict()
         return stats
     
     def visualise(self):

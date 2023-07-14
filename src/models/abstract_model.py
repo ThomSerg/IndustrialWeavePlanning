@@ -25,35 +25,35 @@ from src.utils.configuration import Configuration
 
 
 def constraint(func):
-        def count_constraints(self):
-            # g = func.__globals__
-            # sentinel = object()
+    def count_constraints(self):
+        # g = func.__globals__
+        # sentinel = object()
 
-            # oldvalue = g.get('c', sentinel)
-            # g['c'] = []
+        # oldvalue = g.get('c', sentinel)
+        # g['c'] = []
 
-            # try:
-            #     start = timer()
-            #     func(self)
-            #     end = timer()
-            #     c = g.get('c')
-            #     self.constraints_stats[func.__name__] = { 
-            #         "nr_constraint": len(c),
-            #         "creation_time": end-start
-            #     }
-            # except:
-            #     g['c'] = oldvalue
+        # try:
+        #     start = timer()
+        #     func(self)
+        #     end = timer()
+        #     c = g.get('c')
+        #     self.constraints_stats[func.__name__] = { 
+        #         "nr_constraint": len(c),
+        #         "creation_time": end-start
+        #     }
+        # except:
+        #     g['c'] = oldvalue
 
-            start = timer()
-            c = func(self)
-            end = timer()
-            self.constraints_stats[func.__name__] = { 
-                "nr_constraint": len(c),
-                "creation_time": end-start
-            }
+        start = timer()
+        c = func(self)
+        end = timer()
+        self.constraints_stats[func.__name__] = { 
+            "nr_constraint": len(c),
+            "creation_time": end-start
+        }
 
-            return c
-        return count_constraints
+        return c
+    return count_constraints
 
 def handler(signum, frame):
     print("Forever is over!")

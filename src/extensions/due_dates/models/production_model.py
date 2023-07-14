@@ -266,6 +266,7 @@ class ProductionModel():
         self.sat = False
 
         try:
+            start_t_total = timer()
             print("Collecting constraints ...")
 
             alarm.start(constraint_creation_timeout) 
@@ -295,6 +296,9 @@ class ProductionModel():
             res = s.solve( max_time_in_seconds=max_time_in_seconds)
             end_s = timer()
             self.stats.solve_time = end_s - start_s
+
+            end_t_total = timer()
+            self.stats.total_time = end_t_total - start_t_total
  
         except TimeoutException as e: 
             print(e)
@@ -309,7 +313,10 @@ class ProductionModel():
     
     def get_stats(self):
         # TODO nieuwe statistieken voor multi bin packing algoritmen
-        
+        self.stats.objective = self.objective.value()
+        self.stats.nr_variables = len(self.get_variables())
+        self.stats.constraints = self.constraints_stats
+        self.stats.constraint_time = sum([a["creation_time"] for a in self.constraints_stats.values()])
         
         self.stats.nr_solutions = len(self.single_bin_packings)
         self.stats.deadlines = self.production_schedule.deadlines.astype(int).tolist()
@@ -320,7 +327,7 @@ class ProductionModel():
         self.stats.solution_ends = np.array(self.bin_production.bin_ends.value()).astype(int).tolist()
         self.stats.solution_active = np.array(self.bin_production.bin_active.value()).astype(bool).tolist()
         
-        a = np.array([fsb.counts for fsb in self.free_single_bins])
+        a = np.array([fsb.counts for fsb in self.single_bin_packings])
         self.stats.bins = a.astype(int).tolist()
         self.stats.densities = [float(sol.density) for sol in self.single_bin_packings]
         self.stats.total_density = float(sum([sum(repeats)*sol.density for (repeats,sol) in zip(self.bin_production.bin_repeats.value(), self.single_bin_packings)]) / sum(self.bin_production.bin_repeats.value()))
