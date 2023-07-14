@@ -28,7 +28,7 @@ class CreelPackingModel:
         for (i,j) in itertools.pairwise(range(self.creel_packing.max_creel_number)):
             c.append(
                 (j < self.creel_packing.count).implies(
-                    self.creel_packing.starts[j] == self.creel_packing.ends[i] + 1
+                    self.creel_packing.starts[j] == self.creel_packing.ends[i] + 1 + self.creel_packing.machine_config.creel_switch_penalty
                 )
             )
         

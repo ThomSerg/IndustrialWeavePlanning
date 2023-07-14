@@ -31,6 +31,7 @@ class ProductionModelCreel(ProductionModel):
             items=self.items,
             free_single_bin_packings=[],
             fixed_single_bin_packings=self.fixed_single_bins,
+            single_bin_model=self.single_bin_model,
             bin_production=self.bin_production,
             machine_config=self.machine_config
         )

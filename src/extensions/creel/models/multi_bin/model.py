@@ -9,6 +9,7 @@ from src.data_structures.textile_item import TextileItem
 from src.data_structures.abstract_single_bin_packing import AbstractItemPacking
 from src.extensions.due_dates.data_structures.bin_production import BinProduction
 from src.data_structures.machine_config import MachineConfig
+from src.models.single_bin_creel.abstract_single_bin_creel_model import AbstractSBMCreel
 
 from cpmpy.expressions.python_builtins import all as cpm_all
 from cpmpy.expressions.python_builtins import any as cpm_any
@@ -29,6 +30,7 @@ class CreelModel:
                     items: list[TextileItem],
                     free_single_bin_packings: list[AbstractItemPacking],
                     fixed_single_bin_packings: list[AbstractItemPacking],
+                    single_bin_model: AbstractSBMCreel,
                     bin_production: list[BinProduction],
                     machine_config: MachineConfig,
                 ):
@@ -40,6 +42,7 @@ class CreelModel:
         self.items = items
         self.free_single_bin_packings = free_single_bin_packings
         self.fixed_single_bin_packings = fixed_single_bin_packings
+        self.single_bin_model = single_bin_model
         self.bin_production = bin_production
         self.machine_config = machine_config
 
@@ -143,12 +146,12 @@ class CreelModel:
         self.f = []
         self.cond = []
         for i_deadline in range(len(self.bin_production.deadlines)):
-            for bin_packing,bin_active,bin_start,bin_end in zip(self.bin_production.fixable_bin_packings,self.bin_production.bin_active[:,i_deadline], self.bin_production.bin_starts[-len(self.bin_production.bin_active):,i_deadline],self.bin_production.bin_ends[-len(self.bin_production.bin_active):,i_deadline]):
+            for bin_packing,bin_active,bin_start,bin_end in zip(self.bin_production.fixable_bin_packings,self.bin_production.bin_active[-len(self.bin_production.fixable_bin_packings):,i_deadline], self.bin_production.bin_starts[-len(self.bin_production.fixable_bin_packings):,i_deadline],self.bin_production.bin_ends[-len(self.bin_production.fixable_bin_packings):,i_deadline]):
                 for i_section,(section,section_start,section_end) in enumerate(zip(self.creel_packing.sections, self.creel_packing.starts, self.creel_packing.ends)):
                     
 
                     # The bin color range must be compatible with the section color range
-                    cc = within_color_section(bin_packing, section)
+                    cc = self.single_bin_model.within_color_section(bin_packing, section)
 
                     # Look for correct section where bin is located
                     c.append(
@@ -175,27 +178,29 @@ class CreelModel:
 
  
         # A change in creel config causes a delay TODO code combineren
-        for i_deadline in range(len(self.bin_production.deadlines)):
-            for bin_packing,bin_active,bin_start,bin_end in zip(self.bin_production.fixable_bin_packings,self.bin_production.bin_active[:,i_deadline], self.bin_production.bin_starts[-len(self.bin_production.bin_active):,i_deadline],self.bin_production.bin_ends[-len(self.bin_production.bin_active):,i_deadline]):
-                for i_section,(section,section_start,section_end) in enumerate(zip(self.creel_packing.sections, self.creel_packing.starts, self.creel_packing.ends)):
+        # for i_deadline in range(len(self.bin_production.deadlines)):
+        #     for bin_packing,bin_active,bin_start,bin_end in zip(self.bin_production.fixable_bin_packings,self.bin_production.bin_active[:,i_deadline], self.bin_production.bin_starts[-len(self.bin_production.bin_active):,i_deadline],self.bin_production.bin_ends[-len(self.bin_production.bin_active):,i_deadline]):
+        #         for i_section,(section,section_start,section_end) in enumerate(zip(self.creel_packing.sections, self.creel_packing.starts, self.creel_packing.ends)):
                     
-                    if i_section >= 1: 
-                        c.append(
-                            (i_section < self.creel_packing.count).implies(
-                                (bin_end < section_start) | (bin_start >= section_start + self.creel_delay_cost)
-                            )
-                        )
+        #             if i_section >= 1: 
+        #                 c.append(
+        #                     (i_section < self.creel_packing.count).implies(
+        #                         (bin_end < section_start) | (bin_start >= section_start + self.creel_delay_cost)
+        #                     )
+        #                 )
 
-        for i_deadline in range(len(self.bin_production.deadlines)):
-            for i_bin,(bin_active,bin_start,bin_end,bin_packing) in enumerate(zip(self.bin_production.bin_active[:,i_deadline], self.bin_production.bin_starts[:,i_deadline], self.bin_production.bin_ends[:,i_deadline], self.bin_production.fixable_bin_packings)):
-                for i_section,(section,section_start,section_end) in enumerate(zip(self.creel_packing.sections, self.creel_packing.starts, self.creel_packing.ends)):
+        # for i_deadline in range(len(self.bin_production.deadlines)):
+        #     for i_bin,(bin_active,bin_start,bin_end,bin_packing) in enumerate(zip(self.bin_production.bin_active[:,i_deadline], self.bin_production.bin_starts[:,i_deadline], self.bin_production.bin_ends[:,i_deadline], self.bin_production.fixable_bin_packings)):
+        #         for i_section,(section,section_start,section_end) in enumerate(zip(self.creel_packing.sections, self.creel_packing.starts, self.creel_packing.ends)):
                         
-                    if i_section >= 1: 
-                        c.append(
-                            (i_section < self.creel_packing.count).implies(
-                                (bin_end < section_start) | (bin_start >= section_start + self.creel_delay_cost)
-                            )
-                        )
+        #             if i_section >= 1: 
+        #                 c.append(
+        #                     (i_section < self.creel_packing.count).implies(
+        #                         (bin_end < section_start) | (bin_start >= section_start + self.creel_delay_cost)
+        #                     )
+        #                 )
+
+        # => al in creel_packing_model
 
 
         return c
