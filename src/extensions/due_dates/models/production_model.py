@@ -313,7 +313,7 @@ class ProductionModel():
     
     def get_stats(self):
         # TODO nieuwe statistieken voor multi bin packing algoritmen
-        self.stats.objective = self.objective.value()
+        self.stats.objective = int(self.objective.value())
         self.stats.nr_variables = len(self.get_variables())
         self.stats.constraints = self.constraints_stats
         self.stats.constraint_time = sum([a["creation_time"] for a in self.constraints_stats.values()])
