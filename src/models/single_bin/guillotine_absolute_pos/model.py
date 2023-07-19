@@ -73,4 +73,20 @@ class GuillotineAbsolutePosSBM(GuillotineSBM):
         c.extend(self.constraints)
         self.constraints = c
         return c
+    
+    def get_objective(self):
+
+        # Waste
+        o1 = super().get_objective()
+
+        # Preference for lower left corner
+        o4 = cpm_sum([((item.pos_xs[i_instance] + item.pos_ys[i_instance])*(item.active[i_instance])) for item in self.single_bin_packing.items for i_instance in range(item.nr_length_repeats()*item.nr_width_repeats())])
+
+        # Very large number
+        M = self.single_bin_packing.bin.width*self.single_bin_packing.bin.max_length
+
+        # Multi-objective objective function
+        o = M*o1 + o4
+
+        return o
 
