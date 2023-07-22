@@ -67,6 +67,8 @@ class CreelModel:
             creel_config=creel_config
         )
 
+        self.creel_section = creel_section
+
         # Get constraints of creel sections
         creel_section_model = CreelSectionModel(creel_section, creel_config)
         c.extend(creel_section_model.get_constraints())

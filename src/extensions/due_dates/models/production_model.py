@@ -369,6 +369,7 @@ class ProductionModel():
         #a[-1] = a[-1].value()
         print(a)
         print("Densities:", [sol.density for sol in self.single_bin_solutions])
+        print(self.bin_production.bin_repeats.value())
         print("Total density:", sum([sum(repeats)*sol.density for (repeats,sol) in zip(self.bin_production.bin_repeats.value(), self.single_bin_solutions)]) / sum(self.bin_production.bin_repeats.value()))
         print("Deadlines:")
         print(self.production_schedule.deadlines)

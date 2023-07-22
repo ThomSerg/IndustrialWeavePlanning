@@ -6,7 +6,7 @@ from typing import Union
 import math
 
 from cpmpy.expressions.variables import boolvar, intvar, cpm_array
-from cpmpy.expressions.python_builtins import all, any
+from cpmpy.expressions.python_builtins import all as cpm_all
 #from cpmpy.expressions.globalconstraints import 
 
 from src.data_structures.bin import Bin
@@ -62,6 +62,7 @@ class AbstractSingleBinPacking(FixableObject):
     
     def __eq__(self, other):
         if isinstance(other, AbstractSingleBinPacking):
+            return cpm_all(self.counts == other.counts)
             return all(i == o for (i,o) in zip(self.items, other.items))
         else:
             return False

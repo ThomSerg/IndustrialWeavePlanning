@@ -163,15 +163,20 @@ def single_bin_benchmark_model_info(models: list[AbstractSingleBinModel], proble
 
                 initialised_model = model.init_from_problem(problem)
 
-                c = initialised_model.get_constraints_per_type()
+                c = initialised_model.get_constraints()
+                l = [cpmpy.transformations.flatten_model.flatten_constraint(e) for e in c]
+                lf = flatten(l)
+                print(str(len(c)) + "->" + str(len(lf)))
 
-                for constraint_type in c.keys():
-                    constraints = c[constraint_type]
-                    l = [cpmpy.transformations.flatten_model.flatten_constraint(e) for e in constraints]
-                    lf = flatten(l)
-                    print(constraint_type + " : " + str(len(constraints)) + "->" + str(len(lf)))
+                # for constraint_type in c.keys():
+                #     constraints = c[constraint_type]
+                #     l = [cpmpy.transformations.flatten_model.flatten_constraint(e) for e in constraints]
+                #     lf = flatten(l)
+                #     print(constraint_type + " : " + str(len(constraints)) + "->" + str(len(lf)))
 
-                    nr_constraints[constraint_type] = len(lf)
+                #     nr_constraints[constraint_type] = len(lf)
+
+                nr_constraints = len(lf)
 
 
                 # l = [cpmpy.transformations.flatten_model.flatten_constraint(e) for e in c]

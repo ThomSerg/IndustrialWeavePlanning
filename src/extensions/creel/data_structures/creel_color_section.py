@@ -53,7 +53,7 @@ class CreelColorSection(FixableObject):
         return cpm_array(res)
 
     def _widths_var(self) -> NDVarArray[intvar]:
-        return intvar_1D(self.min_width, self.total_width, self.max_repeats)
+        return intvar_1D(0, self.total_width, self.max_repeats)
 
     def is_here(self, x1: ft.Int) -> boolvar:
         return cpm_any([(s <= x1) & (x1 < s + w) & (i < self.count) for i,(s,w) in enumerate(zip(self.starts,self.widths))]) # TODO mogelijks problemen met rendgevelveschilen tussen kleurzone uit textielpositie bepalen en overlap van kleurzones bepalen
@@ -63,4 +63,4 @@ class CreelColorSection(FixableObject):
         return cpm_any([ cpm_all([(s <= x1), (x2 <= s+w), (i < self.count)]) for i,(s,w) in enumerate(zip(self.starts,self.widths))])
 
     def is_here_2_fixed(self, x1: ft.Int, x2: int) -> boolvar:
-        return cpm_any([(s <= x1) & (int(x2) <= s+w ) & (i < self.count) for i,(s,w) in enumerate(zip(self.starts,self.widths))]) # & (i < self.count) 
+        return cpm_any([cpm_all([(s <= x1), (int(x2) <= s+w ), (i < self.count)]) for i,(s,w) in enumerate(zip(self.starts,self.widths))]) # & (i < self.count) 
