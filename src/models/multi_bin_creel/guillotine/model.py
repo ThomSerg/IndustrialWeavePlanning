@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import math
+
 from ...single_bin.guillotine.model import GuillotineSBM
 
 from src.models.abstract_model import AbstractSingleBinModel, constraint
@@ -52,6 +54,54 @@ class GuillotineSBMCreel(GuillotineSBM, AbstractSBMCreel):
             
 
         return cpm_all(cc)
+
+    def fix(self):
+        super().fix()
+
+   
+        for i in range(self.I): # go over items
+
+            item = self.single_bin_packing.items[i]
+            item.fixable_active.fix()
+            item.fixable_pos_xs_arr.fix()
+            item.fixable_pos_ys_arr.fix()
+
+            item.fixable_active.fixed=True
+            item.fixable_pos_xs_arr.fixed=True
+            item.fixable_pos_ys_arr.fixed=True
+
+            item.fixable_active.fixed_value[:,:] = False
+
+        pattern_height = 0
+        for p in range(self.P): # go over patterns
+            strip_width = 0
+            for a in range(self.A): # go over strips
+                cut_height = 0
+                
+                for b in range(self.B): # go over vertical cuts
+                    for i in range(self.I): # go over items
+
+                        if self.sigma[p,a,b,i].value():
+
+                            item = self.single_bin_packing.items[i]
+                            x_pos = strip_width
+                            y_pos = (pattern_height+cut_height)
+
+                            x_grid = min((math.floor(x_pos / item.width), item.nr_width_repeats()-1))
+                            y_grid = min((math.floor(y_pos / item.height), item.nr_length_repeats()-1))
+
+                            item.fixable_active.fixed_value[y_grid, x_grid] = self.sigma[p,a,b,i].value()
+                            item.fixable_pos_xs_arr.fixed_value[y_grid, x_grid] = x_pos
+                            item.fixable_pos_ys_arr.fixed_value[y_grid, x_grid] = y_pos
+
+                            self.single_bin_packing.items[i] = item
+                        
+                            cut_height += self.items[i].height
+                            break
+
+                strip_width += sum(self.gamma[p,a,:].value()*self.widths) 
+
+            pattern_height += self.pattern_length[p].value()
 
     def get_constraints(self):
         return super().get_constraints()
