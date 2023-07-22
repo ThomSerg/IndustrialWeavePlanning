@@ -7,6 +7,7 @@ from ..anchor.item_packing import ItemPacking
 
 from src.data_structures.bin import Bin
 from src.models.abstract_model import constraint
+from src.data_structures.machine_config import MachineConfig
 
 from cpmpy import Model, AllEqual
 from cpmpy.solvers import CPM_ortools 
@@ -17,6 +18,15 @@ from cpmpy.expressions.variables import intvar, boolvar, NDVarArray, cpm_array, 
 from cpmpy.expressions.globalconstraints import Element, Xor
 
 class GuillotineAbsolutePosSBM(GuillotineSBM):
+
+    def __init__(self, 
+                    machine_config: MachineConfig, 
+                    single_bin_packing: SingleBinPacking
+                ):
+        super().__init__(machine_config, single_bin_packing)
+
+        self.pos_xs = intvar(0, self.bin_width, (self.P ,self.A, self.B, self.I))
+        self.pos_ys = intvar(0, self.single_bin_packing.bin.max_length , (self.P ,self.A, self.B, self.I))
 
     @classmethod
     def init_from_problem(cls, problem) -> GuillotineAbsolutePosSBM:
@@ -40,9 +50,6 @@ class GuillotineAbsolutePosSBM(GuillotineSBM):
     @constraint
     def absolute_pos(self):
         c = []
-
-        self.pos_xs = intvar(0, self.bin_width, (self.P ,self.A, self.B, self.I))
-        self.pos_ys = intvar(0, self.single_bin_packing.bin.max_length , (self.P ,self.A, self.B, self.I))
 
         pattern_height = 0
         for p in range(self.P): # go over patterns
@@ -73,6 +80,9 @@ class GuillotineAbsolutePosSBM(GuillotineSBM):
         c.extend(self.constraints)
         self.constraints = c
         return c
+
+    def get_variables(self):
+        return super().get_variables() + self.pos_xs.flatten().tolist() + self.pos_ys.flatten().tolist()
     
     def get_objective(self):
 

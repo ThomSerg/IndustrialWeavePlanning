@@ -57,7 +57,7 @@ def constraint(func):
 
 def handler(signum, frame):
     print("Forever is over!")
-    raise Exception("end of time")
+    raise TimeoutException("end of time")
 
 
 class TimeoutException(Exception):

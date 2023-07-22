@@ -3,6 +3,7 @@ from __future__ import annotations
 import math
 import time
 import itertools
+import matplotlib.pyplot as plt
 
 from dataclasses import dataclass, field
 from cpmpy.expressions.python_builtins import sum as cpm_sum
@@ -101,11 +102,11 @@ class LnsMBM():
             bin_solutions = model.single_bin_packings
 
             # Detect duplicate solution generation
-            duplicate_sol = False
-            for (bin_sol_1, bin_sol_2) in itertools.combinations(bin_solutions, 2):
-                duplicate_sol |= (bin_sol_1 == bin_sol_2)
-            if duplicate_sol:
-                break
+            # duplicate_sol = False
+            # for (bin_sol_1, bin_sol_2) in itertools.combinations(bin_solutions, 2):
+            #     duplicate_sol |= (bin_sol_1 == bin_sol_2)
+            # if duplicate_sol:
+            #     break
 
             # Update datastructures
             self.models.append(model)
@@ -303,12 +304,11 @@ class LnsMBM():
         # Get the new bin 
         free_single_bin_packing = self.temp_model.free_single_bins[0]
         if sat:
-            free_single_bin_packing.fix()
-            print(free_single_bin_packing.counts)
+            self.temp_model.free_single_bin_models[0].fix()
 
             # Show the new bin
             self.temp_model.free_single_bin_models[0].visualise()
-            #plt.show()
+            plt.show()
 
             print("STATS:", self.temp_model.get_stats())
             self.temp_model.print_stats()
@@ -353,12 +353,16 @@ class ProductionModelLNS(ProductionModel):
     @constraint
     def usefull_bin(self):
         # The newly created bins should be used at least once to avoid creating garbage
-        return [cpm_any([ba for ba in self.bin_production.bin_active[len(self.bin_production.bin_active)-1,:]])] 
+        if len(self.free_single_bins) != 0:
+            return [cpm_any(self.bin_production.fixable_bin_active.flatten().tolist())] 
+        else: return []
     
 
     def get_constraints(self):
         c = []
         c = super().get_constraints()
-        c.append(self.usefull_bin())
+        c.extend(self.usefull_bin())
+        c.extend(self.unique_new_bin())
+        c.append(cpm_any(self.bin_production.bin_active.flatten().tolist()))
         self.constraints = c
         return c

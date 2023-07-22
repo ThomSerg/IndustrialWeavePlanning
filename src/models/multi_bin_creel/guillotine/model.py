@@ -24,13 +24,6 @@ class GuillotineSBMCreel(GuillotineSBM, AbstractSBMCreel):
                 ):
         super().__init__(machine_config, single_bin_packing)
 
-        self.creel_model = CreelModel(
-            self.machine_config.max_creel_colors,
-            self.single_bin_packing.items,
-            self,
-            self.machine_config
-        )
-
     def within_color_section(self, section: CreelSection):
         cc = []
 
@@ -38,11 +31,10 @@ class GuillotineSBMCreel(GuillotineSBM, AbstractSBMCreel):
             strip_width = 0
             for a in range(self.A): # go over strips
 
+                
                 for i in range(self.I): # go over items
                     item = self.single_bin_packing.items[i]
-      
                     for color in item.item.color.basic_colors:
-
                         if a == 0:
                             cc.append(
                                 cpm_any(self.sigma[p,a,:,i]).implies(
@@ -58,10 +50,10 @@ class GuillotineSBMCreel(GuillotineSBM, AbstractSBMCreel):
 
                 strip_width += cpm_sum(self.gamma[p,a,:]*self.widths)
             
+
         return cpm_all(cc)
 
     def get_constraints(self):
-        self.constraints.extend(self.creel_model.get_constraints())
         return super().get_constraints()
     
     def get_name():

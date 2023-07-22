@@ -13,6 +13,7 @@ from cpmpy.expressions.python_builtins import any as cpm_any
 from cpmpy.expressions.python_builtins import max as cpm_max
 from cpmpy.expressions.python_builtins import min as cpm_min
 
+from cpmpy import Model
 
 class AnchorSBMCreel(AnchorSBM, AbstractSBMCreel):
 
@@ -23,13 +24,6 @@ class AnchorSBMCreel(AnchorSBM, AbstractSBMCreel):
                 ):
 
         super().__init__(machine_config, single_bin_packing)
-
-        self.creel_model = CreelModel(
-            self.machine_config.max_creel_colors,
-            self.single_bin_packing.items,
-            self,
-            self.machine_config
-        )
     
     def within_color_section(self, section: CreelSection):
 
@@ -50,7 +44,6 @@ class AnchorSBMCreel(AnchorSBM, AbstractSBMCreel):
         return cpm_all(cc)
 
     def get_constraints(self):
-        self.constraints.extend(self.creel_model.get_constraints())
         return super().get_constraints()
     
 
