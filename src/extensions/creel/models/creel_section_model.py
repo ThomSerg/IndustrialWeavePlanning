@@ -1,11 +1,9 @@
 
+from cpmpy.expressions.globalconstraints import Cumulative
+
 from ..data_structures.creel_section import CreelSection
 from ..data_structures.creel_config import CreelConfig
 from .creel_color_section_model import CreelColorSectionModel
-
-from cpmpy.expressions.variables import NDVarArray, intvar, boolvar, cpm_array, _IntVarImpl
-from cpmpy.expressions.globalconstraints import Cumulative
-
 
 
 def flatten(l):
@@ -26,20 +24,10 @@ class CreelSectionModel:
         starts = flatten([ccs.starts for ccs in self.creel_section.color_sections])
         durations = flatten([ccs.widths for ccs in self.creel_section.color_sections])
         ends = flatten([ccs.ends for ccs in self.creel_section.color_sections])
-        #demand = flatten([ccs. for ccs in self.creel_section.color_sections])
         demand = flatten([[i < ccs.count for i in range(ccs.max_repeats)] for ccs in self.creel_section.color_sections])
 
-
-        
         # Limit number of colors at each position
         c.append(Cumulative(starts, durations, ends, demand, self.creel_config.max_colors))
-        # for ccs in self.creel_section.color_sections:
-        #     for (i,start) in enumerate(ccs.starts):
-        #         c.append(
-        #             (i < ccs.count).implies(
-        #                 sum([ccs2.is_here(start) for ccs2 in self.creel_section.color_sections if ccs2 != ccs]) < self.creel_config.max_colors
-        #             )
-        #         )
    
         # Get constraints of creel color sections
         self.creel_color_section_models = [CreelColorSectionModel(cs) for cs in self.creel_section.color_sections]

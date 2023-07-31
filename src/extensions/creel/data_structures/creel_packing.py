@@ -15,18 +15,22 @@ import src.utils.fixable_type as ft
 @dataclass(kw_only=True)
 class CreelPacking(FixableObject):
 
-    max_creel_number: int
-    max_deadline: int
-    max_colors: int
-    colors: list[Color] 
-    min_widths: list[int]
-    machine_config: MachineConfig
+    '''
+    Creel packing
+    '''
 
-    fixable_count: ft.FixableInt = None
-    fixable_starts: NDVarArray[intvar] = None
-    fixable_ends: NDVarArray[intvar] = None
+    max_creel_number: int           # max number of creel sections
+    max_deadline: int               # last deadline
+    max_colors: int                 # max number of colours per dent
+    colors: list[Color]             # yarn colours
+    min_widths: list[int]           # dim_{t_c, min}, minimal interval width
+    machine_config: MachineConfig   # weaving machine config
 
-    _creel_sections: list[CreelSection] = None
+    fixable_count: ft.FixableInt = None         # number of used creel packings
+    fixable_starts: NDVarArray[intvar] = None   # starts of creel packings
+    fixable_ends: NDVarArray[intvar] = None     # ends of creel packings
+
+    _creel_sections: list[CreelSection] = None  # creel sections
 
     def __post_init__(self):
         self.creel_config = CreelConfig(total_width = self.machine_config.width, max_colors=self.max_colors)
@@ -34,6 +38,8 @@ class CreelPacking(FixableObject):
         if self.fixable_starts is None: self.fixable_starts = ft.FixableIntArray(fixable_parent=self, free_value=self._starts_var())
         if self.fixable_ends is None: self.fixable_ends = ft.FixableIntArray(fixable_parent=self, free_value=self._ends_var())
         if self._creel_sections is None: self._creel_sections = self._creel_sections_var()
+
+    # Properties
 
     @property
     def count(self) -> intvar:
@@ -51,6 +57,8 @@ class CreelPacking(FixableObject):
     def sections(self) -> list[CreelSection]:
         return self._creel_sections
     
+    # Decision variables
+
     def _starts_var(self):
         return intvar_1D(0, self.max_deadline-1, self.max_creel_number)
 
@@ -64,14 +72,8 @@ class CreelPacking(FixableObject):
         
         return [
                 CreelSection(
-                    colors=self.colors,
-                    min_widths=self.min_widths,
-                    creel_config=self.creel_config                
+                    colors = self.colors,
+                    min_widths = self.min_widths,
+                    creel_config = self.creel_config                
                     ) for i in range(self.max_creel_number)
                 ]
-    
-    
-    
-
-
-

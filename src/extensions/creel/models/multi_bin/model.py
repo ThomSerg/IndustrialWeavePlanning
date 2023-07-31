@@ -1,9 +1,13 @@
 from __future__ import annotations
-from ...data_structures.creel_packing import CreelPacking
-from ...models.creel_packing_model import CreelPackingModel
 
 import numpy as np
-import math
+
+from cpmpy.expressions.python_builtins import all as cpm_all
+from cpmpy.expressions.python_builtins import any as cpm_any
+from cpmpy.expressions.python_builtins import sum as cpm_sum
+
+from ...data_structures.creel_packing import CreelPacking
+from ...models.creel_packing_model import CreelPackingModel
 
 from src.data_structures.textile_item import TextileItem
 from src.data_structures.abstract_single_bin_packing import AbstractItemPacking
@@ -11,14 +15,6 @@ from src.extensions.due_dates.data_structures.bin_production import BinProductio
 from src.data_structures.machine_config import MachineConfig
 from src.models.single_bin_creel.abstract_single_bin_creel_model import AbstractSBMCreel
 
-from cpmpy.expressions.python_builtins import all as cpm_all
-from cpmpy.expressions.python_builtins import any as cpm_any
-from cpmpy.expressions.python_builtins import max as cpm_max
-from cpmpy.expressions.python_builtins import min as cpm_min
-from cpmpy.expressions.python_builtins import sum as cpm_sum
-from cpmpy.expressions.variables import cpm_array
-
-from src.extensions.creel.constraints import within_color_section
 
 class CreelModel:
 
@@ -37,16 +33,16 @@ class CreelModel:
         # Set attributes
         self.max_creel_number = max_creel_number
         self.max_deadline = max_deadline
-        self.max_colors=max_colors
+        self.max_colors = max_colors
         self.items = items
         self.fixed_single_bin_packings = fixed_single_bin_packings
         self.single_bin_model = single_bin_model
         self.bin_production = bin_production
         self.machine_config = machine_config
 
-        self.creel_delay_cost = machine_config.creel_switch_penalty # TODO hierarchische structuur van machine configs maken?
+        self.creel_delay_cost = machine_config.creel_switch_penalty
 
-        # Collect all colors -> misschien meegeven bij constructor
+        # Collect all colors
         colors = []
         for item in self.items:
             colors.extend(item.color.basic_colors)
@@ -58,7 +54,7 @@ class CreelModel:
         c = []
 
         # Determine the minimal width of each color section based on all textile items with that color
-        min_widths = [np.inf for i in range(len(self.colors))]
+        min_widths = [np.inf for _ in range(len(self.colors))]
         for item in self.items:
             for basic_color in item.color.basic_colors:
                 min_widths[self.colors.index(basic_color)] = min((min_widths[self.colors.index(basic_color)],item.width,item.height))
@@ -125,7 +121,6 @@ class CreelModel:
                             )
                         )
                     )
-                    
 
                 # If a bin is active, it must lie in a color section
                 c.append(
@@ -145,7 +140,6 @@ class CreelModel:
         for i_deadline in range(len(self.bin_production.deadlines)):
             for bin_packing,bin_active,bin_start,bin_end in zip(self.bin_production.fixable_bin_packings,self.bin_production.bin_active[-len(self.bin_production.fixable_bin_packings):,i_deadline], self.bin_production.bin_starts[-len(self.bin_production.fixable_bin_packings):,i_deadline],self.bin_production.bin_ends[-len(self.bin_production.fixable_bin_packings):,i_deadline]):
                 for i_section,(section,section_start,section_end) in enumerate(zip(self.creel_packing.sections, self.creel_packing.starts, self.creel_packing.ends)):
-                    
 
                     # The bin color range must be compatible with the section color range
                     cc = self.single_bin_model.within_color_section(section)
@@ -173,39 +167,15 @@ class CreelModel:
         self.bin_starts = self.bin_production.bin_starts
         self.bin_ends = self.bin_production.bin_ends
 
-        # niet nodig -> al ergens anders in verwerkt
-        # A change in creel config causes a delay TODO code combineren
-        # for i_deadline in range(len(self.bin_production.deadlines)):
-        #     for bin_packing,bin_active,bin_start,bin_end in zip(self.bin_production.fixable_bin_packings,self.bin_production.bin_active[:,i_deadline], self.bin_production.bin_starts[-len(self.bin_production.bin_active):,i_deadline],self.bin_production.bin_ends[-len(self.bin_production.bin_active):,i_deadline]):
-        #         for i_section,(section,section_start,section_end) in enumerate(zip(self.creel_packing.sections, self.creel_packing.starts, self.creel_packing.ends)):
-                    
-        #             if i_section >= 1: 
-        #                 c.append(
-        #                     (i_section < self.creel_packing.count).implies(
-        #                         (bin_end < section_start) | (bin_start >= section_start + self.creel_delay_cost)
-        #                     )
-        #                 )
-
-        # for i_deadline in range(len(self.bin_production.deadlines)):
-        #     for i_bin,(bin_active,bin_start,bin_end,bin_packing) in enumerate(zip(self.bin_production.bin_active[:,i_deadline], self.bin_production.bin_starts[:,i_deadline], self.bin_production.bin_ends[:,i_deadline], self.bin_production.fixable_bin_packings)):
-        #         for i_section,(section,section_start,section_end) in enumerate(zip(self.creel_packing.sections, self.creel_packing.starts, self.creel_packing.ends)):
-                        
-        #             if i_section >= 1: 
-        #                 c.append(
-        #                     (i_section < self.creel_packing.count).implies(
-        #                         (bin_end < section_start) | (bin_start >= section_start + self.creel_delay_cost)
-        #                     )
-        #                 )
-
-        # => al in creel_packing_model
-
+        # At least one creel section should be in use
         c.append(cpm_sum([ccs.count>0 for cs in self.creel_packing._creel_sections for ccs in cs.creel_color_sections]) > 1)
-
 
         return c
 
     def get_objectives(self):
+        # Preference for earlier creel sections
         o1 = cpm_sum([start*(i < self.creel_packing.count) for (i,start) in enumerate(self.creel_packing.starts)])
+        # Preference for earlier produced bins
         o2 = cpm_sum(np.multiply(self.bin_production.bin_starts, self.bin_production.bin_active))
         return o1 + o2
 
@@ -236,7 +206,7 @@ class CreelModel:
 
         return color_ranges
 
-    # https://stackoverflow.com/questions/15273693/union-of-multiple-ranges
+    # code by eumiro (https://stackoverflow.com/questions/15273693/union-of-multiple-ranges)
     def interval_union(self, intervals):
         res = []
         for begin,end in sorted(intervals):
@@ -245,4 +215,3 @@ class CreelModel:
             else:
                 res.append([begin, end])
         return res
-

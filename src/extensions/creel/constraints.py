@@ -1,17 +1,15 @@
 
-from src.data_structures.abstract_single_bin_packing import AbstractItemPacking
-from .data_structures.creel_section import CreelSection
-from src.models.single_bin.guillotine.model import GuillotineSBM
-
 from cpmpy.expressions.python_builtins import all as cpm_all
 from cpmpy.expressions.python_builtins import any as cpm_any
 from cpmpy.expressions.python_builtins import max as cpm_max
 from cpmpy.expressions.python_builtins import min as cpm_min
-from cpmpy.expressions.python_builtins import sum as cpm_sum
-from cpmpy.expressions.variables import cpm_array
+
+from src.data_structures.abstract_single_bin_packing import AbstractItemPacking
+from .data_structures.creel_section import CreelSection
+from src.models.single_bin.guillotine.model import GuillotineSBM
+
 
 def within_color_section(bin_packing: AbstractItemPacking, section: CreelSection):
-
 
     # The bin color range must be compatible with the section color range
     cc = []
@@ -28,6 +26,7 @@ def within_color_section(bin_packing: AbstractItemPacking, section: CreelSection
                     cpm_all(ccc)
                 )
             )
+
     return cpm_all(cc)
 
 def within_color_section_guillotine(bin_model: GuillotineSBM, section: CreelSection):

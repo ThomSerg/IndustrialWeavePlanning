@@ -1,9 +1,9 @@
-
-from ..data_structures.creel_color_section import CreelColorSection
-
 import itertools
 
 from cpmpy.expressions.globalconstraints import Element
+
+from ..data_structures.creel_color_section import CreelColorSection
+
 
 class CreelColorSectionModel:
 
