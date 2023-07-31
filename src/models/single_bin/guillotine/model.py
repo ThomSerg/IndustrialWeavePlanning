@@ -1,33 +1,29 @@
 from __future__ import annotations
+
 import itertools
-
-
-import math
-import time
 import numpy as np
+import matplotlib.pyplot as plt
 
 from src.models.abstract_model import AbstractSingleBinModel, constraint
 from src.data_structures.bin import Bin
 from src.data_structures.machine_config import MachineConfig
-from ..anchor.single_bin_packing import SingleBinPacking
 
-from cpmpy import Model, AllEqual
-from cpmpy.solvers import CPM_ortools 
-from cpmpy.expressions.python_builtins import all, any
+from cpmpy import Model
 from cpmpy.expressions.python_builtins import sum as cpm_sum
-from cpmpy.expressions.variables import intvar, boolvar, NDVarArray, cpm_array, _IntVarImpl, _genname
-from cpmpy.expressions.globalconstraints import Element, Xor
-
-from matplotlib.axes import Axes
-import matplotlib.pyplot as plt
+from cpmpy.expressions.variables import intvar, boolvar
 
 from ..anchor.item_packing import ItemPacking
+from ..anchor.single_bin_packing import SingleBinPacking
 
 
 class GuillotineSBM(AbstractSingleBinModel):
 
-    ItemPacking = ItemPacking
-    single_bin_packing = SingleBinPacking
+    '''
+    CP-Guillotine model
+    '''
+
+    ItemPacking = ItemPacking               # item packing datatype
+    single_bin_packing = SingleBinPacking   # bin packing datatype
 
     def __init__(self, 
                     machine_config: MachineConfig, 
@@ -38,14 +34,15 @@ class GuillotineSBM(AbstractSingleBinModel):
         self.init_variables()
         self.model = Model()
        
-
     @classmethod
     def init_from_problem(cls, problem) -> GuillotineSBM:
+
         sbp = SingleBinPacking(
-                _items=problem.get_item_packing(ItemPacking),
-                _items_rotated=problem.get_item_packing_rotated(ItemPacking),
-                bin=Bin(config=problem.get_bin_config()),
+                _items = problem.get_item_packing(ItemPacking),
+                _items_rotated = problem.get_item_packing_rotated(ItemPacking),
+                bin = Bin(config=problem.get_bin_config()),
             )
+        
         return cls(
             problem.get_machine_config(),
             sbp,
@@ -55,7 +52,7 @@ class GuillotineSBM(AbstractSingleBinModel):
         return "Guillotine"
 
     def init_variables(self):
-        self.bin_length = self.single_bin_packing.bin.length #intvar(self.machine_config.min_length, self.machine_config.max_length) # the bin length
+        self.bin_length = self.single_bin_packing.bin.length # the bin length
         self.bin_width = self.machine_config.width # the bin width
         self.items = self.single_bin_packing.items
         self.widths = sorted(set([item.width for item in self.items]))
@@ -68,7 +65,6 @@ class GuillotineSBM(AbstractSingleBinModel):
         self.A = self.bin_width // min(self.widths) # upper bound on number of strips
         self.B = self.P #self.Pmax // min(self.heights) # upper bound on number of vertical cuts
 
-        
         self.W = len(self.widths) # number of unique widths
         self.I = len(self.items) # number of items to pack
 
@@ -100,8 +96,6 @@ class GuillotineSBM(AbstractSingleBinModel):
         # 1.4
         # -> definition pattern length lower bound
         for p in range(self.P):
-            # c.append(self.beta[p].implies(self.pattern_length[p] >= self.Pmin)) # ✅
-            # c.append((~self.beta[p]).implies(self.pattern_length[p] == 0)) # ✅
             c.append(self.pattern_length[p] >= self.Pmin*self.beta[p])
 
         # 1.5
@@ -118,20 +112,16 @@ class GuillotineSBM(AbstractSingleBinModel):
             for a in range(self.A-1):
                 # 1.7
                 c.append(cpm_sum(self.gamma[p,a+1,:]) <= cpm_sum(self.gamma[p,a,:]))
-                #c.append((cpm_sum(self.gamma[p,a+1,:]) != 0).implies(cpm_sum(self.gamma[p,a,:]) != 0)) # ✅
 
             for a in range(self.A):
                 # 1.8
-                c.append(cpm_sum(self.gamma[p,a,:]) <= 1) # ✅
+                c.append(cpm_sum(self.gamma[p,a,:]) <= 1)
 
             # 1.9    
             # -> a pattern can only exist if its first strip has a width    
             c.append(cpm_sum(self.gamma[p,0,:]) >= self.beta[p])
-            #c.append(self.beta[p].implies(sum(self.gamma[p,0,:]) != 0 ))
-            # print("TEST", cpm_sum(self.gamma[p,0,:]) > 0)
 
             # 1.10
-            #c.append(cpm_sum(self.gamma[p,:,:]*np.array([self.widths]).T) <= self.bin_width)
             c.append(cpm_sum([cpm_sum(self.gamma[p,:,w])*self.widths[w] for w in range(self.W)]) <= self.bin_width)
 
 
@@ -141,17 +131,15 @@ class GuillotineSBM(AbstractSingleBinModel):
                 for b in range(self.B-1):
                     # 1.11
                     c.append(cpm_sum(self.sigma[p,a,b+1,:]) <= cpm_sum(self.sigma[p,a,b,:]))
-                    #c.append((cpm_sum(self.sigma[p,a,b+1,:]) != 0).implies(cpm_sum(self.sigma[p,a,b,:])!=0))
-
 
         for p in range(self.P):
             for a in range(self.A):
 
-                c.append((cpm_sum(self.gamma[p,a,:]) != 0).implies(cpm_sum(self.sigma[p,a,0,:]) != 0)) # ✅
+                c.append((cpm_sum(self.gamma[p,a,:]) != 0).implies(cpm_sum(self.sigma[p,a,0,:]) != 0)) 
 
                 for b in range(self.B):   
                     # 1.12
-                    c.append(cpm_sum(self.sigma[p,a,b,:]) <= 1) # ✅
+                    c.append(cpm_sum(self.sigma[p,a,b,:]) <= 1) 
 
                     # 1.13
                     for w in range(self.W):
@@ -166,8 +154,6 @@ class GuillotineSBM(AbstractSingleBinModel):
                 c.append(cpm_sum([cpm_sum(self.sigma[p,a,:,i])*self.heights[i] for i in range(self.I)]) <= self.pattern_length[p])
 
         # 1.15
-        # for i in range(self.I):
-        #     c.append(cpm_sum(self.sigma[:,:,:,i]) >= 1)
         # -> min production
 
         # 1.16
@@ -191,7 +177,6 @@ class GuillotineSBM(AbstractSingleBinModel):
                     for i in range(self.I):
                         c.append(cpm_sum([self.sigma[p,a,b,i_] for i_ in range(i,self.I)]) >= self.sigma[p,a,b,i])
 
-
         for i,count in enumerate(self.single_bin_packing.counts):
             c.append(count == cpm_sum(self.sigma[:,:,:,i]) + cpm_sum(self.sigma[:,:,:,i+self.I//2]))
 
@@ -200,7 +185,6 @@ class GuillotineSBM(AbstractSingleBinModel):
     def get_constraints(self):
         c = []
         c.extend(self.guillotine_constraints())
-
         c.extend(self.constraints)
         self.constraints = c
         return c
@@ -222,52 +206,6 @@ class GuillotineSBM(AbstractSingleBinModel):
     def fix(self):
         self.single_bin_packing.fix()
 
-        # if self.single_bin_packing.items[0].fixable_pos_xs_arr.fixed_value is not None:
-        #     for i in range(self.I): # go over items
-
-        #         item = self.single_bin_packing.items[i]
-        #         item.fixable_active.fix()
-        #         item.fixable_pos_xs_arr.fix()
-        #         item.fixable_pos_ys_arr.fix()
-
-        #         item.fixable_active.fixed=True
-        #         item.fixable_pos_xs_arr.fixed=True
-        #         item.fixable_pos_ys_arr.fixed=True
-
-        #         item.fixable_active.fixed_value[:,:] = False
-
-        #     pattern_height = 0
-        #     for p in range(self.P): # go over patterns
-        #         strip_width = 0
-        #         for a in range(self.A): # go over strips
-        #             cut_height = 0
-                    
-        #             for b in range(self.B): # go over vertical cuts
-        #                 for i in range(self.I): # go over items
-
-        #                     if self.sigma[p,a,b,i].value():
-
-        #                         item = self.single_bin_packing.items[i]
-        #                         x_pos = strip_width
-        #                         y_pos = (pattern_height+cut_height)
-
-        #                         x_grid = min((math.floor(x_pos / item.width), item.nr_width_repeats()-1))
-        #                         y_grid = min((math.floor(y_pos / item.height), item.nr_length_repeats()-1))
-
-        #                         item.fixable_active.fixed_value[y_grid, x_grid] = self.sigma[p,a,b,i].value()
-        #                         item.fixable_pos_xs_arr.fixed_value[y_grid, x_grid] = x_pos
-        #                         item.fixable_pos_ys_arr.fixed_value[y_grid, x_grid] = y_pos
-
-        #                         self.single_bin_packing.items[i] = item
-                            
-        #                         cut_height += self.items[i].height
-        #                         break
-
-        #             strip_width += sum(self.gamma[p,a,:].value()*self.widths) 
-
-        #         pattern_height += self.pattern_length[p].value()
-
-
     def get_stats(self):
 
         self.stats.total_density = float(np.sum([np.sum(self.sigma[:,:,:,i]).value()*self.items[i].item.area for i in range(self.I)]) / (self.bin_length.value()*self.bin_width))
@@ -287,11 +225,9 @@ class GuillotineSBM(AbstractSingleBinModel):
 
         bin_width = self.bin_width
         bin_height = self.machine_config.max_length
-
-        #bin_height /= bin_width
             
         fig_size = (10*bin_height/bin_width,10)
-        (fig, ax) = plt.subplots(figsize=fig_size)
+        (_, ax) = plt.subplots(figsize=fig_size)
 
         ax.get_yaxis().set_visible(False)
         ax.get_xaxis().set_visible(False)
@@ -300,8 +236,6 @@ class GuillotineSBM(AbstractSingleBinModel):
         ax.set_ylim((0, 1))
 
         cmap = get_cmap(self.I//2)
-
-
 
         pattern_height = 0
         for p in range(self.P):
@@ -313,7 +247,6 @@ class GuillotineSBM(AbstractSingleBinModel):
                     for i in range(self.I):
                         if (self.sigma[p,a,b,i].value()):
 
-
                             ax.add_patch(
                                 plt.Rectangle(
                                     (
@@ -324,7 +257,6 @@ class GuillotineSBM(AbstractSingleBinModel):
                                     self.items[i].width/bin_width,
                                     edgecolor='black',
                                     facecolor=cmap(i%(self.I//2)),
-                                    #alpha=0.5
                                 )
                             )
                             
@@ -333,16 +265,11 @@ class GuillotineSBM(AbstractSingleBinModel):
                             cut_height += self.items[i].height
                             break
 
-                strip_width += sum(self.gamma[p,a,:].value()*self.widths) #max_width
+                strip_width += sum(self.gamma[p,a,:].value()*self.widths)
 
             pattern_height += self.pattern_length[p].value()
-      
-        
-    
-
- 
-
-    
+  
+# code by Ali (https://stackoverflow.com/questions/14720331/how-to-generate-random-colors-in-matplotlib)
 def get_cmap(n, name='tab20'):
     '''Returns a function that maps each index in 0, 1, ..., n-1 to a distinct 
     RGB color; the keyword argument name must be a standard mpl colormap name.'''

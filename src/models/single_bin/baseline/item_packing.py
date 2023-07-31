@@ -1,18 +1,21 @@
 from __future__ import annotations
 from dataclasses import dataclass
 
-from cpmpy.expressions.variables import NDVarArray, intvar, boolvar, cpm_array
+from cpmpy.expressions.variables import intvar, boolvar
+
 from src.utils.cpm_extensions import intvar_1D
-
-from src.utils.fixable_object import FixableObject
 import src.utils.fixable_type as ft
-
 from src.data_structures.abstract_item_packing import AbstractItemPacking
+
 
 @dataclass(kw_only=True)
 class ItemPacking(AbstractItemPacking):
 
-    fixable_rotation: ft.FixableBoolArray = None
+    '''
+    Packing of a single item
+    '''
+
+    fixable_rotation: ft.FixableBoolArray = None    # item rotation (90°)
 
     def __post_init__(self):
         super().__post_init__()
@@ -23,6 +26,8 @@ class ItemPacking(AbstractItemPacking):
             return super().get_variables() + [self.rotations]
         return super().get_variables() + list(self.rotations)
     
+    # Properties
+
     @property
     def rotations(self):
         return self.fixable_rotation.value()
@@ -33,7 +38,9 @@ class ItemPacking(AbstractItemPacking):
 
     @property
     def heights(self):
-        return self.item.height * self.rotations + self.item.width * (1 - self.rotations)    
+        return self.item.height * self.rotations + self.item.width * (1 - self.rotations)  
+
+    # Decision variables  
 
     def _pos_xs_var(self):
         return intvar_1D(0, self.bin_config.width - self.item.smallest_side, self.max_count)
@@ -46,6 +53,8 @@ class ItemPacking(AbstractItemPacking):
     
     def _active_var(self):
         return boolvar(self.max_count)
+    
+    # Equality comparison
 
     def __eq__(self, other):
         if isinstance(other, ItemPacking):

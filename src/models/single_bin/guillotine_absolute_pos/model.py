@@ -1,5 +1,7 @@
 from __future__ import annotations
-import itertools
+
+from cpmpy.expressions.python_builtins import sum as cpm_sum
+from cpmpy.expressions.variables import intvar
 
 from ..guillotine.model import GuillotineSBM
 from ..anchor.single_bin_packing import SingleBinPacking
@@ -9,15 +11,12 @@ from src.data_structures.bin import Bin
 from src.models.abstract_model import constraint
 from src.data_structures.machine_config import MachineConfig
 
-from cpmpy import Model, AllEqual
-from cpmpy.solvers import CPM_ortools 
-from cpmpy.expressions.python_builtins import all, any
-from cpmpy.expressions.python_builtins import any as cpm_any
-from cpmpy.expressions.python_builtins import sum as cpm_sum
-from cpmpy.expressions.variables import intvar, boolvar, NDVarArray, cpm_array, _IntVarImpl, _genname
-from cpmpy.expressions.globalconstraints import Element, Xor
 
 class GuillotineAbsolutePosSBM(GuillotineSBM):
+
+    '''
+    CP-Guillotine-Absolute
+    '''
 
     def __init__(self, 
                     machine_config: MachineConfig, 
@@ -25,16 +24,19 @@ class GuillotineAbsolutePosSBM(GuillotineSBM):
                 ):
         super().__init__(machine_config, single_bin_packing)
 
+        # Additional absolute positional variables
         self.pos_xs = intvar(0, self.bin_width, (self.P ,self.A, self.B, self.I))
         self.pos_ys = intvar(0, self.single_bin_packing.bin.max_length , (self.P ,self.A, self.B, self.I))
 
     @classmethod
     def init_from_problem(cls, problem) -> GuillotineAbsolutePosSBM:
+
         sbp = SingleBinPacking(
-                _items=problem.get_item_packing(ItemPacking),
-                _items_rotated=problem.get_item_packing_rotated(ItemPacking),
-                bin=Bin(config=problem.get_bin_config()),
+                _items = problem.get_item_packing(ItemPacking),
+                _items_rotated = problem.get_item_packing_rotated(ItemPacking),
+                bin = Bin(config=problem.get_bin_config()),
             )
+        
         return cls(
             problem.get_machine_config(),
             sbp,
@@ -76,7 +78,6 @@ class GuillotineAbsolutePosSBM(GuillotineSBM):
         c.extend(self.guillotine_constraints())
         c.extend(self.bin_length_link())
         c.extend(self.absolute_pos())
-
         c.extend(self.constraints)
         self.constraints = c
         return c
@@ -93,10 +94,9 @@ class GuillotineAbsolutePosSBM(GuillotineSBM):
         o4 = cpm_sum([((item.pos_xs[i_instance] + item.pos_ys[i_instance])*(item.active[i_instance])) for item in self.single_bin_packing.items for i_instance in range(item.nr_length_repeats()*item.nr_width_repeats())])
 
         # Very large number
-        M = self.single_bin_packing.bin.width*self.single_bin_packing.bin.max_length
+        B = self.single_bin_packing.bin.width*self.single_bin_packing.bin.max_length
 
         # Multi-objective objective function
-        o = M*o1 + o4
+        o = B*o1 + o4
 
         return o
-

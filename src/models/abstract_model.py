@@ -3,46 +3,22 @@ from abc import ABCMeta, abstractmethod
 from dataclasses import dataclass
 from dataclasses_json import dataclass_json
 
-
-from contextlib import contextmanager
 from timeit import default_timer as timer
-from typing import List, Optional, Dict
-import threading
-import _thread
-
+from typing import List, Dict
 import numpy as np
-
 
 from cpmpy.solvers import CPM_ortools 
 from cpmpy import Model
 
-from src.data_structures.abstract_item_packing import AbstractItemPacking
 from src.data_structures.abstract_single_bin_packing import AbstractSingleBinPacking
 from src.data_structures.machine_config import MachineConfig
 from src.data_structures.abstract_single_bin_packing import AbstractSingleBinPacking
-
 from src.utils.configuration import Configuration
 
 
+# Constraint decorator (for collecting statistics)
 def constraint(func):
     def count_constraints(self):
-        # g = func.__globals__
-        # sentinel = object()
-
-        # oldvalue = g.get('c', sentinel)
-        # g['c'] = []
-
-        # try:
-        #     start = timer()
-        #     func(self)
-        #     end = timer()
-        #     c = g.get('c')
-        #     self.constraints_stats[func.__name__] = { 
-        #         "nr_constraint": len(c),
-        #         "creation_time": end-start
-        #     }
-        # except:
-        #     g['c'] = oldvalue
 
         start = timer()
         c = func(self)
@@ -51,31 +27,19 @@ def constraint(func):
             "nr_constraint": len(c),
             "creation_time": end-start
         }
-
         return c
+    
     return count_constraints
+
+# Timeout system (for memory protection)
 
 def handler(signum, frame):
     print("Forever is over!")
     raise TimeoutException("end of time")
 
-
 class TimeoutException(Exception):
     def __init__(self, msg=''):
         self.msg = msg
-
-@contextmanager
-def time_limit(seconds, msg=''):
-    timer = threading.Timer(seconds, lambda: _thread.interrupt_main())
-    timer.start()
-    try:
-        yield
-    except KeyboardInterrupt:
-        raise TimeoutException("Timed out for operation \"{}\"".format(msg))
-    finally:
-        # if the action ends in specified time, timer is canceled
-        timer.cancel()
-
 
 class Alarm():
 
@@ -99,6 +63,10 @@ class Alarm():
             pass
 
 class AbstractModel(metaclass=ABCMeta):
+
+    '''
+    An abstract mathematical model.
+    '''
 
     constraints_stats = {}
 
@@ -133,7 +101,6 @@ class AbstractModel(metaclass=ABCMeta):
             alarm.start(constraint_creation_timeout) 
             self.c = self.get_constraints()
             self.stats.nr_constraints = len(self.c)
-            print("nr constraints:", len(self.c))
             alarm.cancel()
 
             self.o = self.get_objective()
@@ -152,17 +119,17 @@ class AbstractModel(metaclass=ABCMeta):
             self.stats.transfer_time = end_t - start_t
 
             print("Solving...")
+
             start_s = timer()
             res = s.solve( max_time_in_seconds=max_time_in_seconds)
             end_s = timer()
             self.stats.solve_time = end_s - start_s
+
         except TimeoutException as e: 
-            print(e)
             return False
 
         return res
 
-    #@abstractmethod
     def get_repeats(self): pass
 
     def get_stats(self):
@@ -175,6 +142,10 @@ class AbstractModel(metaclass=ABCMeta):
     def fix(self): pass
 
 class AbstractSingleBinModel(AbstractModel):
+
+    '''
+    Abstract model for SLOPP
+    '''
 
     # Constructor
     def __init__(self, 
@@ -207,10 +178,7 @@ class AbstractSingleBinModel(AbstractModel):
     
     @constraint
     def bin_height(self):
-        # The bin length should be at least its minimal value
-        # return [ 
-        #     self.single_bin_packing.bin.config.max_length == self.single_bin_packing.bin.length,
-        #     ]
+        # Bin length must be between upper and lower value
         return [ 
             self.single_bin_packing.bin.config.min_length <= self.single_bin_packing.bin.length,
             self.single_bin_packing.bin.length <= self.single_bin_packing.bin.config.max_length 
@@ -233,16 +201,25 @@ class AbstractSingleBinModel(AbstractModel):
         self.stats.counts = np.array(self.single_bin_packing.counts).astype(int).tolist()
 
 
-
 class AbstractMultiBinModel(AbstractModel):
+
+    '''
+    Abstract model for due-date extended SLOPP
+    '''
 
     def __init__(self):
         pass
 
 class AbstractProductionModel(AbstractModel):
 
+    '''
+    Abstract production schedule module
+    '''
+
     def __init__(self):
         pass
+
+# Stats datastructures
 
 @dataclass_json
 @dataclass

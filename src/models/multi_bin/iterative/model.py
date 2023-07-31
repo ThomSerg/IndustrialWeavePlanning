@@ -1,26 +1,25 @@
 from __future__ import annotations
+from dataclasses import field
 
 import math
 import time
-import itertools
-
-from dataclasses import dataclass, field
-
 
 from src.data_structures.bin_config import BinConfig
-
 from src.data_structures.machine_config import MachineConfig
 from src.data_structures.production_schedule import ProductionSchedule
 from src.data_structures.bin import Bin
 from src.data_structures.item import Item
-
 from src.models.abstract_model import AbstractProductionModel
 from src.data_structures.problem.multi_bin_problem import MultiBinProblem
-
 from src.models.abstract_model import AbstractSingleBinModel
 from src.utils.configuration import Configuration
 
+
 class IterativeMBM():
+
+    '''
+    CP-Iterative model
+    '''
 
     # Constructor
     def __init__(self,
@@ -35,7 +34,6 @@ class IterativeMBM():
         self.production_schedule = production_schedule
         self.production_model = production_model
         self.single_bin_model = single_bin_model
-
         self.preference = [1/5]*5
         
     # Alternative constructor from problem formulation
@@ -59,14 +57,15 @@ class IterativeMBM():
     
     # Solve the model
     def solve(self, config:Configuration, args: dict, bin_solutions=None):
+
+        # Get benchmark settings
         nr_iterations = args.get("nr_iterations", 1)
         packing_timeout = args.get("packing_timeout", 60)
         production_timeout = args.get("production_timeout", 5)
 
         start_time = time.perf_counter()
         
-        if bin_solutions is None: bin_solutions = []
-        # bin_solutions = []      # To collect the bin packings in between iterations
+        if bin_solutions is None: bin_solutions = [] # Collection of found patterns
         self.models = []        # To collect the models of every iteration
         sat = False             # Whether the total model is SAT
 
@@ -74,6 +73,7 @@ class IterativeMBM():
         for i_iteration in range(nr_iterations):
 
             print("--- CREATING NEW BIN ---")
+
             # Solve model to create one new bin in the context of the previously achieved production
             sat_, model = self.solve_one_bin(
                 config=config,
@@ -96,6 +96,7 @@ class IterativeMBM():
 
         # Re-solve model with current packings (no new bin) to get final planning
         print("--- LAST MODEL ---")
+
         # Solve production problem without new bin
         sat_, model = self.solve_packing(
             config=config,
@@ -103,14 +104,13 @@ class IterativeMBM():
             overproduction=True,
             max_time_in_seconds=production_timeout
             )
-
         self.models.append(model)
 
         # Get statistics
         end_time = time.perf_counter()
         print("Computation time:", end_time - start_time, "seconds")
 
-        for model in self.models[0:2:-1]: # TODO ?
+        for model in self.models[0:2:-1]:
             model.single_bin_models[0].visualise()
         
         return sat, self.models
@@ -120,73 +120,6 @@ class IterativeMBM():
 
     def update_preference(self, preference):
         self.preference = preference
-    
-    # def solve_preference(self, args: dict, bin_solutions=field(default_factory=lambda: [])):
-    #     # sat, models = self.solve(args)
-
-    #     packing_timeout = args.get("packing_timeout", 60)
-    #     production_timeout = args.get("production_timeout", 5)
-
-    #     start_time = time.perf_counter()
-        
-    #     models = []
-    #     #bin_solutions = [] #models[-1].single_bin_solutions  # To collect the bin packings in between iterations
-    #     sat = False         # Whether the total model is SAT
-
-    #     previous_bin_production = None      # The (fulfilled) bin production of the previous iteration
-
-        
-        
-    #     print("--- FIXING PRODUCTION ---")
-    #     sat_, model = self.solve_packing(bin_solutions=bin_solutions.copy())
-    #     # Get the production for next iteration
-    #     model.bin_production.fix()
-    #     previous_bin_production = model.bin_production
-
-    #     print("--- CREATING NEW BIN ---")
-    #     # Solve model to create one new bin in the context of the previously achieved production
-    #     sat_, model = self.solve_one_bin(
-    #         bin_solutions=bin_solutions.copy(), 
-    #         max_new_bin_repeat=-1, 
-    #         previous_bin_production=previous_bin_production,
-    #         max_time_in_seconds=packing_timeout
-    #         )
-    
-    #     # Check the outcome
-    #     if not sat_:
-    #         print("NOT SAT")
-    #         return sat, models
-    #     print("SAT")
-
-    #     # Get the bin packings
-    #     bin_solutions = model.single_bin_solutions
-
-    #     # Detect duplicate solution generation
-    #     # duplicate_sol = False
-    #     # for (bin_sol_1, bin_sol_2) in itertools.combinations(bin_solutions, 2):
-    #     #     duplicate_sol |= (bin_sol_1 == bin_sol_2)
-    #     # if duplicate_sol:
-    #     #     return
-    #     # -> niet meer mogelijk
-
-        
-
-    #     print("--- LAST MODEL ---")
-    #     # Solve production problem without new bin
-    #     sat_, model = self.solve_packing(
-    #         bin_solutions=bin_solutions.copy(), 
-    #         overproduction=True,
-    #         max_time_in_seconds=production_timeout
-    #         )
-        
-    #     # Update datastructures
-    #     models.append(model)
-    #     sat = True
-
-            
-
-    #     return sat, models
-
 
 
     # Solve production planning without new bin
@@ -196,7 +129,6 @@ class IterativeMBM():
                         overproduction=False,                               # Whether overproduction is allowed
                         max_time_in_seconds=5                               # Limit solver time
                       ):
-
 
         # The items for which to plan a production
         items = self.production_schedule.items
@@ -211,12 +143,9 @@ class IterativeMBM():
             single_bin_model=self.single_bin_model
         )
 
-    
         # Solve to get partial solution
         sat = self.temp_model.solve(config, max_time_in_seconds, self.get_preference(), overproduction_objective=True)
         print("Packing SAT:", sat)
-        print("nr constraints:", len(self.temp_model.constraints))
-
         self.temp_model.print_stats()
 
         return sat, self.temp_model
@@ -235,43 +164,43 @@ class IterativeMBM():
 
         # Bin config
         temp_bin_config = BinConfig(
-            width=self.machine_config.width,
-            min_length=self.machine_config.max_length-max([max((item.height, item.width)) for item in temp_items]), #temp_machine_config.min_length,
-            max_length=self.machine_config.max_length,
+            width = self.machine_config.width,
+            min_length = self.machine_config.max_length-max([max((item.height, item.width)) for item in temp_items]),
+            max_length = self.machine_config.max_length,
         )
-        temp_items = self.filter_items(temp_items, temp_bin_config) # TODO niet logisch pas, min length van bin zou hier afhankelijk van moeten zijn
+        temp_items = self.filter_items(temp_items, temp_bin_config)
 
         # Item packings
         temp_item_packings = [
                 self.single_bin_model.ItemPacking(
-                        item=i, 
-                        max_count=math.floor((self.machine_config.width*self.machine_config.max_length)/i.area),
-                        bin_config=temp_bin_config
-                    ) for i in temp_items] # TODO: better bound
+                        item = i, 
+                        max_count = math.floor((self.machine_config.width*self.machine_config.max_length)/i.area),
+                        bin_config = temp_bin_config
+                    ) for i in temp_items]
         temp_item_packings_rotated = [
                 self.single_bin_model.ItemPacking(
-                        item=i, 
-                        max_count=math.floor((self.machine_config.width*self.machine_config.max_length)/i.area),
-                        bin_config=temp_bin_config,
-                        rotation=True
-                    ) for i in temp_items] # TODO: better bound
+                        item = i, 
+                        max_count = math.floor((self.machine_config.width*self.machine_config.max_length)/i.area),
+                        bin_config = temp_bin_config,
+                        rotation = True
+                    ) for i in temp_items]
 
         # Free single bin
         free_single_bins = [
             self.single_bin_model.single_bin_packing(
-                _items=temp_item_packings, 
-                _items_rotated=temp_item_packings_rotated,
-                bin=Bin(config=temp_bin_config),
+                _items = temp_item_packings, 
+                _items_rotated = temp_item_packings_rotated,
+                bin = Bin(config=temp_bin_config),
             )]
 
         # Create model
         self.temp_model = self.production_model(
-            machine_config=self.machine_config, 
-            production_schedule=self.production_schedule, 
-            fixed_single_bins=[],
-            free_single_bins=free_single_bins, 
-            items=temp_items,
-            single_bin_model=self.single_bin_model,
+            machine_config = self.machine_config, 
+            production_schedule = self.production_schedule, 
+            fixed_single_bins = [],
+            free_single_bins = free_single_bins, 
+            items = temp_items,
+            single_bin_model = self.single_bin_model,
         )
 
         # New unique solution
@@ -280,22 +209,18 @@ class IterativeMBM():
         # Solve to get partial solution
         sat = self.temp_model.solve(config, max_time_in_seconds, self.get_preference())
         print("Packing SAT:", sat)
-        print("nr constraints:", len(self.temp_model.constraints))
 
         # Get the new bin 
         free_single_bin_packing = self.temp_model.free_single_bins[0]
         if sat:
             free_single_bin_packing.fix()
-            print(free_single_bin_packing.counts)
 
             # Show the new bin
             self.temp_model.free_single_bin_models[0].visualise()
-            #plt.show()
 
             print("STATS:", self.temp_model.get_stats())
             self.temp_model.print_stats()
 
-        
         # Get statistics
         end_time = time.perf_counter()
         print("Computation time:", end_time - start_time, "seconds")

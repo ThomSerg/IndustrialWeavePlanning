@@ -1,27 +1,29 @@
 from __future__ import annotations
 
-from ...single_bin.guillotine.model import GuillotineSBM
+from cpmpy.expressions.python_builtins import all as cpm_all
+from cpmpy.expressions.python_builtins import any as cpm_any
+from cpmpy.expressions.python_builtins import sum as cpm_sum
 
-from src.models.abstract_model import AbstractSingleBinModel, constraint
-from src.data_structures.bin import Bin
-from src.data_structures.machine_config import MachineConfig
 from ...single_bin.anchor.single_bin_packing import SingleBinPacking
 
+from src.data_structures.machine_config import MachineConfig
 from src.extensions.creel.models.single_bin.model import CreelModel
 from src.extensions.creel.data_structures.creel_section import CreelSection
 from src.models.single_bin_creel.abstract_single_bin_creel_model import AbstractSBMCreel
 from src.models.single_bin.guillotine_absolute_pos.model import GuillotineAbsolutePosSBM
 
-from cpmpy.expressions.python_builtins import all as cpm_all
-from cpmpy.expressions.python_builtins import any as cpm_any
-from cpmpy.expressions.python_builtins import sum as cpm_sum
 
 class GuillotineAbsolutePosSBMCreel(GuillotineAbsolutePosSBM, AbstractSBMCreel):
+
+    '''
+    CP-Guillotine-Absolute + creel model
+    '''
 
     def __init__(self, 
                     machine_config: MachineConfig, 
                     single_bin_packing: SingleBinPacking,
                 ):
+        
         super().__init__(machine_config, single_bin_packing)
 
         self.creel_model = CreelModel(
@@ -39,7 +41,6 @@ class GuillotineAbsolutePosSBMCreel(GuillotineAbsolutePosSBM, AbstractSBMCreel):
             strip_width = 0
             for a in range(self.A): # go over strips
 
-                
                 for i in range(self.I): # go over items
                     for color in self.items[i].item.color.basic_colors:
                         if a == 0:
@@ -56,7 +57,6 @@ class GuillotineAbsolutePosSBMCreel(GuillotineAbsolutePosSBM, AbstractSBMCreel):
                             )
 
                 strip_width += cpm_sum(self.gamma[p,a,:]*self.widths)
-            
 
             pattern_height += self.pattern_length[p]
 

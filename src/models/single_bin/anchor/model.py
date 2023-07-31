@@ -4,39 +4,30 @@ from dataclasses import dataclass
 from dataclasses_json import dataclass_json
 
 import math
-import time
 from timeit import default_timer as timer
-from typing import List, Optional, Dict
+from typing import List
 
-import numpy as np
-from src.data_structures.bin import Bin
-
-from src.data_structures.machine_config import MachineConfig
-from .single_bin_packing import SingleBinPacking
-
-import functools, operator
-
-
-from cpmpy import Model, AllEqual
-from cpmpy.solvers import CPM_ortools 
 from cpmpy.expressions.python_builtins import all, any
 from cpmpy.expressions.python_builtins import sum as cpm_sum
-from cpmpy.expressions.variables import intvar, boolvar, NDVarArray, cpm_array, _IntVarImpl, _genname
-from cpmpy.expressions.globalconstraints import Element, Xor
 
+from src.data_structures.bin import Bin
+from src.data_structures.machine_config import MachineConfig
 from src.models.abstract_model import AbstractSingleBinModel, constraint, SingleBinStats
-from src.data_structures.problem.problem import Problem
-
 from src.models import objectives
 
+from .single_bin_packing import SingleBinPacking
 from .Visualiser import show_bin_packing
 from .item_packing import ItemPacking
 
 
 class AnchorSBM(AbstractSingleBinModel):
 
-    ItemPacking = ItemPacking
-    single_bin_packing = SingleBinPacking
+    '''
+    CP-Anchor model
+    '''
+
+    ItemPacking = ItemPacking               # item packing datatype
+    single_bin_packing = SingleBinPacking   # bin packing datatype
     
     # Constructor
     def __init__(self, 
@@ -50,6 +41,7 @@ class AnchorSBM(AbstractSingleBinModel):
     # Alternative constructor from problem formulation
     @classmethod
     def init_from_problem(cls, problem) -> AnchorSBM:
+
         # Create packing variables
         sbp = SingleBinPacking(
                 _items=problem.get_item_packing(ItemPacking),
@@ -74,10 +66,6 @@ class AnchorSBM(AbstractSingleBinModel):
     @constraint
     def unselected_items(self):
         c = []
-
-        # Link the position of every unselected item to that of the next (unselected) item
-        # -> gives some determinism to all items, regardless whether they are selected
-        # -> allows for reasoning over item position without having to check whether a specific instance is active
 
         # Go over all items
         for item in self.single_bin_packing.items:
@@ -106,7 +94,6 @@ class AnchorSBM(AbstractSingleBinModel):
 
         for item in self.single_bin_packing.items:
             l = max(((self.single_bin_packing.bin.min_length // item.height - 1), 0))
-            #u = max(((self.single_bin_packing.bin.max_length // item.height - 1), 0))
             for y in range(l,item.nr_length_repeats()):
                 for x in range(item.nr_width_repeats()):
                     c.append(
@@ -114,7 +101,6 @@ class AnchorSBM(AbstractSingleBinModel):
                             item.pos_ys_arr[y,x] + item.heights_arr[y,x] <= self.single_bin_packing.bin.length
                         )
                     )
-        #     #c.extend((item.pos_ys_arr[l:,:] + item.heights_arr[l:,:])*item.active_arr[l:,:] <= self.single_bin_packing.bin.length)
         
         return c
 
@@ -163,7 +149,6 @@ class AnchorSBM(AbstractSingleBinModel):
                             pos_y_1 = pos_ys_1[y_1,x_1]
                             pos_y_2 = pos_ys_2[y_2,x_2]
                                                         
-                            # TODO test met nieuwe formulering
                             a_1 = item_2.max_move_x[y_2,x_2]
                             c_1 = ((x_2+1)*w_2) - (x_2*w_2 - item_2.min_move_x[y_2,x_2])
                             b_1 = item_2.max_move_y[y_2,x_2]
@@ -189,16 +174,12 @@ class AnchorSBM(AbstractSingleBinModel):
                             consequence = []
                             
                             if y_1*h_1 <= y_2*h_2:
-                            #if c_y_1 <= c_y_2:
                                 consequence.append( (pos_y_1 + h_1 <= pos_y_2) )
                             if y_2*h_2 <= y_1*h_1:
-                            #if c_y_2 <= c_y_1:
                                 consequence.append( (pos_y_2 + h_2 <= pos_y_1) )
                             if x_1*w_1 <= x_2*w_2:
-                            #if c_x_1 <= c_x_2:
                                 consequence.append( (pos_x_1 + w_1 <= pos_x_2) )
                             if x_2*w_2 <= x_1*w_1:
-                            #if c_x_2 <= c_x_1:
                                 consequence.append( (pos_x_2 + w_2 <= pos_x_1) )
 
                             c.append(
@@ -256,8 +237,6 @@ class AnchorSBM(AbstractSingleBinModel):
                                     (pos_ys[y,x] + h <= pos_ys[y+1,x+1]))
                             )
 
-        print("nr_no_overlap", len(c))
-
         return c
     
     @constraint
@@ -309,10 +288,10 @@ class AnchorSBM(AbstractSingleBinModel):
         o4 = cpm_sum([((item.pos_xs[i_instance] + item.pos_ys[i_instance])*(item.active[i_instance])) for item in self.single_bin_packing.items for i_instance in range(item.nr_length_repeats()*item.nr_width_repeats())])
 
         # Very large number
-        M = self.single_bin_packing.bin.width*self.single_bin_packing.bin.max_length
+        B = self.single_bin_packing.bin.width*self.single_bin_packing.bin.max_length
 
         # Multi-objective objective function
-        o = M*o1 + o4
+        o = B*o1 + o4
 
         return o
 
@@ -334,6 +313,8 @@ class AnchorSBM(AbstractSingleBinModel):
 
     def visualise(self):
         return show_bin_packing(self.single_bin_packing)
+
+# Extension to stats datatype
 
 @dataclass_json
 @dataclass

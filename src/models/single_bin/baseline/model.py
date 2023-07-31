@@ -1,33 +1,29 @@
 from __future__ import annotations
+
 import itertools
-
 import numpy as np
-import math
-
-
 
 from src.data_structures.machine_config import MachineConfig
-from .single_bin_packing import SingleBinPacking
 from src.data_structures.problem.colored_single_bin_problem import ColoredSingleBinProblem
 from src.data_structures.bin import Bin
 from src.models.single_bin.baseline.item_packing import ItemPacking
-from .Visualiser import show_bin_packing
 from src.models.abstract_model import AbstractSingleBinModel, constraint
-
-
-from cpmpy.solvers import CPM_ortools 
-from cpmpy.expressions.python_builtins import all, any
-from cpmpy.expressions.python_builtins import sum as cpm_sum
-
 from src.models.constraints import non_overlap
 
+from .Visualiser import show_bin_packing
+from .single_bin_packing import SingleBinPacking
 
-   
+from cpmpy.expressions.python_builtins import sum as cpm_sum
+
 
 class BaselineSBM(AbstractSingleBinModel):
 
-    ItemPacking = ItemPacking
-    single_bin_packing = SingleBinPacking
+    '''
+    CP-Baseline model
+    '''
+
+    ItemPacking = ItemPacking               # item packing datatype
+    single_bin_packing = SingleBinPacking   # bin packing datatype
 
     # Constructor
     def __init__(self, 
@@ -40,19 +36,13 @@ class BaselineSBM(AbstractSingleBinModel):
     # Alternative constructor from problem formulation
     @classmethod
     def init_from_problem(cls, problem: ColoredSingleBinProblem) -> BaselineSBM:
-        # Create items to pack
-        # items = [
-        #     ItemPacking(
-        #             item=i, 
-        #             max_count=math.floor((problem.machine_width*problem.machine_max_length)/i.area), 
-        #             bin_config=problem.get_bin_config(),
-        #         ) for i in problem.get_items()
-        # ]
+
         # Create the packing variables
         sbp = SingleBinPacking(
                 _items=problem.get_item_packing(ItemPacking),
                 bin=Bin(config=problem.get_bin_config()),
             )
+        
         # Construct the model
         return cls(
             problem.get_machine_config(),
@@ -86,7 +76,7 @@ class BaselineSBM(AbstractSingleBinModel):
             for i_instance in range(item.max_count):
                 pxs = item.pos_xs[i_instance]
                 pys = item.pos_ys[i_instance]
-                # Stay within the width
+                # stay within the width
                 c.append(pxs <= self.single_bin_packing.bin.width - item.widths[i_instance])
                 # stay within the height
                 c.append(pys + item.heights[i_instance] <= self.single_bin_packing.bin.length)
@@ -180,16 +170,15 @@ class BaselineSBM(AbstractSingleBinModel):
         o4 = cpm_sum([((item.pos_xs[i_instance] + item.pos_ys[i_instance])*(item.active[i_instance])) for item in self.single_bin_packing.items for i_instance in range(item.max_count)])
 
         # Very large number
-        M = self.single_bin_packing.bin.width*self.single_bin_packing.bin.max_length
+        B = self.single_bin_packing.bin.width*self.single_bin_packing.bin.max_length
 
         # Multi-objective objective function
-        o = o1*M + o4
+        o = o1*B + o4
 
         return o
 
     def get_variables(self):
         return self.single_bin_packing.get_variables()
-
 
     def fix(self):
         self.single_bin_packing.fix()

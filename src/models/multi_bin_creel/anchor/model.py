@@ -1,21 +1,22 @@
-from ...single_bin.anchor.model import AnchorSBM
-
-from src.data_structures.bin import Bin
-from src.data_structures.machine_config import MachineConfig
-from src.data_structures.abstract_single_bin_packing import AbstractSingleBinPacking
-
-from src.extensions.creel.models.single_bin.model import CreelModel
-from src.extensions.creel.data_structures.creel_section import CreelSection
-from src.models.single_bin_creel.abstract_single_bin_creel_model import AbstractSBMCreel
 
 from cpmpy.expressions.python_builtins import all as cpm_all
 from cpmpy.expressions.python_builtins import any as cpm_any
 from cpmpy.expressions.python_builtins import max as cpm_max
 from cpmpy.expressions.python_builtins import min as cpm_min
 
-from cpmpy import Model
+from ...single_bin.anchor.model import AnchorSBM
+
+from src.data_structures.machine_config import MachineConfig
+from src.data_structures.abstract_single_bin_packing import AbstractSingleBinPacking
+from src.extensions.creel.data_structures.creel_section import CreelSection
+from src.models.single_bin_creel.abstract_single_bin_creel_model import AbstractSBMCreel
+
 
 class AnchorSBMCreel(AnchorSBM, AbstractSBMCreel):
+
+    '''
+    CP-Anchor + creel model (for MLOPP)
+    '''
 
     # Constructor
     def __init__(self, 
@@ -29,6 +30,7 @@ class AnchorSBMCreel(AnchorSBM, AbstractSBMCreel):
 
         # The bin color range must be compatible with the section color range
         cc = []
+
         for item in self.single_bin_packing.items:
             for x in range(item.nr_width_repeats()):
                 ccc = []
@@ -41,6 +43,7 @@ class AnchorSBMCreel(AnchorSBM, AbstractSBMCreel):
                         cpm_all(ccc)
                     )
                 )
+
         return cpm_all(cc)
 
     def get_constraints(self):
