@@ -6,10 +6,10 @@ import sys
 class Configuration:
 
     @property
-    def linux(self): return sys.platform == "Linux"
+    def linux(self): return sys.platform == "linux"
 
     @property
-    def windows(self): return sys.platform == "Windows"
+    def windows(self): return sys.platform == "windows"
 
     @property
-    def mac(self): return sys.platform == "Mac"
+    def mac(self): return sys.platform == "mac"

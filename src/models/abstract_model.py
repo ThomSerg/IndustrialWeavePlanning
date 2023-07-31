@@ -81,10 +81,10 @@ class Alarm():
 
     def __init__(self, config:Configuration):
         self.config = config
-
         if config.linux:
             import signal
-            self.signal = signal.signal(signal.SIGALRM, handler)
+            self.signal = signal
+            self.signal.signal(signal.SIGALRM, handler)
 
     def start(self, timeout):
         if self.config.linux:
