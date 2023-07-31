@@ -2,13 +2,15 @@ from dataclasses import dataclass
 from abc import ABCMeta, abstractmethod
 
 from typing import TypeVar, Generic, Union
-
 import numpy as np
 import numpy.typing as npt
 
 from cpmpy.expressions.variables import NDVarArray, intvar, boolvar
 
 from .fixable_object import FixableObject
+
+
+# Datatypes for type hinting
 
 Fixed = TypeVar("Fixed")
 Free = TypeVar("Free")
@@ -29,13 +31,19 @@ FixedBoolArray = npt.NDArray[FixedBool]
 FreeBoolArray = NDVarArray[FreeBool]
 BoolArray = Union[FixedBoolArray, FreeBoolArray]
 
+
 @dataclass(kw_only=True)
 class FixableType(Generic[Fixed, Free], metaclass=ABCMeta):
 
-    fixable_parent: FixableObject
-    fixed_value: Fixed = None
-    free_value: Free = None
-    fixed = False
+    '''
+    Object which has a free decision variable and its fixed counterpart.
+    Makes usage of CPMpy decision variables and standard python datatypes transparant.
+    '''
+
+    fixable_parent: FixableObject   # parent object (for recursive fixing)
+    fixed_value: Fixed = None       # fixed value
+    free_value: Free = None         # free CPMpy variable
+    fixed = False                   
 
     @abstractmethod
     def _fix_value(self, value): pass
@@ -43,17 +51,6 @@ class FixableType(Generic[Fixed, Free], metaclass=ABCMeta):
     def fix(self):
         self.fixed = True
         self.fixed_value = self.fix_value(self.free_value.value())
-
-    # def free(self):
-    #     self.fixed = False
-    
-    # def set_fixed_value(self, f:Fixed):
-    #     self.fixed_value = f
-    #     self.fixed = True
-
-    # def set_free_value(self, f:Free):
-    #     self.free_value = f
-    #     self.fixed = False
 
     def value(self):
         if self.fixable_parent.fixed:
@@ -64,6 +61,11 @@ class FixableType(Generic[Fixed, Free], metaclass=ABCMeta):
             return self.free_value
     
 class FixableArray(metaclass=ABCMeta):
+
+    '''
+    Fixable CPMpy array
+    '''
+
     @abstractmethod
     def flatten(self): pass
 
@@ -75,8 +77,10 @@ class FixableInt(FixableType[int, intvar]):
     
     def _fix_value(value):
         return int(value)
+    
 
 class FixableBool(FixableType[bool, boolvar]):
+
     def __init__(self, fixable_parent):
         super().__init__(fixable_parent=fixable_parent, free_value=boolvar())
 
@@ -85,8 +89,10 @@ class FixableBool(FixableType[bool, boolvar]):
     
     def _fix_value(value):
         return bool(value)
+    
 
 class FixableIntArray(FixableType[FixedIntArray, FreeIntArray], FixableArray):
+
     def flatten(self):
         return FixableIntArray(fixable_parent=self.fixable_parent, free_value=self.free_value.flatten())
 
@@ -102,6 +108,7 @@ class FixableIntArray(FixableType[FixedIntArray, FreeIntArray], FixableArray):
                 for y in range(value.shape[1]):
                     a[x,y] = FixableInt._fix_value(value[x,y])
         return a
+    
 
 class FixableBoolArray(FixableType[FixedBoolArray, FreeBoolArray], FixableArray):
     def flatten(self):
@@ -119,5 +126,3 @@ class FixableBoolArray(FixableType[FixedBoolArray, FreeBoolArray], FixableArray)
                 for y in range(value.shape[1]):
                     a[x,y] = FixableBool._fix_value(value[x,y])
         return a
-
-

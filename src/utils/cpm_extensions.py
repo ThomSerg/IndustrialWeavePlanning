@@ -1,11 +1,16 @@
-from cpmpy.expressions.variables import intvar, boolvar, NDVarArray, cpm_array, _IntVarImpl, _genname
-from cpmpy.expressions.python_builtins import any
+from cpmpy.expressions.variables import intvar, cpm_array
 
+'''
+Force CPMpy to create an array when dimension is zero
+'''
 def intvar_1D(lower, upper, repeat=1):
     if repeat == 1:
         return cpm_array([intvar(lower, upper)])
     return intvar(lower, upper, repeat)
 
+'''
+CPMpy array with custom bounds for each element
+'''
 def intvar_2D(lowers, uppers):
     vars = []
     for lower_row, upper_row in zip(lowers, uppers):
