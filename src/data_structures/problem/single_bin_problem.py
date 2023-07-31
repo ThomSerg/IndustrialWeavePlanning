@@ -9,7 +9,9 @@ from src.data_structures.bin_config import BinConfig
 
 class SingleBinProblem(ABC, Problem):
 
-    counts : npt.NDArray[np.int_]
+    '''
+    Single Large Object Placement Problem (SLOPP)
+    '''
 
     def __init__(self):
         pass
@@ -17,15 +19,9 @@ class SingleBinProblem(ABC, Problem):
 
     def get_bin_config(self):
         machine_config = self.get_machine_config()
-        items = self.get_items()
 
         return BinConfig(
-            width=machine_config.width,
-            min_length=machine_config.min_length, 
-            max_length=machine_config.max_length,
+            width = machine_config.width,
+            min_length = machine_config.min_length, 
+            max_length = machine_config.max_length,
         )
-
-
-
-    
-

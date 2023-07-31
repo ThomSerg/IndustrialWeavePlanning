@@ -1,13 +1,16 @@
 from dataclasses import dataclass
 
 import numpy.typing as npt
-import numpy as np
+
 
 @dataclass
 class DeadlineCounts:
 
- 
-    counts: npt.NDArray
+    '''
+    Collection of demands (or achieved production) for certain items across all deadlines.
+    '''
+
+    counts: npt.NDArray     # the demand
 
     def get_counts_for(self, deadline:int) -> npt.NDArray:
         return self.counts[:,deadline]

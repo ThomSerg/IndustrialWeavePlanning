@@ -1,21 +1,25 @@
 from dataclasses import dataclass
+from dataclass_wizard import JSONWizard
 
 import numpy.typing as npt
 
 from src.data_structures.deadline_counts import DeadlineCounts
 from src.data_structures.item import Item
 
-from dataclass_wizard import JSONWizard
 
 @dataclass
 class ProductionSchedule(JSONWizard):
 
-    items: list[Item]
+    '''
+    Representation of the production schedule.
+    '''
 
-    deadlines: npt.NDArray
+    items: list[Item]               # items to produce
+    deadlines: npt.NDArray          # deadlines
+    requirements: DeadlineCounts    # requirements against each deadline
+    fullfilments: DeadlineCounts    # what gets produced against each deadline
 
-    requirements: DeadlineCounts
-    fullfilments: DeadlineCounts 
+    # Getters
 
     def get_requirements(self):
         return self.requirements.counts

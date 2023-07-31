@@ -1,28 +1,30 @@
 from __future__ import annotations
+from abc import abstractmethod
+from dataclasses import dataclass
 
-from abc import ABC, abstractmethod
-from dataclasses import dataclass,  field
-from typing import Union
-import math
-
-from cpmpy.expressions.variables import boolvar, intvar, cpm_array
+from cpmpy.expressions.variables import intvar
 from cpmpy.expressions.python_builtins import all as cpm_all
-#from cpmpy.expressions.globalconstraints import 
 
 from src.data_structures.bin import Bin
-from src.data_structures.abstract_item_packing import AbstractItemPacking
-
-import numpy as np
-import numpy.typing as npt
-
-
 from src.utils.fixable_object import FixableObject
-import src.utils.fixable_type as ft
+
 
 @dataclass(kw_only=True)
 class AbstractSingleBinPacking(FixableObject):
 
-    bin: Bin
+    '''
+    Abstract class representing a packed (or to be packed) singular large object.
+    '''
+
+    bin: Bin    # The large object in which to pack
+
+    def get_variables(self):
+        res = self.bin.get_variables()
+        for item in self.items:
+            res += item.get_variables()
+        return res
+
+    # Properties
 
     @property
     @abstractmethod
@@ -44,12 +46,8 @@ class AbstractSingleBinPacking(FixableObject):
     def area(self) -> intvar:
         return sum(item.count*item.area for item in self.items)
     
-    def get_variables(self):
-        res = self.bin.get_variables()
-        for item in self.items:
-            res += item.get_variables()
-        return res
-    
+    # Post-fix operations
+
     def _post_fix(self):
         for item in self.items:
             item.fix()
@@ -59,10 +57,11 @@ class AbstractSingleBinPacking(FixableObject):
         for item in self.items:
             item.free()
         self.bin.free()
+
+    # Equality comparison
     
     def __eq__(self, other):
         if isinstance(other, AbstractSingleBinPacking):
             return cpm_all(self.counts == other.counts)
-            return all(i == o for (i,o) in zip(self.items, other.items))
         else:
             return False
