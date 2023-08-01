@@ -3,14 +3,14 @@ import numpy as np
 
 from cpmpy import *
 from cpmpy.solvers import CPM_ortools 
-from cpmpy.expressions.python_builtins import all as cpm_all
-from cpmpy.expressions.python_builtins import any as cpm_any
 from cpmpy.expressions.python_builtins import sum as cpm_sum
-from cpmpy.expressions.python_builtins import max as cpm_max
+
 
 class DueDateBenchmarkModel():
 
-    
+    '''
+    CPMpy model for generating realistic problem instances.
+    '''
 
     def __init__(self,
                     nr_items: int,
@@ -129,4 +129,3 @@ class DueDateBenchmarkModel():
                 }
         
         return bench
-
