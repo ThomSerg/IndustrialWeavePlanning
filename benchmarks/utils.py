@@ -1,28 +1,17 @@
-import pprint
 from timeit import default_timer as timer
 import pickle
 import os
 import json
-import signal
-
 import gc
-
 import matplotlib.pyplot as plt
 
-from src.data_structures.problem.problem import Problem
-#from iterative.Visualiser import show_bin_packing
 from src.data_structures.problem.multi_bin_problem import MultiBinProblem
 from src.data_structures.problem.single_bin_problem import SingleBinProblem
-
 from src.models.abstract_model import AbstractMultiBinModel, AbstractSingleBinModel
-#from iterative.models.MultiBin.AbstractProductionModel import AbstractProductionModel
 from src.extensions.due_dates.models.production_model import ProductionModel
-
 from src.utils.configuration import Configuration
 
 import cpmpy
-
-
 
 
 class BenchmarkSave():
@@ -64,7 +53,6 @@ def run_single_bin_benchmark(
             print("SAT", sat)
             print("TIME", end-start)
 
-            
             file_directory = os.path.join(os.getcwd(), "results", model.get_name())
             if not os.path.exists(file_directory):
                 os.makedirs(file_directory)
@@ -79,15 +67,12 @@ def run_single_bin_benchmark(
             if sat:
                 stats = initialised_model.get_stats()
                 stats.total_time = end-start
-                # print("STATS")
-                # pprint.pprint(stats)
                 print("STATS", stats)
 
                 file_name = os.path.join(file_directory, problem.name + ".json")
                 with open(file_name, 'w') as handle:
                     handle.write(json.dumps(stats, indent=4))
 
-      
                 initialised_model.visualise()
                 if figure_export:
                     plt.savefig(os.path.join(file_directory, problem.name + '.png'))
@@ -97,8 +82,6 @@ def run_single_bin_benchmark(
 def run_single_bin_benchmark_repeated(models: list[AbstractSingleBinModel], problems: list[SingleBinProblem], start_index=0, max_time_seconds=20, nr_repeats=1):
 
     config = Configuration()
-
-    # problems.reverse()
 
     for problem in problems:
 
@@ -120,12 +103,8 @@ def run_single_bin_benchmark_repeated(models: list[AbstractSingleBinModel], prob
                 if not os.path.exists(file_directory):
                     os.makedirs(file_directory)
 
-                # with open(file_name, 'wb') as handle:
-                #     pickle.dump(bench_save, handle, protocol=pickle.HIGHEST_PROTOCOL)
-
                 print("SAT", sat)
                 print("TIME", end-start)
-
                 print(initialised_model.constraints_stats)
 
                 if sat:
@@ -133,29 +112,24 @@ def run_single_bin_benchmark_repeated(models: list[AbstractSingleBinModel], prob
                     stats = initialised_model.get_stats()
                     stats.total_time = end-start
 
-                    # print("STATS")
-                    # pprint.pprint(stats)
                     print("STATS", stats)
 
                     file_name = os.path.join(file_directory, problem.name + "_" + str(i_repeat) + ".json")
                     with open(file_name, 'w') as handle:
                         handle.write(json.dumps(stats.to_dict(), indent=4))
 
-                    #show_bin_packing(initialised_model.single_bin_packing)
                     initialised_model.visualise()
                     plt.savefig(os.path.join(file_directory, problem.name + "_" + str(i_repeat) + '.png'))
-
                     plt.show()
 
 def single_bin_benchmark_model_info(models: list[AbstractSingleBinModel], problems: list[SingleBinProblem], start_index=0, max_time_seconds=20, nr_repeats=1):
-
-    # problems.reverse()
 
     model_complexity = []
 
     for problem in problems:
         print("PROBLEM", problem.name)
         print(problem.json_dict)
+
         for model in models:
             for i_repeat in range(nr_repeats):
 
@@ -168,23 +142,9 @@ def single_bin_benchmark_model_info(models: list[AbstractSingleBinModel], proble
                 lf = flatten(l)
                 print(str(len(c)) + "->" + str(len(lf)))
 
-                # for constraint_type in c.keys():
-                #     constraints = c[constraint_type]
-                #     l = [cpmpy.transformations.flatten_model.flatten_constraint(e) for e in constraints]
-                #     lf = flatten(l)
-                #     print(constraint_type + " : " + str(len(constraints)) + "->" + str(len(lf)))
-
-                #     nr_constraints[constraint_type] = len(lf)
-
                 nr_constraints = len(lf)
 
-
-                # l = [cpmpy.transformations.flatten_model.flatten_constraint(e) for e in c]
-                # lf = flatten(l)
-
                 print("------")
-                # print(len(c))
-                # print(len(lf))
 
                 info = {}
                 info["constraints"] = nr_constraints
@@ -251,8 +211,6 @@ def run_multi_bin_benchmark(
                 stats = initialised_model.get_stats()
                 stats["total_time"] = end-start
 
-                # print("STATS")
-                # pprint.pprint(stats)
                 print("STATS", stats)
 
                 file_name = os.path.join(file_directory, problem.name + ".json")
@@ -264,11 +222,3 @@ def run_multi_bin_benchmark(
                 if figure_export:
                     plt.savefig(os.path.join(file_directory, problem.name + '.png'))
                     plt.show()
-
-
-
-
-    
-
-
-

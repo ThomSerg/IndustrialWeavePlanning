@@ -45,7 +45,6 @@ class ProblemJsonCS(ColoredSingleBinProblem):
         self.name = name
         self.widths : npt.NDArray[np.int_] = np.array(json_dict["widths"],dtype='int64')
         self.heights : npt.NDArray[np.int_] = np.array(json_dict["heights"],dtype='int64')
-        #self.counts : npt.NDArray[np.int_] = np.array(json_dict["counts"],dtype='int64')
         self.colors : npt.NDArray[np.int_] = np.array(json_dict["colors"],dtype='int64')
         self.machine_width : int = json_dict["machine_config"]["width"]
         self.machine_min_length : int = json_dict["machine_config"]["min_length"]
