@@ -184,7 +184,7 @@ class BaselineSBM(AbstractSingleBinModel):
         self.single_bin_packing.fix()
     
     def get_repeats(self):
-        return sum([item.free_max_count for item in self.single_bin_packing.items])
+        return sum([item.max_count for item in self.single_bin_packing.items])
     
     def get_stats(self):
         

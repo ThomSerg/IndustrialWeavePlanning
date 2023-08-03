@@ -10,7 +10,7 @@ from ...data_structures.creel_packing import CreelPacking
 from ...models.creel_packing_model import CreelPackingModel
 
 from src.data_structures.textile_item import TextileItem
-from src.data_structures.abstract_single_bin_packing import AbstractItemPacking
+from src.data_structures.abstract_item_packing import AbstractItemPacking
 from src.extensions.due_dates.data_structures.bin_production import BinProduction
 from src.data_structures.machine_config import MachineConfig
 from src.models.single_bin_creel.abstract_single_bin_creel_model import AbstractSBMCreel
