@@ -13,7 +13,7 @@ The code inside this repository is part of my thesis research towards a diploma 
 
 Author: **Thomas Sergeys** [@mail](mailto:thomas.s2000@hotmail.com)
 
-Supervisor: **Prof. dr. ir. Tias Guns** [🠊](https://www.kuleuven.be/wieiswie/nl/person/00056117)
+Supervisor: **Prof. dr. Tias Guns** [🠊](https://www.kuleuven.be/wieiswie/nl/person/00056117)
 
 Assistant-supervisor: **Dimosthenis Tsouros** [🠊](https://www.kuleuven.be/wieiswie/nl/person/00158977)
 
