@@ -1,0 +1,262 @@
+{
+    "4_100_450_3_0": {
+        "widths": [
+            44,
+            49,
+            37,
+            43
+        ],
+        "heights": [
+            43,
+            94,
+            72,
+            54
+        ],
+        "machine_config": {
+            "width": 100,
+            "min_length": 450,
+            "max_length": 450,
+            "max_creel_colors": 3
+        },
+        "colors": [
+            0,
+            1,
+            2,
+            3
+        ]
+    },
+    "4_100_450_3_1": {
+        "widths": [
+            83,
+            35,
+            24,
+            29
+        ],
+        "heights": [
+            53,
+            27,
+            46,
+            37
+        ],
+        "machine_config": {
+            "width": 100,
+            "min_length": 450,
+            "max_length": 450,
+            "max_creel_colors": 3
+        },
+        "colors": [
+            0,
+            1,
+            2,
+            3
+        ]
+    },
+    "4_100_450_3_2": {
+        "widths": [
+            37,
+            49,
+            37,
+            78
+        ],
+        "heights": [
+            24,
+            28,
+            63,
+            57
+        ],
+        "machine_config": {
+            "width": 100,
+            "min_length": 450,
+            "max_length": 450,
+            "max_creel_colors": 3
+        },
+        "colors": [
+            0,
+            1,
+            2,
+            3
+        ]
+    },
+    "4_100_450_3_3": {
+        "widths": [
+            25,
+            60,
+            65,
+            56
+        ],
+        "heights": [
+            41,
+            35,
+            38,
+            54
+        ],
+        "machine_config": {
+            "width": 100,
+            "min_length": 450,
+            "max_length": 450,
+            "max_creel_colors": 3
+        },
+        "colors": [
+            0,
+            1,
+            2,
+            3
+        ]
+    },
+    "4_100_450_3_4": {
+        "widths": [
+            34,
+            49,
+            82,
+            62
+        ],
+        "heights": [
+            35,
+            72,
+            36,
+            62
+        ],
+        "machine_config": {
+            "width": 100,
+            "min_length": 450,
+            "max_length": 450,
+            "max_creel_colors": 3
+        },
+        "colors": [
+            0,
+            1,
+            2,
+            3
+        ]
+    },
+    "4_100_450_3_5": {
+        "widths": [
+            69,
+            46,
+            31,
+            66
+        ],
+        "heights": [
+            71,
+            63,
+            45,
+            61
+        ],
+        "machine_config": {
+            "width": 100,
+            "min_length": 450,
+            "max_length": 450,
+            "max_creel_colors": 3
+        },
+        "colors": [
+            0,
+            1,
+            2,
+            3
+        ]
+    },
+    "4_100_450_3_6": {
+        "widths": [
+            69,
+            70,
+            67,
+            70
+        ],
+        "heights": [
+            65,
+            69,
+            47,
+            31
+        ],
+        "machine_config": {
+            "width": 100,
+            "min_length": 450,
+            "max_length": 450,
+            "max_creel_colors": 3
+        },
+        "colors": [
+            0,
+            1,
+            2,
+            3
+        ]
+    },
+    "4_100_450_3_7": {
+        "widths": [
+            83,
+            47,
+            20,
+            88
+        ],
+        "heights": [
+            50,
+            28,
+            43,
+            40
+        ],
+        "machine_config": {
+            "width": 100,
+            "min_length": 450,
+            "max_length": 450,
+            "max_creel_colors": 3
+        },
+        "colors": [
+            0,
+            1,
+            2,
+            3
+        ]
+    },
+    "4_100_450_3_8": {
+        "widths": [
+            74,
+            55,
+            25,
+            66
+        ],
+        "heights": [
+            67,
+            28,
+            57,
+            61
+        ],
+        "machine_config": {
+            "width": 100,
+            "min_length": 450,
+            "max_length": 450,
+            "max_creel_colors": 3
+        },
+        "colors": [
+            0,
+            1,
+            2,
+            3
+        ]
+    },
+    "4_100_450_3_9": {
+        "widths": [
+            45,
+            95,
+            36,
+            63
+        ],
+        "heights": [
+            94,
+            50,
+            34,
+            49
+        ],
+        "machine_config": {
+            "width": 100,
+            "min_length": 450,
+            "max_length": 450,
+            "max_creel_colors": 3
+        },
+        "colors": [
+            0,
+            1,
+            2,
+            3
+        ]
+    }
+}
