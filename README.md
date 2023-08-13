@@ -34,7 +34,7 @@ This repository contains:
 
 ```latex
 @mastersthesis{sergeys2023thesis,
-    title   = {Computer-Based Production Planning Optimisation for Industrial Weaving Machines},
+    title   = {Computerised Production Planning Optimisation for Industrial Weaving Machines},
     author  = {Sergeys, Thomas},
     year    = {2023},
     month   = {8},
