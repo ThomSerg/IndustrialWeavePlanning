@@ -25,7 +25,7 @@ Topic proposed by: **Vandewiele nv** [🠊](https://vandewiele.com/)
 ## Contents
 
 This repository contains:
-- Thesis text [🠊](Master_Thesis_31-07-2023.pdf)
+- Thesis text [🠊](Master_Thesis_13-08-2023-2.pdf)
 - Proposed benchmark suites [🠊](/benchmarks/)
 - Code for proposed model formulations [🠊](/src/)
 ---
