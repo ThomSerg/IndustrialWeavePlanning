@@ -15,7 +15,7 @@ Author: **Thomas Sergeys** [@mail](mailto:thomas.s2000@hotmail.com)
 
 Supervisor: **Prof. dr. Tias Guns** [🠊](https://www.kuleuven.be/wieiswie/nl/person/00056117)
 
-Assistant-supervisor: **Dimosthenis Tsouros** [🠊](https://www.kuleuven.be/wieiswie/nl/person/00158977)
+Assistant-supervisor: **Dr. ir. Dimosthenis Tsouros** [🠊](https://www.kuleuven.be/wieiswie/nl/person/00158977)
 
 Topic proposed by: **Vandewiele nv** [🠊](https://vandewiele.com/)
 
